@@ -1,0 +1,796 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Argument map · Eine Position</title>
+<style>body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style>
+</head>
+<body>
+<style>
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --ink: #1a202c;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --accent: #4f46e5;
+
+  --c-position: #4f46e5;
+  --c-position-bg: #eef2ff;
+  --c-fact: #0d9488;
+  --c-fact-bg: #f0fdfa;
+  --c-value: #d97706;
+  --c-value-bg: #fffbeb;
+
+  --c-agree: #16a34a;
+  --c-factdis: #dc2626;
+  --c-valdis: #9333ea;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+}
+header { background: var(--card); border-bottom: 1px solid var(--border); }
+.header-inner {
+  max-width: 1680px; margin: 0 auto; padding: 20px 24px 14px;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+}
+h1 { margin: 0; font-size: 26px; letter-spacing: -0.02em; }
+.mode-desc { margin: 8px 0 0; font-size: 13px; color: var(--muted); max-width: 720px; }
+.model-badge {
+  font-size: 12px; color: var(--muted); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; white-space: nowrap;
+}
+main { max-width: 1680px; margin: 0 auto; padding: 0 24px 40px; }
+
+.tabs { display: flex; gap: 4px; margin-top: 14px; flex-wrap: wrap; }
+.tab {
+  border: 1px solid var(--border); border-bottom: none; background: #eef0f4;
+  color: var(--muted); padding: 9px 22px; font-size: 14px; font-weight: 600;
+  border-radius: 10px 10px 0 0; cursor: pointer; font-family: inherit;
+}
+.tab.active { background: var(--card); color: var(--ink); }
+.panel { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 0 12px 12px 12px; padding: 20px; }
+.panel.active { display: block; }
+
+.fine-print { font-size: 12px; color: var(--muted); margin: 0; }
+.hidden { display: none !important; }
+
+.legend {
+  margin: 4px 0 12px; font-size: 13px; color: var(--muted);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.legend-hint { flex-basis: 100%; }
+.chip {
+  display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px;
+  border-radius: 20px; border: 1px solid;
+}
+.chip.role-mc { color: #0f172a; background: #f1f5f9; border-color: #334155; }
+.chip.role-c { color: #334155; background: #f8fafc; border-color: #94a3b8; }
+.chip.role-p { color: #64748b; background: #fff; border-color: #cbd5e1; }
+.edge-sample { display: inline-block; width: 30px; border-top: 2px solid #94a3b8; vertical-align: middle; }
+.edge-sample.attack { border-top: 2px dashed var(--c-factdis); }
+.edge-sample.agree { border-top-color: var(--c-agree); }
+.edge-sample.factdis { border-top-color: var(--c-factdis); }
+.edge-sample.valdis { border-top-color: var(--c-valdis); }
+.typed-toggle {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
+  color: var(--ink); border: 1px solid var(--border); border-radius: 20px;
+  padding: 3px 12px; cursor: pointer; user-select: none;
+}
+
+.pane { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-top: 16px; background: var(--card); }
+.pane h2 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.map-holder { overflow-x: auto; }
+.map-holder svg { display: block; }
+
+.node-box { rx: 8; stroke-width: 1.5; }
+.node.position .node-box { fill: var(--c-position-bg); stroke: var(--c-position); }
+.node.fact .node-box { fill: var(--c-fact-bg); stroke: var(--c-fact); }
+.node.value .node-box { fill: var(--c-value-bg); stroke: var(--c-value); }
+.node { cursor: pointer; }
+.node.hovered .node-box { stroke-width: 3; }
+.node-type { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; }
+.node.position .node-type { fill: var(--c-position); }
+.node.fact .node-type { fill: var(--c-fact); }
+.node.value .node-type { fill: var(--c-value); }
+.node-text { font-size: 12px; fill: var(--ink); }
+.node.role-major .node-box { stroke-width: 2.5; }
+.node.untyped .node-box { fill: #f8fafc; stroke: #94a3b8; }
+.node.untyped .node-type { fill: #475569; }
+.node.untyped.role-major .node-box { fill: #f1f5f9; stroke: #334155; }
+
+.edge-visible { fill: none; stroke: #94a3b8; stroke-width: 1.5; }
+.edge-hit { fill: none; stroke: transparent; stroke-width: 14; cursor: pointer; }
+.edge-group.hovered .edge-visible { stroke: var(--accent); stroke-width: 2.5; }
+.edge-group.dimmed .edge-visible { opacity: 0.12; }
+.edge-group.attack .edge-visible { stroke: var(--c-factdis); stroke-dasharray: 6 4; }
+.edge-group.attack.hovered .edge-visible { stroke: #b91c1c; }
+
+.map-col-title { font-size: 13px; font-weight: 700; }
+.map-col-title.a { fill: #1d4ed8; }
+.map-col-title.b { fill: #b45309; }
+.cross-group { cursor: pointer; }
+.cross-link { fill: none; stroke-width: 2; opacity: 0.75; }
+.cross-group.agreement .cross-link { stroke: var(--c-agree); }
+.cross-group.factual .cross-link { stroke: var(--c-factdis); }
+.cross-group.value .cross-link { stroke: var(--c-valdis); }
+.cross-group.hovered .cross-link { stroke-width: 3.5; opacity: 1; }
+.cross-group.dimmed .cross-link { opacity: 0.1; }
+
+.tooltip {
+  position: fixed; z-index: 50; max-width: 340px;
+  background: #1e293b; color: #f1f5f9; font-size: 12.5px; line-height: 1.45;
+  border-radius: 8px; padding: 8px 12px; pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+.tooltip .tt-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 3px; }
+
+/* click → zugrunde liegender Text */
+.textpanel { border: 1px solid var(--border); border-radius: 10px; background: #fbfbfd; padding: 12px 16px; margin-top: 12px; font-size: 13.5px; }
+.textpanel.idle { color: var(--muted); font-size: 12.5px; }
+.tp-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.tp-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 7px; }
+.tp-head .smeta { font-size: 11.5px; color: var(--muted); }
+.sdot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+.tp-quote { background: #f1f5f9; border-left: 3px solid var(--accent); border-radius: 6px; padding: 11px 13px; line-height: 1.65; max-width: 82ch; }
+.tp-quote mark { background: #fef08a; padding: 1px 2px; border-radius: 2px; }
+.tp-note { font-size: 11.5px; color: var(--muted); margin-top: 7px; }
+.dsrc { display: inline-block; margin-top: 8px; font-size: 12px; color: var(--accent); font-weight: 600; text-decoration: none; }
+.dsrc:hover { text-decoration: underline; }
+
+/* zugrunde liegende Texte (ganz unten) */
+.texts { margin-top: 16px; }
+.texts h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+.texts details { border: 1px solid var(--border); border-radius: 8px; background: #fff; margin-bottom: 8px; }
+.texts summary { cursor: pointer; padding: 10px 14px; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.texts summary:hover { background: #f8fafc; }
+.texts .smeta { font-size: 11px; color: var(--muted); font-weight: 400; }
+.texts .dbody { padding: 2px 16px 12px; }
+.texts .dbody p { font-size: 13px; line-height: 1.65; max-width: 82ch; margin: 0 0 10px; }
+.texts .dph { display: block; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 6px 0 2px; font-weight: 700; }
+</style>
+<style>.s2crumb{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8a8781;margin:14px 0 2px}.s2crumb b{color:#4f46e5;font-weight:600}</style>
+<header>
+  <div class="header-inner">
+    <div>
+      <a href="index.html" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.06em;color:#94a3b8;text-decoration:none">← Übersicht</a>
+      <p class="s2crumb" style="color:#94a3b8"><b style="color:#a5b4fc">Experten</b> · Eine Position</p>
+      <h1 style="margin-top:4px">Argument map</h1>
+      <p class="mode-desc">Ein einzelner Text als Karte: Hauptthese, Zwischenthesen und Prämissen, verbunden durch Stütz- und Angriffspfeile (Hover zeigt die Begründung). <strong>Klick auf einen Knoten zeigt die wörtliche Textstelle</strong>; der vollständige Text steht zuunterst.</p>
+    </div>
+    <span class="model-badge">Prototyp — vorberechnete Extraktion</span>
+  </div>
+</header>
+
+<main>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="bericht">Erläuternder Bericht Paket Schweiz–EU</button>
+  <button class="tab" data-tab="cassis">Bundesrats-Votum Cassis</button>
+</nav>
+
+<section id="panel-bericht" class="panel">
+  <p class="fine-print">Fallbeispiel: Erläuternder Bericht des Bundesrates zur Eröffnung der Vernehmlassung «Paket Schweiz–EU» (13.6.2025), Abschnitt «Übersicht» — eine Position. Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.</p>
+  <div class="pane">
+    <h2>Argument map</h2>
+    <div class="legend">
+      <span class="chip role-mc">Hauptthese</span>
+      <span class="chip role-c">These</span>
+      <span class="chip role-p">Prämisse</span>
+      <span class="edge-sample"></span> stützt
+      <span class="edge-sample attack"></span> greift an
+      <label class="typed-toggle"><input type="checkbox" id="typed-bericht" checked> Fakt/Wert-Typen zeigen</label>
+      <span class="legend-hint">— Hover auf Knoten und Pfeile zeigt Volltext und Begründung; <strong>Klick auf einen Knoten zeigt unten die wörtliche Textstelle samt Quelle.</strong></span>
+    </div>
+    <div id="map-bericht" class="map-holder"></div>
+  </div>
+  <div id="tp-bericht" class="textpanel idle">Klick auf einen Knoten zeigt hier die zugrunde liegende Textstelle — wörtlich, mit Quelle.</div>
+  <div class="texts">
+    <h2>Zugrunde liegender Text</h2>
+    <div id="texts-bericht"></div>
+  </div>
+</section>
+
+<section id="panel-cassis" class="panel">
+  <p class="fine-print">Fallbeispiel: Votum von Bundesrat Ignazio Cassis im Ständerat (12.3.2026) zur Neutralitätsinitiative — eine Position, die auf die Voten Germann und Poggia antwortet. Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.</p>
+  <div class="pane">
+    <h2>Argument map</h2>
+    <div class="legend">
+      <span class="chip role-mc">Hauptthese</span>
+      <span class="chip role-c">These</span>
+      <span class="chip role-p">Prämisse</span>
+      <span class="edge-sample"></span> stützt
+      <span class="edge-sample attack"></span> greift an
+      <label class="typed-toggle"><input type="checkbox" id="typed-cassis" checked> Fakt/Wert-Typen zeigen</label>
+      <span class="legend-hint">— Hover auf Knoten und Pfeile zeigt Volltext und Begründung; <strong>Klick auf einen Knoten zeigt unten die wörtliche Textstelle samt Quelle.</strong></span>
+    </div>
+    <div id="map-cassis" class="map-holder"></div>
+  </div>
+  <div id="tp-cassis" class="textpanel idle">Klick auf einen Knoten zeigt hier die zugrunde liegende Textstelle — wörtlich, mit Quelle.</div>
+  <div class="texts">
+    <h2>Zugrunde liegender Text</h2>
+    <div id="texts-cassis"></div>
+  </div>
+</section>
+
+</main>
+
+<div id="tooltip" class="tooltip hidden"></div>
+<script>
+const $ = (sel) => document.querySelector(sel);
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+const tooltip = $('#tooltip');
+function showTooltip(html, x, y) {
+  tooltip.innerHTML = html;
+  tooltip.classList.remove('hidden');
+  const r = tooltip.getBoundingClientRect();
+  tooltip.style.left = Math.min(x + 14, window.innerWidth - r.width - 12) + 'px';
+  tooltip.style.top = Math.min(y + 14, window.innerHeight - r.height - 12) + 'px';
+}
+function hideTooltip() { tooltip.classList.add('hidden'); }
+
+const KIND_LABEL = { agreement: 'Einigkeit', factual: 'Faktische Uneinigkeit', value: 'Wert-Uneinigkeit' };
+
+
+const AM = {};
+/* ===== bericht ===== */
+/* ---------- Argument map: Erläuternder Bericht Paket Schweiz–EU (13.6.2025), Abschnitt «Übersicht» — eine Position ----------
+   Textstellen verbatim (Transkription aus dem PDF). Knoten, Pfeile, Typen und Warrants: vom Tool. */
+AM["bericht"] = {
+  title:"Erläuternder Bericht Paket Schweiz–EU",
+  kind:"single",
+  intro:"Fallbeispiel: Erläuternder Bericht des Bundesrates zur Eröffnung der Vernehmlassung «Paket Schweiz–EU» (13.6.2025), Abschnitt «Übersicht» — eine Position. Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.",
+  positions:[
+    { id:"R", short:"Bundesrat", name:"Bundesrat — Erläuternder Bericht", c:"#1d4ed8", side:null,
+      src:"Erläuternder Bericht zur Eröffnung des Vernehmlassungsverfahrens, Paket Schweiz–EU, 13.6.2025, «Übersicht» S. 2–4 (Transkription aus dem PDF)",
+      url:"https://www.europa.eda.admin.ch/dam/de/sd-web/D1B9F4b1HKA2/20250613%20Erl%C3%A4uternder%20Bericht%20(DE).pdf" }
+  ],
+  full:{
+    R:[
+      { h:"Ausgangslage", t:"Für die Leistungsfähigkeit einer offenen Volkswirtschaft wie der Schweiz, die über keine bedeutenden Rohstoffe und einen nur begrenzten Binnenmarkt verfügt, spielt der Zugang zu ausländischen Märkten eine unabdingbare Rolle. Die Schweiz setzt sich dafür ein, dass dieser Zugang möglichst weitreichend und geografisch diversifiziert ist. Damit wird auch die Widerstandsfähigkeit in Krisen gestärkt. Gleichzeitig konzentriert sich die Schweiz auf ihre wichtigsten Wirtschaftspartner. Die EU ist mit einem Anteil von rund 59 Prozent am Warenhandel die mit Abstand wichtigste Handelspartnerin der Schweiz. Aus diesen Gründen stehen die Stabilisierung und Weiterentwicklung der Beziehungen mittels des bewährten bilateralen Wegs zwischen der Schweiz und der EU im Zentrum der bundesrätlichen Aussen- und Wirtschaftspolitik." },
+      { t:"Die Welt wird instabiler, unsicherer und unvorhersehbarer. Globale Entwicklungen fordern die einzelnen Staaten heraus: Grossmächtekonkurrenz, zunehmendes Gewicht neuer informeller Gruppierungen (z. B. BRICS), Erosion des internationalen Rechts (Macht vor Recht), die Klimaveränderung, ein weiter zunehmender Migrationsdruck, Entwicklungen in der Informationstechnologie und im Energiesektor, aber auch wachsende Staatsschulden, eine Fragmentierung der internationalen Wirtschaftsordnung, zunehmende handelspolitische Spannungen sowie fragmentierte und polarisierte Gesellschaften." },
+      { t:"Ein regelrechter «Ring of Fire» mit dem Krieg in der Ukraine, Unruhen im Balkan und im Kaukasus, Konflikten im Mittleren Osten, einer instabilen Lage in Nordafrika sowie Machtumstürze in Subsahara-Afrika machen die Weltlage zu einem fragilen Umfeld. Diesen globalen Instabilitäten kann die Schweiz entgegentreten, wenn die Beziehungen zu ihrer unmittelbaren Nachbarschaft, zu Partnern, die ihre Werte teilen, stabil und berechenbar sind. Vor diesem Hintergrund sind geregelte Beziehungen zur EU für die Schweiz von strategischer Bedeutung." },
+      { t:"Die Schweiz verfolgt seit mehr als 25 Jahren auf konsequente Weise den bilateralen Weg mit der EU. Der bilaterale Weg weist von allen Optionen (Nichtstun, Freihandel, Beitritt zum EWR, Beitritt zur EU) das ausgewogenste Verhältnis von konkretem, namentlich wirtschaftlichem Nutzen sowie politischem Gestaltungsspielraum auf. Die Erfahrung aus diesen 25 Jahren zeigt, dass der bilaterale Weg sich bewährt. Er wurde deshalb direkt und indirekt neun Mal durch das Volk an der Urne bestätigt." },
+      { t:"Die Schweiz kann aufgrund der mit der EU abgeschlossenen Binnenmarkt- und Kooperationsabkommen gezielt an denjenigen Bereichen teilhaben, die ihren Kernanliegen dienen, ohne dass die Kompetenzen der Kantone, der Bundesversammlung, des Bundesrates, der Gerichte oder des Volkes eingeschränkt werden. Mit den ausgehandelten Mitwirkungsrechten in der dynamischen Rechtsübernahme für Bund, Kantone und Parlament wird sie sich in Zukunft ausserdem bei der Weiterentwicklung des Rechts, das Teil der Abkommen ist und sein wird, einbringen können." },
+      { h:"Inhalt der Vorlage", t:"Das vorliegende Paket ist Ausdruck der Kontinuität der massgeschneiderten Beziehungen zwischen der Schweiz und der EU. Es stabilisiert den bewährten bilateralen Weg und garantiert das Funktionieren der bestehenden bilateralen Verträge für die Zukunft. Zudem werden dadurch die Beziehungen in denjenigen Bereichen weiterentwickelt, die im Interesse der Schweiz liegen." },
+      { t:"Konkret umfasst es einen Stabilisierungsteil mit (i) der sektoriellen Verankerung von institutionellen Elementen in den bestehenden Binnenmarktabkommen Personenfreizügigkeit, technische Handelshemmnisse (MRA), Land- und Luftverkehr unter Berücksichtigung von Ausnahmen, Absicherungen und Prinzipien, (ii) der Aufnahme von Bestimmungen über staatliche Beihilfen in die bestehenden Land- und Luftverkehrsabkommen, (iii) weiteren Anpassungen der bestehenden Abkommen (Personenfreizügigkeit, technische Handelshemmnisse (MRA), Land- und Luftverkehr sowie Landwirtschaft), (iv) Kooperationsabkommen in den Bereichen Forschung, Bildung und Weltraum sowie (v) der Verstetigung des Schweizer Beitrags." },
+      { t:"Ein Weiterentwicklungsteil widerspiegelt die Schweizer Interessen an einem gezielten Ausbau der bilateralen Beziehungen mit der EU. Er umfasst: (i) neue Binnenmarktabkommen in den Bereichen Strom (inkl. institutionelle Elemente und staatliche Beihilfen) und Lebensmittelsicherheit (inkl. institutionelle Elemente) sowie (ii) ein neues Kooperationsabkommen im Bereich Gesundheit. Die Schweiz und die EU streben zudem nach einem regelmässigen politischen Austausch in unterschiedlichen Bereichen. Folglich wurden (i) ein hochrangiger Dialog und (ii) eine institutionalisierte parlamentarische Zusammenarbeit beschlossen. In einer gemeinsamen Erklärung wurden Übergangsregeln für die Phase ab Ende 2024 bis zum Inkrafttreten des Pakets festgelegt." },
+      { t:"Die vorliegenden Abkommen sichern die verfassungsmässigen Kompetenzen der Kantone, der Bundesversammlung, des Bundesrates, der Gerichte und des Volkes. Die durch die Bundesverfassung garantierten Initiativ- und Referendumsrechte (Art. 136 Abs. 2 BV) sind weiterhin in vollem Umfang gewährleistet. Weder die einzelnen Abkommen noch die darin enthaltenen institutionellen Elemente verhindern, dass eine Volksinitiative lanciert werden kann, die sich gegen die Übernahme einer relevanten Weiterentwicklung des EU-Rechts in das betroffene Abkommen richtet. Ebenso wird gegen eine solche Rechtsübernahme beziehungsweise ein in diesem Zusammenhang erforderliches neues Gesetz oder eine erforderliche Gesetzesanpassung wie bisher das Referendum ergriffen werden können." },
+      { t:"Es ist der Schweiz somit gelungen, ihr Kernziel mit Blick auf ihre Beziehungen zur EU zu erreichen: eine bestmögliche gegenseitige Beteiligung an klar definierten Bereichen des Binnenmarkts sowie Kooperation in ausgewählten Interessenbereichen, unter Wahrung des grösstmöglichen politischen Handlungsspielraums." },
+      { t:"Dazu kommen inländische Massnahmen in den Bereichen Lohnschutz, Zuwanderung, Studiengebühren, Strom und Landverkehr. Es handelt sich dabei um Massnahmen, die für die Umsetzung der völkerrechtlichen Verträge nicht zwingend sind, vom Bundesrat jedoch zugunsten der innenpolitischen Tragfähigkeit des Pakets ausgearbeitet wurden. Sie stützen sich auf einen breiten, inklusiven und transparenten Prozess mit einer Vielzahl von innenpolitischen Akteuren, namentlich den Kantonen, den parlamentarischen Kommissionen der eidgenössischen Räte, den Städten und Gemeinden, den Verbänden und Unternehmen sowie den Sozialpartnern und den politischen Parteien." },
+      { t:"Der Bundesrat empfiehlt die Annahme der Umsetzungsgesetzgebung sowie der Begleitmassnahmen." }
+    ]
+  },
+  data:{
+    units:[
+      { id:"r0", type:"position", pid:"R", label:"Das Paket stabilisiert den bilateralen Weg und entwickelt ihn im Interesse der Schweiz weiter",
+        passage:"§Es stabilisiert den bewährten bilateralen Weg und garantiert das Funktionieren der bestehenden bilateralen Verträge für die Zukunft. Zudem werden dadurch die Beziehungen in denjenigen Bereichen weiterentwickelt, die im Interesse der Schweiz liegen.§" },
+      { id:"f1", type:"fact", pid:"R", label:"Für die offene Volkswirtschaft ist der Marktzugang unabdingbar",
+        passage:"§Für die Leistungsfähigkeit einer offenen Volkswirtschaft wie der Schweiz, die über keine bedeutenden Rohstoffe und einen nur begrenzten Binnenmarkt verfügt, spielt der Zugang zu ausländischen Märkten eine unabdingbare Rolle.§" },
+      { id:"f2", type:"fact", pid:"R", label:"Die EU: rund 59 Prozent des Warenhandels",
+        passage:"§Die EU ist mit einem Anteil von rund 59 Prozent am Warenhandel die mit Abstand wichtigste Handelspartnerin der Schweiz.§" },
+      { id:"c1", type:"fact", pid:"R", label:"Stabilisierung und Weiterentwicklung stehen im Zentrum der Aussen- und Wirtschaftspolitik",
+        passage:"§Aus diesen Gründen stehen die Stabilisierung und Weiterentwicklung der Beziehungen mittels des bewährten bilateralen Wegs zwischen der Schweiz und der EU im Zentrum der bundesrätlichen Aussen- und Wirtschaftspolitik.§" },
+      { id:"f3", type:"fact", pid:"R", label:"Die Welt wird instabiler, unsicherer und unvorhersehbarer",
+        passage:"§Die Welt wird instabiler, unsicherer und unvorhersehbarer.§ Globale Entwicklungen fordern die einzelnen Staaten heraus: Grossmächtekonkurrenz, zunehmendes Gewicht neuer informeller Gruppierungen (z. B. BRICS), Erosion des internationalen Rechts (Macht vor Recht), die Klimaveränderung, ein weiter zunehmender Migrationsdruck, [...]" },
+      { id:"c2", type:"fact", pid:"R", label:"Geregelte Beziehungen zur EU sind von strategischer Bedeutung",
+        passage:"Diesen globalen Instabilitäten kann die Schweiz entgegentreten, wenn die Beziehungen zu ihrer unmittelbaren Nachbarschaft, zu Partnern, die ihre Werte teilen, stabil und berechenbar sind. §Vor diesem Hintergrund sind geregelte Beziehungen zur EU für die Schweiz von strategischer Bedeutung.§" },
+      { id:"f4", type:"fact", pid:"R", label:"Neun Mal an der Urne bestätigt",
+        passage:"§Er wurde deshalb direkt und indirekt neun Mal durch das Volk an der Urne bestätigt.§" },
+      { id:"c3", type:"fact", pid:"R", label:"Der bilaterale Weg hat sich in 25 Jahren bewährt",
+        passage:"Die Schweiz verfolgt seit mehr als 25 Jahren auf konsequente Weise den bilateralen Weg mit der EU. §Die Erfahrung aus diesen 25 Jahren zeigt, dass der bilaterale Weg sich bewährt.§" },
+      { id:"v1", type:"value", pid:"R", label:"Der bilaterale Weg: ausgewogenstes Verhältnis von Nutzen und Gestaltungsspielraum",
+        passage:"§Der bilaterale Weg weist von allen Optionen (Nichtstun, Freihandel, Beitritt zum EWR, Beitritt zur EU) das ausgewogenste Verhältnis von konkretem, namentlich wirtschaftlichem Nutzen sowie politischem Gestaltungsspielraum auf.§" },
+      { id:"f5", type:"fact", pid:"R", label:"Kompetenzen von Kantonen, Parlament, Bundesrat, Gerichten und Volk bleiben gewahrt",
+        passage:"§Die vorliegenden Abkommen sichern die verfassungsmässigen Kompetenzen der Kantone, der Bundesversammlung, des Bundesrates, der Gerichte und des Volkes.§" },
+      { id:"f6", type:"fact", pid:"R", label:"Initiativ- und Referendumsrechte in vollem Umfang gewährleistet",
+        passage:"§Die durch die Bundesverfassung garantierten Initiativ- und Referendumsrechte (Art. 136 Abs. 2 BV) sind weiterhin in vollem Umfang gewährleistet.§" },
+      { id:"f8", type:"fact", pid:"R", label:"Mitwirkungsrechte bei der dynamischen Rechtsübernahme",
+        passage:"§Mit den ausgehandelten Mitwirkungsrechten in der dynamischen Rechtsübernahme für Bund, Kantone und Parlament wird sie sich in Zukunft ausserdem bei der Weiterentwicklung des Rechts, das Teil der Abkommen ist und sein wird, einbringen können.§" },
+      { id:"c4", type:"fact", pid:"R", label:"Kernziel erreicht: Binnenmarktbeteiligung bei grösstmöglichem Handlungsspielraum",
+        passage:"Es ist der Schweiz somit gelungen, ihr Kernziel mit Blick auf ihre Beziehungen zur EU zu erreichen: §eine bestmögliche gegenseitige Beteiligung an klar definierten Bereichen des Binnenmarkts sowie Kooperation in ausgewählten Interessenbereichen, unter Wahrung des grösstmöglichen politischen Handlungsspielraums.§" },
+      { id:"f7", type:"fact", pid:"R", label:"Inländische Massnahmen sichern die innenpolitische Tragfähigkeit",
+        passage:"Dazu kommen inländische Massnahmen in den Bereichen Lohnschutz, Zuwanderung, Studiengebühren, Strom und Landverkehr. §Es handelt sich dabei um Massnahmen, die für die Umsetzung der völkerrechtlichen Verträge nicht zwingend sind, vom Bundesrat jedoch zugunsten der innenpolitischen Tragfähigkeit des Pakets ausgearbeitet wurden.§" }
+    ],
+    links:[
+      { from:"f1", to:"c1", kind:"support", warrant:"Ohne Rohstoffe und mit kleinem Binnenmarkt hängt die Leistungsfähigkeit am Marktzugang." },
+      { from:"f2", to:"c1", kind:"support", warrant:"Wer 59 Prozent des Warenhandels stellt, steht im Zentrum der Wirtschaftspolitik." },
+      { from:"c1", to:"r0", kind:"support", warrant:"Was im Zentrum der Politik steht, soll das Paket stabilisieren und weiterentwickeln." },
+      { from:"f3", to:"c2", kind:"support", warrant:"Instabilität aussen macht berechenbare Beziehungen zur Nachbarschaft wertvoller." },
+      { from:"c2", to:"r0", kind:"support", warrant:"Strategische Bedeutung begründet die Stabilisierung durch das Paket." },
+      { from:"f4", to:"c3", kind:"support", warrant:"Wiederholte Bestätigung an der Urne gilt als Beleg der Bewährung." },
+      { from:"c3", to:"v1", kind:"support", warrant:"Was sich bewährt hat, stützt das Urteil, es sei die ausgewogenste Option." },
+      { from:"v1", to:"r0", kind:"support", warrant:"Die ausgewogenste Option soll fortgeführt, nicht ersetzt werden." },
+      { from:"f5", to:"c4", kind:"support", warrant:"Gewahrte Kompetenzen sind der Handlungsspielraum, den das Kernziel verlangt." },
+      { from:"f6", to:"c4", kind:"support", warrant:"Intakte Volksrechte belegen den gewahrten politischen Handlungsspielraum." },
+      { from:"f8", to:"c4", kind:"support", warrant:"Mitwirkung bei der Rechtsentwicklung stützt die Beteiligung ohne Kompetenzverlust." },
+      { from:"c4", to:"r0", kind:"support", warrant:"Ist das Kernziel erreicht, ist das Paket im Interesse der Schweiz." },
+      { from:"f7", to:"r0", kind:"support", warrant:"Begleitmassnahmen machen das Paket innenpolitisch tragfähig." }
+    ]
+  },
+  note:"Markiert: die Textstelle, die der Knoten zusammenfasst — wörtlich (Transkription aus dem PDF, vor Weitergabe gegen das PDF prüfen). Knoten-Formulierung, Typen und Kartierung: vom Tool."
+};
+
+
+/* ===== cassis ===== */
+/* ---------- Argument map: Votum von Bundesrat Ignazio Cassis, Ständerat 12.3.2026 (Neutralitätsinitiative) — eine Position ----------
+   Textstellen verbatim aus dem Amtlichen Bulletin (AB SR 2026 S. 225–226, Korpus Votum 14). Knoten, Pfeile, Typen und Warrants: vom Tool. */
+AM["cassis"] = {
+  title:"Bundesrats-Votum Cassis",
+  kind:"single",
+  intro:"Fallbeispiel: Votum von Bundesrat Ignazio Cassis im Ständerat (12.3.2026) zur Neutralitätsinitiative — eine Position, die auf die Voten Germann und Poggia antwortet. Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.",
+  positions:[
+    { id:"A", short:"Cassis", name:"Ignazio Cassis (Bundesrat)", c:"#0891b2", side:null,
+      src:"Amtliches Bulletin, Ständerat, 12.3.2026 (AB SR 2026 S. 225–226)",
+      url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838316/download?filename=AB+SR%2C+2026%2C+S.+220+ff._12_20260312.pdf&inline=true&locale=de" }] }
+  ],
+  full:{
+    A:[
+      { t:"Am 27. November 2024 hat der Bundesrat mit seiner Botschaft empfohlen, die Neutralitäts-Initiative ohne Gegenvorschlag und ohne Gegenentwurf abzulehnen. Das hat er, wie er es immer tut, nach einer vertieften Auslegeordnung des Initiativtextes, eines allfälligen Gegenentwurfes oder eines indirekten Gegenvorschlags getan. Ihr Rat hat am 19. Juni letzten Jahres beschlossen, der Neutralitäts-Initiative einen direkten Gegenentwurf gegenüberzustellen. Der Nationalrat ist nun letzten Donnerstag der Empfehlung des Bundesrates gefolgt und hat sich gegen einen Gegenentwurf ausgesprochen. Gestern hat sich Ihre APK ebenfalls gegen einen Gegenentwurf ausgesprochen." },
+      { t:"Le Conseil fédéral estime qu'un tel projet n'est ni judicieux ni nécessaire. Permettez-moi de vous en rappeler brièvement les cinq raisons principales. La première : un contre-projet implique une nécessité d'agir qui n'existe justement pas. La situation actuelle laisse la marge de manoeuvre nécessaire pour mettre à profit la neutralité dans les meilleurs intérêts de la Suisse. [...]" },
+      { t:"En matière de neutralité, il n'existe pas de recette universelle qui permettrait de régler définitivement toutes les questions. C'est, aux yeux du Conseil fédéral, la raison pour laquelle 90 pour cent de la population est pour la neutralité, parce que la neutralité est une projection de ce qu'on pense d'elle. Et c'est important qu'elle reste ainsi." },
+      { t:"Sie haben absolut recht, Herr Ständerat Germann, die Neutralität ist ein Identitätsmerkmal unseres Landes. Ich komme kurz zu den Voten der Ständeräte Germann und Poggia." },
+      { t:"Herr Ständerat Germann, Sie haben erstens gesagt, die Schweiz lasse sich nicht in den Krieg hineinziehen. Dann haben Sie zweitens gesagt, die Neutralität sei das Merkmal Nummer eins und identitätsstiftend. Drittens haben Sie gesagt, die Neutralität sei auch international ein Identitätsmerkmal der Schweiz. Herr Ständerat, Sie haben recht, zu hundert Prozent recht. Der Bundesrat geht mit Ihnen einig, genau so ist die Lage. Es ist das Resultat der heutigen Lage, rechtlich und politisch. Sind Sie sicher, dass eine Änderung ohne Not, egal welche, der Verfassung die heutige Akzeptanz weiterhin garantiert? Wenn ein Gesetz unnötig ist, dann ist es nötig, kein Gesetz zu machen. Den Spruch kennen Sie, die Amerikaner sagen: \"If it ain't broke, don't fix it.\" Bewährtes soll man nicht ändern." },
+      { t:"Sie haben es gehört, ein neuer Neutralitätsartikel würde eine Reihe von Interpretationen durch Universitätsprofessoren, Doktorarbeiten und so weiter und so fort zur Folge haben. Wir würden mit der Suche nach der Definition, was Neutralität für jeden Normalbürger heisst, in Teufels Küche kommen. Das würde der Schweiz sicherheitspolitisch und aussenpolitisch nicht helfen." },
+      { t:"Monsieur le conseiller aux États Poggia, vous avez dit que ce qui va sans dire, il vaut peut-être mieux qu'on le dise. Je suis d'accord avec le \"peut-être\". Dans ce cas, je pense qu'il vaut mieux ne pas le dire." },
+      { t:"Si vous posez la question de savoir ce que le monde comprendra de la décision suisse, le Conseil fédéral est convaincu que le monde comprendra qu'un refus de changer quoi que ce soit par le peuple suisse signifie que la Suisse ne change rien à sa neutralité. Avec n'importe quelle autre décision, il comprendra que la Suisse change sa neutralité. Le simple fait de dire que la Suisse change sa neutralité aura un effet sur les marchés financiers et sur les marchés économiques, au-delà de la guerre et de la paix. Réfléchissez à la portée de cela. La Suisse ne serait plus la même, alors qu'elle est la même depuis 180 ans. Si on change quelque chose, il y aura une différence. La Suisse ne sera plus la même et tout le monde cherchera à comprendre quelle est cette différence." }
+    ]
+  },
+  data:{
+    units:[
+      { id:"c0", type:"position", pid:"A", label:"Die Initiative ablehnen — ohne Gegenvorschlag und ohne Gegenentwurf",
+        passage:"§Am 27. November 2024 hat der Bundesrat mit seiner Botschaft empfohlen, die Neutralitäts-Initiative ohne Gegenvorschlag und ohne Gegenentwurf abzulehnen.§ Das hat er, wie er es immer tut, nach einer vertieften Auslegeordnung des Initiativtextes, eines allfälligen Gegenentwurfes oder eines indirekten Gegenvorschlags getan." },
+      { id:"c1", type:"fact", pid:"A", label:"Kein Handlungsbedarf: die heutige Lage lässt den nötigen Spielraum",
+        passage:"Le Conseil fédéral estime qu'un tel projet n'est ni judicieux ni nécessaire. §La première : un contre-projet implique une nécessité d'agir qui n'existe justement pas. La situation actuelle laisse la marge de manoeuvre nécessaire pour mettre à profit la neutralité dans les meilleurs intérêts de la Suisse.§" },
+      { id:"c2", type:"fact", pid:"A", label:"90 Prozent sind für die Neutralität, weil sie eine Projektion ist",
+        passage:"En matière de neutralité, il n'existe pas de recette universelle qui permettrait de régler définitivement toutes les questions. §C'est, aux yeux du Conseil fédéral, la raison pour laquelle 90 pour cent de la population est pour la neutralité, parce que la neutralité est une projection de ce qu'on pense d'elle.§ Et c'est important qu'elle reste ainsi." },
+      { id:"c3", type:"fact", pid:"A", label:"Germann hat zu hundert Prozent recht: genau so ist die Lage — rechtlich und politisch",
+        passage:"§Herr Ständerat, Sie haben recht, zu hundert Prozent recht. Der Bundesrat geht mit Ihnen einig, genau so ist die Lage.§ Es ist das Resultat der heutigen Lage, rechtlich und politisch." },
+      { id:"c4", type:"fact", pid:"A", label:"Eine Verfassungsänderung ohne Not garantiert die heutige Akzeptanz nicht",
+        passage:"Es ist das Resultat der heutigen Lage, rechtlich und politisch. §Sind Sie sicher, dass eine Änderung ohne Not, egal welche, der Verfassung die heutige Akzeptanz weiterhin garantiert?§" },
+      { id:"c5", type:"value", pid:"A", label:"Bewährtes soll man nicht ändern — «If it ain't broke, don't fix it»",
+        passage:"Wenn ein Gesetz unnötig ist, dann ist es nötig, kein Gesetz zu machen. §Den Spruch kennen Sie, die Amerikaner sagen: \"If it ain't broke, don't fix it.\" Bewährtes soll man nicht ändern.§" },
+      { id:"c6", type:"fact", pid:"A", label:"Ein neuer Artikel löste eine Interpretationswelle aus, die der Schweiz nicht hilft",
+        passage:"§Sie haben es gehört, ein neuer Neutralitätsartikel würde eine Reihe von Interpretationen durch Universitätsprofessoren, Doktorarbeiten und so weiter und so fort zur Folge haben.§ Wir würden mit der Suche nach der Definition, was Neutralität für jeden Normalbürger heisst, in Teufels Küche kommen. Das würde der Schweiz sicherheitspolitisch und aussenpolitisch nicht helfen." },
+      { id:"c7", type:"value", pid:"A", label:"Was sich von selbst versteht, sagt man besser nicht",
+        passage:"Monsieur le conseiller aux États Poggia, vous avez dit que ce qui va sans dire, il vaut peut-être mieux qu'on le dise. §Je suis d'accord avec le \"peut-être\". Dans ce cas, je pense qu'il vaut mieux ne pas le dire.§" },
+      { id:"c8", type:"fact", pid:"A", label:"Die Welt liest ein Nein als «keine Änderung» — alles andere als Änderung der Neutralität",
+        passage:"§le Conseil fédéral est convaincu que le monde comprendra qu'un refus de changer quoi que ce soit par le peuple suisse signifie que la Suisse ne change rien à sa neutralité.§ Avec n'importe quelle autre décision, il comprendra que la Suisse change sa neutralité." },
+      { id:"c9", type:"fact", pid:"A", label:"Schon die Aussage einer Änderung wirkte auf die Finanz- und Wirtschaftsmärkte",
+        passage:"§Le simple fait de dire que la Suisse change sa neutralité aura un effet sur les marchés financiers et sur les marchés économiques, au-delà de la guerre et de la paix.§ Réfléchissez à la portée de cela. La Suisse ne serait plus la même, alors qu'elle est la même depuis 180 ans." }
+    ],
+    links:[
+      { from:"c1", to:"c0", kind:"support", warrant:"Wo kein Handlungsbedarf besteht, ist ein Gegenentwurf weder sinnvoll noch nötig." },
+      { from:"c2", to:"c4", kind:"support", warrant:"Lebt die Zustimmung von der Offenheit des Begriffs, setzt eine Definition sie aufs Spiel." },
+      { from:"c3", to:"c4", kind:"support", warrant:"Ist die Akzeptanz das Resultat der heutigen Lage, kann eine Änderung der Lage sie kosten." },
+      { from:"c3", to:"c5", kind:"support", warrant:"Ist die Lage genau so, wie Germann sie beschreibt, gilt sie als bewährt." },
+      { from:"c4", to:"c0", kind:"support", warrant:"Wer die Akzeptanz nicht aufs Spiel setzen will, ändert die Verfassung nicht — weder durch Initiative noch durch Gegenentwurf." },
+      { from:"c5", to:"c0", kind:"support", warrant:"Bewährtes nicht ändern heisst: weder Initiative noch Gegenentwurf." },
+      { from:"c6", to:"c0", kind:"support", warrant:"Eine Interpretationswelle ohne Nutzen ist ein Grund gegen jeden neuen Neutralitätsartikel." },
+      { from:"c7", to:"c0", kind:"support", warrant:"Ist Aussprechen nicht besser, entfällt Poggias Grund für den Gegenentwurf." },
+      { from:"c8", to:"c9", kind:"support", warrant:"Wird jede Entscheidung ausser dem Nein als Änderung der Neutralität gelesen, wirkt schon diese Lesart nach aussen." },
+      { from:"c8", to:"c0", kind:"support", warrant:"Nur ein Nein zu jeder Änderung signalisiert der Welt, dass die Schweiz ihre Neutralität nicht ändert." },
+      { from:"c9", to:"c0", kind:"support", warrant:"Ein Markteffekt jenseits von Krieg und Frieden ist ein Preis, den die Ablehnung vermeidet." }
+    ]
+  },
+  note:"Markiert: die Textstelle, die der Knoten zusammenfasst — wörtlich (Auszug aus dem Amtlichen Bulletin; [...] = Auslassung). Knoten-Formulierung, Typen und Kartierung: vom Tool."
+};
+
+
+function wrapText(text, maxChars) {
+  const words = String(text).split(/\s+/);
+  const lines = [];
+  let line = '';
+  for (let w of words) {
+    while (w.length > maxChars) { lines.push(w.slice(0, maxChars - 1) + '-'); w = w.slice(maxChars - 1); }
+    if (!line) line = w;
+    else if ((line + ' ' + w).length <= maxChars) line += ' ' + w;
+    else { lines.push(line); line = w; }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function computeLevels(units, links) {
+  const out = {};
+  const touched = new Set();
+  units.forEach(u => { out[u.id] = []; });
+  links.forEach(l => { out[l.from].push(l.to); touched.add(l.from); touched.add(l.to); });
+
+  const level = {};
+  const visiting = new Set();
+  function lv(id) {
+    if (id in level) return level[id];
+    if (visiting.has(id)) return 0;
+    visiting.add(id);
+    const targets = out[id];
+    level[id] = targets.length ? 1 + Math.max(...targets.map(lv)) : 0;
+    visiting.delete(id);
+    return level[id];
+  }
+  units.forEach(u => lv(u.id));
+  const maxConnected = Math.max(0, ...units.filter(u => touched.has(u.id)).map(u => level[u.id]));
+  units.forEach(u => { if (!touched.has(u.id)) level[u.id] = maxConnected + 1; });
+  return level;
+}
+
+const ROLE_LABEL = { major: 'HAUPTTHESE', claim: 'THESE', premise: 'PRÄMISSE' };
+const TYPE_LABEL = { position: 'POSITION', fact: 'FAKT', value: 'WERT' };
+
+function computeRoles(units, links) {
+  if (!units.length) return {};
+  const incoming = {}, outgoing = {}, incomingSupport = {};
+  units.forEach(u => { incoming[u.id] = 0; outgoing[u.id] = 0; incomingSupport[u.id] = 0; });
+  links.forEach(l => {
+    outgoing[l.from]++;
+    incoming[l.to]++;
+    if (l.kind !== 'attack') incomingSupport[l.to]++;
+  });
+  const positions = units.filter(u => u.type === 'position');
+  let majorId;
+  if (positions.length === 1) {
+    majorId = positions[0].id;
+  } else {
+    const sinks = units.filter(u => !outgoing[u.id]);
+    const pool = sinks.length ? sinks : units;
+    majorId = pool.reduce((best, u) => incomingSupport[u.id] > incomingSupport[best.id] ? u : best, pool[0]).id;
+  }
+  const roles = {};
+  units.forEach(u => {
+    roles[u.id] = u.id === majorId ? 'major' : (incoming[u.id] > 0 ? 'claim' : 'premise');
+  });
+  return roles;
+}
+
+const NODE_W = 200, GAP_X = 22, GAP_Y = 64, PAD = 10, LINE_H = 15.5, MAX_CHARS = 27;
+
+function layoutGraph(units, links, availW) {
+  const level = computeLevels(units, links);
+  const maxLevel = Math.max(...Object.values(level));
+
+  const layers = Array.from({ length: maxLevel + 1 }, () => []);
+  units.forEach(u => layers[level[u.id]].push(u));
+
+  for (let li = 1; li <= maxLevel; li++) {
+    const prevIndex = Object.fromEntries(layers[li - 1].map((u, i) => [u.id, i]));
+    layers[li].sort((a, b) => {
+      const key = u => {
+        const ts = links.filter(l => l.from === u.id && l.to in prevIndex).map(l => prevIndex[l.to]);
+        return ts.length ? ts.reduce((s, x) => s + x, 0) / ts.length : units.indexOf(u);
+      };
+      return key(a) - key(b);
+    });
+  }
+
+  const geo = {};
+  units.forEach(u => {
+    const short = u.label || u.text;
+    const display = short.length > 110 ? short.slice(0, 107) + '…' : short;
+    const lines = wrapText(display, MAX_CHARS);
+    geo[u.id] = { lines, h: PAD + 14 + lines.length * LINE_H + PAD };
+  });
+
+  const perRow = Math.max(2, Math.floor((availW - 20 + GAP_X) / (NODE_W + GAP_X)));
+  const rows = [];
+  layers.forEach((ly, li) => {
+    for (let i = 0; i < ly.length; i += perRow) rows.push({ units: ly.slice(i, i + perRow), layer: li });
+  });
+
+  const rowW = rows.map(r => r.units.length * NODE_W + (r.units.length - 1) * GAP_X);
+  const w = Math.max(440, ...rowW) + 20;
+  let y = 12;
+  rows.forEach((row, ri) => {
+    const x0 = (w - (row.units.length * NODE_W + (row.units.length - 1) * GAP_X)) / 2;
+    row.units.forEach((u, i) => { geo[u.id].x = x0 + i * (NODE_W + GAP_X); geo[u.id].y = y; });
+    const rowH = Math.max(0, ...row.units.map(u => geo[u.id].h));
+    const next = rows[ri + 1];
+    y += rowH + (next ? (next.layer === row.layer ? 18 : GAP_Y) : 14);
+  });
+  return { geo, w, h: y };
+}
+
+function shiftGeo(geo, dx, dy) {
+  Object.values(geo).forEach(g => { g.x += dx; g.y += dy; });
+}
+
+function addMarkers(svg, markerId) {
+  const defs = document.createElementNS(SVGNS, 'defs');
+  const m = (id, fill) => `<marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="${fill}"/></marker>`;
+  defs.innerHTML = m(markerId, '#94a3b8') + m(markerId + '-attack', '#dc2626') + m(markerId + '-valdis', '#9333ea');
+  svg.appendChild(defs);
+}
+
+function drawGraph(svg, units, links, geo, opts) {
+  const { roles = null, typed = true, markerId, registry = [], onNode = null } = opts;
+
+  const inSlots = {};
+  links.forEach((l, li) => { if (geo[l.from] && geo[l.to]) (inSlots[l.to] = inSlots[l.to] || []).push(li); });
+  const attachX = {};
+  Object.keys(inSlots).forEach(to => {
+    const list = inSlots[to].sort((a, b) => geo[links[a].from].x - geo[links[b].from].x);
+    list.forEach((li, i) => { attachX[li] = geo[to].x + NODE_W * (i + 1) / (list.length + 1); });
+  });
+
+  links.forEach((l, li) => {
+    const f = geo[l.from], t = geo[l.to];
+    if (!f || !t) return;
+    const attack = l.kind === 'attack';
+    const x1 = f.x + NODE_W / 2, y1 = f.y;
+    const x2 = attachX[li] !== undefined ? attachX[li] : t.x + NODE_W / 2;
+    const y2 = t.y + t.h + 3;
+    const bend = Math.max(28, (y1 - y2) / 2);
+    const d = `M ${x1} ${y1} C ${x1} ${y1 - bend}, ${x2} ${y2 + bend}, ${x2} ${y2}`;
+    const g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('class', 'edge-group' + (attack ? ' attack' : ''));
+    const vis = document.createElementNS(SVGNS, 'path');
+    vis.setAttribute('d', d);
+    vis.setAttribute('class', 'edge-visible');
+    vis.setAttribute('marker-end', `url(#${attack ? markerId + '-attack' : markerId})`);
+    const hit = document.createElementNS(SVGNS, 'path');
+    hit.setAttribute('d', d);
+    hit.setAttribute('class', 'edge-hit');
+    g.append(vis, hit);
+    g.addEventListener('mousemove', e => {
+      g.classList.add('hovered');
+      const label = attack ? 'Greift an — warum es dagegen spricht' : 'Stützt — Begründung';
+      showTooltip(`<span class="tt-label">${esc(label)}</span>${esc(l.warrant || '(keine angegeben)')}`, e.clientX, e.clientY);
+    });
+    g.addEventListener('mouseleave', () => { g.classList.remove('hovered'); hideTooltip(); });
+    svg.appendChild(g);
+    registry.push({ el: g, from: l.from, to: l.to });
+  });
+
+  units.forEach(u => {
+    const gnode = geo[u.id];
+    const role = roles ? roles[u.id] : null;
+    const g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('class', 'node ' + u.type
+      + (role ? ' role-' + role : '')
+      + (typed ? '' : ' untyped'));
+    g.dataset.unit = u.id;
+    g.setAttribute('transform', `translate(${gnode.x}, ${gnode.y})`);
+
+    const rect = document.createElementNS(SVGNS, 'rect');
+    rect.setAttribute('class', 'node-box');
+    rect.setAttribute('width', NODE_W);
+    rect.setAttribute('height', gnode.h);
+    rect.setAttribute('rx', 8);
+    g.appendChild(rect);
+
+    const tl = document.createElementNS(SVGNS, 'text');
+    tl.setAttribute('class', 'node-type');
+    tl.setAttribute('x', PAD);
+    tl.setAttribute('y', PAD + 8);
+    const who = u.pid && CURPIX[u.pid] ? ' · ' + CURPIX[u.pid].short.toUpperCase() : '';
+    tl.textContent = (role
+      ? ROLE_LABEL[role] + (typed ? ' · ' + (TYPE_LABEL[u.type] || u.type.toUpperCase()) : '')
+      : (TYPE_LABEL[u.type] || u.type.toUpperCase())) + who;
+    g.appendChild(tl);
+
+    const txt = document.createElementNS(SVGNS, 'text');
+    txt.setAttribute('class', 'node-text');
+    gnode.lines.forEach((line, i) => {
+      const ts = document.createElementNS(SVGNS, 'tspan');
+      ts.setAttribute('x', PAD);
+      ts.setAttribute('y', PAD + 14 + (i + 0.8) * LINE_H);
+      ts.textContent = line;
+      txt.appendChild(ts);
+    });
+    g.appendChild(txt);
+
+    g.addEventListener('mousemove', e => {
+      g.classList.add('hovered');
+      registry.forEach(r => {
+        const incident = r.from === u.id || r.to === u.id;
+        r.el.classList.toggle('hovered', incident);
+        r.el.classList.toggle('dimmed', !incident);
+      });
+      const label = (role ? ROLE_LABEL[role].toLowerCase() + ' · ' : '') + (TYPE_LABEL[u.type] || u.type)
+        + (u.pid && CURPIX[u.pid] ? ' · ' + CURPIX[u.pid].short : '');
+      showTooltip(`<span class="tt-label">${esc(label)}</span>${esc((u.passage || u.text || '').replace(/§/g, ''))}<br><span class="tt-label" style="margin-top:4px">Klick zeigt die Textstelle unten</span>`, e.clientX, e.clientY);
+    });
+    g.addEventListener('mouseleave', () => {
+      g.classList.remove('hovered');
+      registry.forEach(r => r.el.classList.remove('hovered', 'dimmed'));
+      hideTooltip();
+    });
+    if (onNode) g.addEventListener('click', () => onNode(u));
+    svg.appendChild(g);
+  });
+}
+
+function renderArgMap(holder, data, opts = {}) {
+  holder.innerHTML = '';
+  const { units, links } = data;
+  const availW = Math.max(660, holder.clientWidth || 900);
+  const layout = layoutGraph(units, links, availW);
+  const svgW = Math.max(660, layout.w);
+  shiftGeo(layout.geo, (svgW - layout.w) / 2, 0);
+
+  const svg = document.createElementNS(SVGNS, 'svg');
+  svg.setAttribute('width', svgW);
+  svg.setAttribute('height', layout.h);
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${layout.h}`);
+  const markerId = 'arrow-' + holder.id;
+  addMarkers(svg, markerId);
+  drawGraph(svg, units, links, layout.geo, {
+    roles: computeRoles(units, links), typed: opts.typed !== false, markerId, registry: [], onNode: opts.onNode || null,
+  });
+  holder.appendChild(svg);
+  holder.scrollLeft = (svgW - holder.clientWidth) / 2;
+}
+
+function renderDebateMap(holder, data, opts = {}) {
+  holder.innerHTML = '';
+  const availW = Math.max(660, holder.clientWidth || 1000);
+  const typed = opts.typed !== false;
+  const rolesA = computeRoles(data.a.units, data.a.links);
+  const rolesB = computeRoles(data.b.units, data.b.links);
+
+  const svg = document.createElementNS(SVGNS, 'svg');
+  const markerId = 'arrow-' + holder.id;
+  const registry = [];
+
+  const GUTTER = 100, TITLE_H = 30;
+  const half = Math.max(460, (availW - GUTTER) / 2);
+  const la = layoutGraph(data.a.units, data.a.links, half);
+  const lb = layoutGraph(data.b.units, data.b.links, half);
+  shiftGeo(la.geo, 0, TITLE_H);
+  shiftGeo(lb.geo, la.w + GUTTER, TITLE_H);
+  const svgW = la.w + GUTTER + lb.w;
+  const svgH = TITLE_H + Math.max(la.h, lb.h);
+  svg.setAttribute('width', svgW);
+  svg.setAttribute('height', svgH);
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+  addMarkers(svg, markerId);
+
+  const mkTitle = (text, x, cls) => {
+    const t = document.createElementNS(SVGNS, 'text');
+    t.setAttribute('class', 'map-col-title ' + cls);
+    t.setAttribute('x', x);
+    t.setAttribute('y', 18);
+    t.setAttribute('text-anchor', 'middle');
+    t.textContent = text;
+    svg.appendChild(t);
+  };
+  mkTitle(data.labelA || 'Position A', la.w / 2, 'a');
+  mkTitle(data.labelB || 'Position B', la.w + GUTTER + lb.w / 2, 'b');
+
+  drawGraph(svg, data.a.units, data.a.links, la.geo, { roles: rolesA, typed, markerId, registry, onNode: opts.onNode || null });
+  drawGraph(svg, data.b.units, data.b.links, lb.geo, { roles: rolesB, typed, markerId, registry, onNode: opts.onNode || null });
+
+  const firstNode = svg.querySelector('.node');
+  data.mappings.forEach(m => {
+    const ga = la.geo[m.a], gb = lb.geo[m.b];
+    if (!ga || !gb) return;
+    const x1 = ga.x + NODE_W, y1 = ga.y + ga.h / 2;
+    const x2 = gb.x, y2 = gb.y + gb.h / 2;
+    const mx = (x1 + x2) / 2;
+    const d = `M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`;
+    const g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('class', 'cross-group ' + m.kind);
+    const vis = document.createElementNS(SVGNS, 'path');
+    vis.setAttribute('d', d);
+    vis.setAttribute('class', 'cross-link');
+    const hit = document.createElementNS(SVGNS, 'path');
+    hit.setAttribute('d', d);
+    hit.setAttribute('class', 'edge-hit');
+    g.append(vis, hit);
+    const partners = on => [m.a, m.b].forEach(id => {
+      const n = svg.querySelector(`.node[data-unit="${CSS.escape(id)}"]`);
+      if (n) n.classList.toggle('hovered', on);
+    });
+    g.addEventListener('mousemove', e => {
+      g.classList.add('hovered');
+      partners(true);
+      showTooltip(`<span class="tt-label">${esc(KIND_LABEL[m.kind])}</span>${esc(m.note || '')}`, e.clientX, e.clientY);
+    });
+    g.addEventListener('mouseleave', () => { g.classList.remove('hovered'); partners(false); hideTooltip(); });
+    svg.insertBefore(g, firstNode);
+    registry.push({ el: g, from: m.a, to: m.b });
+  });
+
+  holder.appendChild(svg);
+  holder.scrollLeft = (svgW - holder.clientWidth) / 2;
+}
+
+/* ---------- Klick auf einen Knoten → zugrunde liegender Text ---------- */
+
+function showNode(panelId, u, meta) {
+  const p = document.getElementById(panelId);
+  p.classList.remove('idle');
+  p.innerHTML = '';
+  const lab = document.createElement('div'); lab.className = 'tp-label'; lab.textContent = 'Zugrunde liegender Text';
+  p.appendChild(lab);
+  const head = document.createElement('div'); head.className = 'tp-head';
+  if (meta.color) { const dt = document.createElement('span'); dt.className = 'sdot'; dt.style.background = meta.color; head.appendChild(dt); }
+  const b = document.createElement('b'); b.textContent = meta.who; head.appendChild(b);
+  if (meta.src) { const s = document.createElement('span'); s.className = 'smeta'; s.textContent = meta.src; head.appendChild(s); }
+  p.appendChild(head);
+  const q = document.createElement('div'); q.className = 'tp-quote';
+  String(u.passage || u.text || '').split('§').forEach((chunk, i) => {
+    if (i % 2 === 1) { const m = document.createElement('mark'); m.textContent = chunk; q.appendChild(m); }
+    else q.appendChild(document.createTextNode(chunk));
+  });
+  p.appendChild(q);
+  ((meta.urls && meta.urls.length) ? meta.urls : (meta.url ? [{ l:'Quelle öffnen', u:meta.url }] : [])).forEach((s, i) => { if (i) p.appendChild(document.createTextNode(' · ')); const a = document.createElement('a'); a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; a.className = 'dsrc'; a.textContent = s.l + ' →'; p.appendChild(a); });
+  if (meta.note) { const n = document.createElement('div'); n.className = 'tp-note'; n.textContent = meta.note; p.appendChild(n); }
+}
+
+
+
+function buildDetails(holderId, groups) {
+  const holder = document.getElementById(holderId);
+  groups.forEach(g => {
+    const d = document.createElement('details');
+    const s = document.createElement('summary');
+    if (g.color) { const dt = document.createElement('span'); dt.className = 'sdot'; dt.style.background = g.color; s.appendChild(dt); }
+    s.appendChild(document.createTextNode(g.title));
+    if (g.meta) { const m = document.createElement('span'); m.className = 'smeta'; m.textContent = g.meta; s.appendChild(m); }
+    d.appendChild(s);
+    const body = document.createElement('div'); body.className = 'dbody';
+    g.paras.forEach(p => {
+      if (p.h) { const b = document.createElement('b'); b.className = 'dph'; b.textContent = p.h; body.appendChild(b); }
+      const el2 = document.createElement('p'); el2.textContent = p.t; body.appendChild(el2);
+    });
+    ((g.urls && g.urls.length) ? g.urls : (g.url ? [{ l:'Quelle öffnen', u:g.url }] : [])).forEach((s, i) => { if (i) body.appendChild(document.createTextNode(' · ')); const a = document.createElement('a'); a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; a.textContent = s.l + ' →'; a.className = 'dsrc'; a.style.margin = '0 0 12px'; body.appendChild(a); });
+    d.appendChild(body);
+    holder.appendChild(d);
+  });
+}
+
+let CURPIX = {};
+function pidxOf(a){ const m = {}; (a.positions || []).forEach(p => { m[p.id] = p; }); return m; }
+function showFor(key){
+  const a = AM[key], P = pidxOf(a);
+  return u => {
+    const p = P[u.pid];
+    showNode('tp-' + key, u, { who: p ? p.name : (a.title || ''), color: p ? p.c : null, src: p ? p.src : '', url: p ? p.url : null, urls: p ? p.urls : null,
+      note: a.note || 'Markiert: die Textstelle, die der Knoten zusammenfasst — wörtlich. Knoten-Formulierung und Kartierung: vom Tool.' });
+  };
+}
+Object.keys(AM).forEach(key => {
+  const a = AM[key];
+  buildDetails('texts-' + key, (a.positions || []).map(p => ({
+    title: p.name, meta: (p.src || '') + ' — verbatim; [...] = Auslassung der Erhebung', color: p.c, paras: (a.full && a.full[p.id]) || [], url: p.url, urls: p.urls
+  })));
+});
+
+function redraw() {
+  const act = document.querySelector('.tab.active').dataset.tab;
+  const a = AM[act];
+  CURPIX = pidxOf(a);
+  const holder = $('#map-' + act);
+  const typed = $('#typed-' + act).checked;
+  if (a.kind === 'debate') renderDebateMap(holder, a.data, { typed, onNode: showFor(act) });
+  else renderArgMap(holder, a.data, { typed, onNode: showFor(act) });
+}
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    redraw();
+  });
+});
+Object.keys(AM).forEach(key => { $('#typed-' + key).addEventListener('change', redraw); });
+let resizeTimer;
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(redraw, 150); });
+document.querySelector('.panel').classList.add('active');
+redraw();
+</script>
+</body>
+</html>

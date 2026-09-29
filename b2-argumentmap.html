@@ -1,0 +1,1023 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Argument map · Bürger*innen</title>
+<style>body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style>
+</head>
+<body>
+<style>
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --ink: #1a202c;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --accent: #4f46e5;
+
+  --c-position: #4f46e5;
+  --c-position-bg: #eef2ff;
+  --c-fact: #0d9488;
+  --c-fact-bg: #f0fdfa;
+  --c-value: #d97706;
+  --c-value-bg: #fffbeb;
+
+  --c-agree: #16a34a;
+  --c-factdis: #dc2626;
+  --c-valdis: #9333ea;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+}
+header { background: var(--card); border-bottom: 1px solid var(--border); }
+.header-inner {
+  max-width: 1680px; margin: 0 auto; padding: 20px 24px 14px;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+}
+h1 { margin: 0; font-size: 26px; letter-spacing: -0.02em; }
+.mode-desc { margin: 8px 0 0; font-size: 13px; color: var(--muted); max-width: 720px; }
+.model-badge {
+  font-size: 12px; color: var(--muted); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; white-space: nowrap;
+}
+main { max-width: 1680px; margin: 0 auto; padding: 0 24px 40px; }
+
+.tabs { display: flex; gap: 4px; margin-top: 14px; flex-wrap: wrap; }
+.tab {
+  border: 1px solid var(--border); border-bottom: none; background: #eef0f4;
+  color: var(--muted); padding: 9px 22px; font-size: 14px; font-weight: 600;
+  border-radius: 10px 10px 0 0; cursor: pointer; font-family: inherit;
+}
+.tab.active { background: var(--card); color: var(--ink); }
+.panel { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 0 12px 12px 12px; padding: 20px; }
+.panel.active { display: block; }
+
+.fine-print { font-size: 12px; color: var(--muted); margin: 0; }
+.hidden { display: none !important; }
+
+.legend {
+  margin: 4px 0 12px; font-size: 13px; color: var(--muted);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.legend-hint { flex-basis: 100%; }
+.chip {
+  display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px;
+  border-radius: 20px; border: 1px solid;
+}
+.chip.role-mc { color: #0f172a; background: #f1f5f9; border-color: #334155; }
+.chip.role-c { color: #334155; background: #f8fafc; border-color: #94a3b8; }
+.chip.role-p { color: #64748b; background: #fff; border-color: #cbd5e1; }
+.edge-sample { display: inline-block; width: 30px; border-top: 2px solid #94a3b8; vertical-align: middle; }
+.edge-sample.attack { border-top: 2px dashed var(--c-factdis); }
+.edge-sample.agree { border-top-color: var(--c-agree); }
+.edge-sample.factdis { border-top-color: var(--c-factdis); }
+.edge-sample.valdis { border-top-color: var(--c-valdis); }
+.typed-toggle {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
+  color: var(--ink); border: 1px solid var(--border); border-radius: 20px;
+  padding: 3px 12px; cursor: pointer; user-select: none;
+}
+
+.pane { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-top: 16px; background: var(--card); }
+.pane h2 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.map-holder { overflow-x: auto; }
+.map-holder svg { display: block; }
+
+.node-box { rx: 8; stroke-width: 1.5; }
+.node.position .node-box { fill: var(--c-position-bg); stroke: var(--c-position); }
+.node.fact .node-box { fill: var(--c-fact-bg); stroke: var(--c-fact); }
+.node.value .node-box { fill: var(--c-value-bg); stroke: var(--c-value); }
+.node { cursor: pointer; }
+.node.hovered .node-box { stroke-width: 3; }
+.node-type { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; }
+.node.position .node-type { fill: var(--c-position); }
+.node.fact .node-type { fill: var(--c-fact); }
+.node.value .node-type { fill: var(--c-value); }
+.node-text { font-size: 12px; fill: var(--ink); }
+.node.role-major .node-box { stroke-width: 2.5; }
+.node.untyped .node-box { fill: #f8fafc; stroke: #94a3b8; }
+.node.untyped .node-type { fill: #475569; }
+.node.untyped.role-major .node-box { fill: #f1f5f9; stroke: #334155; }
+
+.edge-visible { fill: none; stroke: #94a3b8; stroke-width: 1.5; }
+.edge-hit { fill: none; stroke: transparent; stroke-width: 14; cursor: pointer; }
+.edge-group.hovered .edge-visible { stroke: var(--accent); stroke-width: 2.5; }
+.edge-group.dimmed .edge-visible { opacity: 0.12; }
+.edge-group.attack .edge-visible { stroke: var(--c-factdis); stroke-dasharray: 6 4; }
+.edge-group.attack.hovered .edge-visible { stroke: #b91c1c; }
+
+.map-col-title { font-size: 13px; font-weight: 700; }
+.map-col-title.a { fill: #1d4ed8; }
+.map-col-title.b { fill: #b45309; }
+.cross-group { cursor: pointer; }
+.cross-link { fill: none; stroke-width: 2; opacity: 0.75; }
+.cross-group.agreement .cross-link { stroke: var(--c-agree); }
+.cross-group.factual .cross-link { stroke: var(--c-factdis); }
+.cross-group.value .cross-link { stroke: var(--c-valdis); }
+.cross-group.hovered .cross-link { stroke-width: 3.5; opacity: 1; }
+.cross-group.dimmed .cross-link { opacity: 0.1; }
+
+.tooltip {
+  position: fixed; z-index: 50; max-width: 340px;
+  background: #1e293b; color: #f1f5f9; font-size: 12.5px; line-height: 1.45;
+  border-radius: 8px; padding: 8px 12px; pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+.tooltip .tt-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 3px; }
+
+/* click → zugrunde liegender Text */
+.textpanel { border: 1px solid var(--border); border-radius: 10px; background: #fbfbfd; padding: 12px 16px; margin-top: 12px; font-size: 13.5px; }
+.textpanel.idle { color: var(--muted); font-size: 12.5px; }
+.tp-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.tp-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 7px; }
+.tp-head .smeta { font-size: 11.5px; color: var(--muted); }
+.sdot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+.tp-quote { background: #f1f5f9; border-left: 3px solid var(--accent); border-radius: 6px; padding: 11px 13px; line-height: 1.65; max-width: 82ch; }
+.tp-quote mark { background: #fef08a; padding: 1px 2px; border-radius: 2px; }
+.tp-note { font-size: 11.5px; color: var(--muted); margin-top: 7px; }
+.dsrc { display: inline-block; margin-top: 8px; font-size: 12px; color: var(--accent); font-weight: 600; text-decoration: none; }
+.dsrc:hover { text-decoration: underline; }
+
+/* zugrunde liegende Texte (ganz unten) */
+.texts { margin-top: 16px; }
+.texts h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+.texts details { border: 1px solid var(--border); border-radius: 8px; background: #fff; margin-bottom: 8px; }
+.texts summary { cursor: pointer; padding: 10px 14px; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.texts summary:hover { background: #f8fafc; }
+.texts .smeta { font-size: 11px; color: var(--muted); font-weight: 400; }
+.texts .dbody { padding: 2px 16px 12px; }
+.texts .dbody p { font-size: 13px; line-height: 1.65; max-width: 82ch; margin: 0 0 10px; }
+.texts .dph { display: block; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 6px 0 2px; font-weight: 700; }
+</style>
+<style>.s2crumb{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8a8781;margin:14px 0 2px}.s2crumb b{color:#4f46e5;font-weight:600}</style>
+<header>
+  <div class="header-inner">
+    <div>
+      <a href="index.html" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.06em;color:#94a3b8;text-decoration:none">← Übersicht</a>
+      <p class="s2crumb" style="color:#94a3b8"><b style="color:#a5b4fc">Bürger*innen &amp; Schulen</b> · Mehrere Positionen</p>
+      <h1 style="margin-top:4px">Argument map</h1>
+      <p class="mode-desc">Die Struktur der Debatte als Karte: Hauptthese, Zwischenthesen und Prämissen, verbunden durch Stütz- und Angriffspfeile — jeder Pfeil trägt seine Begründung (Hover). Zwei Seiten pro Vorlage, farbige Querverbindungen zeigen Einigkeit, faktische und Wert-Uneinigkeit. <strong>Klick auf einen Knoten zeigt die zugrunde liegende Textstelle</strong>; die vollständigen Texte stehen zuunterst.</p>
+    </div>
+    <span class="model-badge">Prototyp — vorberechnete Extraktion</span>
+  </div>
+</header>
+
+<main>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="zehnmio">10-Millionen-Initiative</button>
+  <button class="tab" data-tab="zivildienst">Zivildienstgesetz</button>
+</nav>
+
+<section id="panel-zehnmio" class="panel">
+  <p class="fine-print">Fallbeispiel: die Volksinitiative «Keine 10-Millionen-Schweiz! (Nachhaltigkeitsinitiative)», abgestimmt am 14. Juni 2026 (45,21 % Ja, abgelehnt). Links das Ja des Initiativkomitees (Argumente-Seite im Abstimmungsbüchlein) und der SVP, rechts das Nein von Bundesrat und Parlament (Argumente-Seite, dazu vier Absätze «Im Detail — Folgen») sowie von SP, FDP, Mitte und GRÜNEN (Parolen-Begründungen). Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.</p>
+  <div class="pane">
+    <h2>Debatten-Karte</h2>
+    <div class="legend">
+      <span class="chip role-mc">Hauptthese</span>
+      <span class="chip role-c">These</span>
+      <span class="chip role-p">Prämisse</span>
+      <span class="edge-sample"></span> stützt
+      <span class="edge-sample attack"></span> greift an
+      <span class="edge-sample agree"></span> Einigkeit
+      <span class="edge-sample factdis"></span> faktische Uneinigkeit
+      <span class="edge-sample valdis"></span> Wert-Uneinigkeit
+      <label class="typed-toggle"><input type="checkbox" id="typed-zehnmio" checked> Fakt/Wert-Typen zeigen</label>
+      <span class="legend-hint">— Hover auf Knoten und Pfeile zeigt Volltext und Begründung; <strong>Klick auf einen Knoten zeigt unten die wörtliche Textstelle samt Quelle.</strong></span>
+    </div>
+    <div id="map-zehnmio" class="map-holder"></div>
+  </div>
+  <div id="tp-zehnmio" class="textpanel idle">Klick auf einen Knoten zeigt hier die zugrunde liegende Textstelle — wörtlich, mit Quelle.</div>
+  <div class="texts">
+    <h2>Zugrunde liegende Texte</h2>
+    <div id="texts-zehnmio"></div>
+  </div>
+</section>
+
+<section id="panel-zivildienst" class="panel">
+  <p class="fine-print">Fallbeispiel: die Änderung des Zivildienstgesetzes, abgestimmt am 14. Juni 2026 (52,46 % Ja, angenommen) — links das Ja von Bundesrat und Parlament, SVP, FDP und Die Mitte, rechts das Nein des Referendumskomitees, der SP und der GRÜNEN. Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.</p>
+  <div class="pane">
+    <h2>Debatten-Karte</h2>
+    <div class="legend">
+      <span class="chip role-mc">Hauptthese</span>
+      <span class="chip role-c">These</span>
+      <span class="chip role-p">Prämisse</span>
+      <span class="edge-sample"></span> stützt
+      <span class="edge-sample attack"></span> greift an
+      <span class="edge-sample agree"></span> Einigkeit
+      <span class="edge-sample factdis"></span> faktische Uneinigkeit
+      <span class="edge-sample valdis"></span> Wert-Uneinigkeit
+      <label class="typed-toggle"><input type="checkbox" id="typed-zivildienst" checked> Fakt/Wert-Typen zeigen</label>
+      <span class="legend-hint">— Hover auf Knoten und Pfeile zeigt Volltext und Begründung; <strong>Klick auf einen Knoten zeigt unten die wörtliche Textstelle samt Quelle.</strong></span>
+    </div>
+    <div id="map-zivildienst" class="map-holder"></div>
+  </div>
+  <div id="tp-zivildienst" class="textpanel idle">Klick auf einen Knoten zeigt hier die zugrunde liegende Textstelle — wörtlich, mit Quelle.</div>
+  <div class="texts">
+    <h2>Zugrunde liegende Texte</h2>
+    <div id="texts-zivildienst"></div>
+  </div>
+</section>
+
+</main>
+
+<div id="tooltip" class="tooltip hidden"></div>
+<script>
+const $ = (sel) => document.querySelector(sel);
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+const tooltip = $('#tooltip');
+function showTooltip(html, x, y) {
+  tooltip.innerHTML = html;
+  tooltip.classList.remove('hidden');
+  const r = tooltip.getBoundingClientRect();
+  tooltip.style.left = Math.min(x + 14, window.innerWidth - r.width - 12) + 'px';
+  tooltip.style.top = Math.min(y + 14, window.innerHeight - r.height - 12) + 'px';
+}
+function hideTooltip() { tooltip.classList.add('hidden'); }
+
+const KIND_LABEL = { agreement: 'Einigkeit', factual: 'Faktische Uneinigkeit', value: 'Wert-Uneinigkeit' };
+
+
+const AM = {};
+/* ===== zehnmio ===== */
+/* ---------- Debatten-Karte: Volksinitiative «Keine 10-Millionen-Schweiz! (Nachhaltigkeitsinitiative)», Abstimmung 14.6.2026 (Kartierung: vom Tool; Textstellen verbatim) ----------
+   positions/full = POS/FULL aus zehnmio.ds.js, unverändert übernommen. */
+AM["zehnmio"] = { title:"10-Millionen-Initiative", kind:"debate",
+  intro:"Fallbeispiel: die Volksinitiative «Keine 10-Millionen-Schweiz! (Nachhaltigkeitsinitiative)», abgestimmt am 14. Juni 2026 (45,21 % Ja, abgelehnt). Links das Ja des Initiativkomitees (Argumente-Seite im Abstimmungsbüchlein) und der SVP, rechts das Nein von Bundesrat und Parlament (Argumente-Seite, dazu vier Absätze «Im Detail — Folgen») sowie von SP, FDP, Mitte und GRÜNEN (Parolen-Begründungen). Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.",
+  note:"Markiert: die Textstelle, die der Knoten zusammenfasst — wörtlich aus dem Abstimmungsbüchlein bzw. aus den Parteitexten (erhoben 18.9.2026, [...] = Auslassung der Erhebung). Knoten-Formulierung und Kartierung: vom Tool.",
+  positions:[
+    { id:"A", short:"Komitee", name:"Initiativkomitee", c:"#7c3aed", side:"ja", src:"Erläuterungen des Bundesrates (Abstimmungsbüchlein) zur Volksabstimmung vom 14.6.2026, PDF v2, Argumente des Initiativkomitees, S. 16–17", url:"https://www.admin.ch/de/nachhaltigkeitsinitiative" },
+    { id:"B", short:"Bundesrat", name:"Bundesrat und Parlament", c:"#1d4ed8", side:"nein", src:"Erläuterungen des Bundesrates (Abstimmungsbüchlein) zur Volksabstimmung vom 14.6.2026, PDF v2, Argumente von Bundesrat und Parlament, S. 18–19, und «Im Detail — Folgen der Initiative», S. 13–14 (NR 123 Nein / 67 Ja, SR 30 Nein / 9 Ja)", url:"https://www.admin.ch/de/nachhaltigkeitsinitiative" },
+    { id:"C", short:"SVP", name:"SVP Schweiz", c:"#b45309", side:"ja", src:"SVP Schweiz, Medienmitteilung «Wer die Schweiz liebt, sagt JA zur Nachhaltigkeits-Initiative!», 24.3.2026; Argumentarium (PDF), 24.3.2026; Kampagnenseite (Auszüge)", url:"https://www.svp.ch/aktuell/publikationen/medienmitteilungen/wer-die-schweiz-liebt-sagt-ja-zur-nachhaltigkeits-initiative/",
+        urls:[{ l:"Medienmitteilung 24.3.2026", u:"https://www.svp.ch/aktuell/publikationen/medienmitteilungen/wer-die-schweiz-liebt-sagt-ja-zur-nachhaltigkeits-initiative/" }, { l:"Argumentarium 24.3.2026 (PDF)", u:"https://www.svp.ch/wp-content/uploads/260324_Argumentarium-ohne-Q-A-DE.pdf" }, { l:"Kampagnenseite", u:"https://www.svp.ch/aktuell/kampagnen/keine-10-millionen-schweiz-nachhaltigkeits-initiative/" }] },
+    { id:"D", short:"SP", name:"SP Schweiz", c:"#15803d", side:"nein", src:"SP Schweiz, Parteitag 25.10.2025, Traktandum 9, Antrag des Präsidiums (PDF, S. 20–21); «In leichter Sprache: NEIN zur 10-Millionen-Initiative», 5.5.2026 (Auszüge)", url:"https://www.sp-ps.ch/wp-content/uploads/2025/11/SP60_Argumentarium_Parole_SP_Parteitag_2025-10-25_de.pdf",
+        urls:[{ l:"Parteitag 25.10.2025 (PDF)", u:"https://www.sp-ps.ch/wp-content/uploads/2025/11/SP60_Argumentarium_Parole_SP_Parteitag_2025-10-25_de.pdf" }, { l:"«In leichter Sprache», 5.5.2026", u:"https://www.sp-ps.ch/in-leichter-sprache-nein-zur-10-millionen-initiative/" }] },
+    { id:"E", short:"FDP", name:"FDP.Die Liberalen", c:"#0891b2", side:"nein", src:"FDP.Die Liberalen, Medienmitteilung «NEIN zur schädlichen Chaos-Initiative», 9.3.2026; Medienmitteilung «Probleme lösen statt bewirtschaften», 14.6.2026 (Auszüge)", url:"https://www.fdp.ch/aktuell/medienmitteilungen/medienmitteilung-detail/news/nein-zur-schaedlichen-chaos-initiative",
+        urls:[{ l:"Medienmitteilung 9.3.2026", u:"https://www.fdp.ch/aktuell/medienmitteilungen/medienmitteilung-detail/news/nein-zur-schaedlichen-chaos-initiative" }, { l:"Medienmitteilung 14.6.2026", u:"https://www.fdp.ch/aktuell/medienmitteilungen/medienmitteilung-detail/news/probleme-loesen-statt-bewirtschaften" }] },
+    { id:"F", short:"Die Mitte", name:"Die Mitte", c:"#be123c", side:"nein", src:"Die Mitte Schweiz, Medienmitteilung zur Delegiertenversammlung Zug, 28.3.2026; Rede Parteipräsident Philipp Matthias Bregy, 28.3.2026; Medienmitteilung 14.6.2026 (Auszüge)", url:"https://die-mitte.ch/delegiertenversammlung-die-mitte-lehnt-die-chaos-initiative-klar-ab/",
+        urls:[{ l:"Medienmitteilung DV 28.3.2026", u:"https://die-mitte.ch/delegiertenversammlung-die-mitte-lehnt-die-chaos-initiative-klar-ab/" }, { l:"Rede Bregy 28.3.2026", u:"https://die-mitte.ch/rede-parteipraesident-philipp-matthias-bregy-nationalrat-vs-2/" }, { l:"Medienmitteilung 14.6.2026", u:"https://die-mitte.ch/bevoelkerung-erwartet-antworten-auf-herausforderungen/" }] },
+    { id:"G", short:"GRÜNE", name:"GRÜNE Schweiz", c:"#4d7c0f", side:"nein", src:"GRÜNE Schweiz, Abstimmungsempfehlung «Nein zur Chaos-Initiative der SVP» (Kampagnenseite); Übersicht «Abstimmungen: 14. Juni 2026» (Auszüge)", url:"https://gruene.ch/abstimmungsempfehlung/nein-zur-chaos-initiative",
+        urls:[{ l:"Abstimmungsempfehlung", u:"https://gruene.ch/abstimmungsempfehlung/nein-zur-chaos-initiative" }, { l:"Übersicht «Abstimmungen: 14. Juni 2026»", u:"https://gruene.ch/abstimmungen-14-juni-2026" }] }
+  ],
+  full:{
+    A:[
+      { h:"Argumente Initiativkomitee", t:"Wir alle sehen und spüren die Folgen der massiven Zuwanderung: Wohnungsnot, die Mieten werden immer teurer. Die Zubetonierung der Landschaft. Stau und überfüllte Züge. Steigende Kriminalität. Das Gesundheitswesen ist am Anschlag. In den Schulen sinkt die Bildungsqualität. Viele fühlen sich zunehmend fremd im eigenen Land." },
+      { h:"Sehr hohe Zuwanderung", t:"Die Schweiz hatte Ende 2025 rund 9,1 Millionen Einwohnerinnen und Einwohner. Die ständige Wohnbevölkerung hat innerhalb von 12 Jahren um 1 Million Menschen zugenommen. Der Hauptgrund ist die massive Zuwanderung. Aktuell kommen pro Jahr über 100 000 Personen zusätzlich in die Schweiz: aus der EU, aus Drittstaaten oder über das Asylsystem: viele aus fremden, islamischen Kulturen. Viele wandern in unseren Sozialstaat ein. Meldungen über Einbrüche, Gewaltverbrechen und Messerangriffe sind alltäglich geworden." },
+      { h:"Wohnungsnot", t:"Die Mieten werden immer teurer. Die meisten Schweizerinnen und Schweizer können sich kein Wohneigentum mehr leisten – obwohl viel mehr gebaut wird. Für die Wohnungsnot ist die massive Zuwanderung hauptverantwortlich." },
+      { h:"Natur und Landwirtschaft unter Druck", t:"Auch das Landschaftsbild verändert sich. Unsere schöne Schweiz wird jeden Tag mehr und mehr zubetoniert. Grünflächen und Wiesen verschwinden. Es wird immer enger und höher gebaut. Natur und Ökologie sind unter Druck. Die Lebensqualität nimmt ab." },
+      { h:"Schule am Anschlag", t:"Die Schweiz war immer stolz auf ihr Bildungssystem. Doch die Entwicklung an den Schulen bereitet grosse Sorgen. Studien zeigen: Je mehr fremdsprachige Kinder in einer Schulklasse sind, desto tiefer ist das durchschnittliche Bildungsniveau. Ein Viertel der Schweizer Schulabgängerinnen und -abgänger kann nicht richtig lesen." },
+      { h:"Zuwanderung verschärft Fachkräftemangel", t:"Die Zuwanderung sorgt für noch mehr Zuwanderung. 100 000 Zuwanderinnen und Zuwanderer brauchen zusätzlich rund 45 000 Wohnungen und rund 2200 Ärztinnen, Ärzte und Pflegende. Jahr für Jahr. Diese Endlosspirale ist nicht nachhaltig." },
+      { h:"Ja zu einer nachhaltigen Entwicklung", t:"Die Nachhaltigkeits-Initiative sorgt für eine vernünftige Zuwanderung: Die ständige Wohnbevölkerung darf bis 2050 die 10-Millionen-Grenze nicht überschreiten. Das heisst: Es könnten immer noch rund 40 000 Personen und Fachkräfte pro Jahr einwandern." },
+      { t:"Die Initiative verpflichtet die Politik zu einer massvollen Zuwanderung in die Schweiz: Ja zu einer nachhaltigen Bevölkerungsentwicklung statt zu einer ungebremsten Zuwanderung. Ja zum Schutz der Umwelt und der Landschaft. Ja zur Volksinitiative «Keine 10-Millionen-Schweiz! (Nachhaltigkeitsinitiative)»" },
+      { t:"Darum empfiehlt das Initiativkomitee: Ja" },
+      { t:"nachhaltigkeitsinitiative.ch" },
+      { t:"Der Text auf dieser Doppelseite stammt vom Initiativkomitee. Es ist für den Inhalt und die Wortwahl verantwortlich." }
+    ],
+    B:[
+      { h:"Weniger Wohlstand", t:"Die Initiative schadet dem Wohlstand. Schweizer Unternehmen sind auf ausländische Arbeitskräfte angewiesen. Bei einer Begrenzung der ständigen Wohnbevölkerung könnten sie Arbeitskräfte nur noch eingeschränkt in der EU rekrutieren. Die Wirtschaft und der Wohlstand der Schweiz würden leiden." },
+      { h:"Gesellschaftliche Probleme", t:"Die Initiative gefährdet das Funktionieren der Gesellschaft. Spitäler und Pflegeheime könnten alte und kranke Menschen nicht mehr wie gewohnt behandeln und pflegen. Auch andere Branchen, z.B. das Baugewerbe, stünden vor grossen Problemen; dies würde den Infrastrukturen schaden." },
+      { h:"Unsichere Beziehungen zur EU", t:"Die Initiative gefährdet den bilateralen Weg mit der EU in einer unsicheren Zeit. Der Bundesrat sieht darin ein grosses Risiko. Die EU ist die wichtigste politische und wirtschaftliche Partnerin der Schweiz. Deshalb will der Bundesrat den bilateralen Weg fortführen und so den Wohlstand langfristig sichern." },
+      { h:"Weniger Sicherheit", t:"Die Initiative würde den Kampf gegen Kriminalität und Terrorismus erschweren. Bei einer Beendigung der Schengen-Zusammenarbeit könnte die Schweiz nicht mehr auf Datenbanken der EU zugreifen, die für den Schutz der Bevölkerung wichtig sind." },
+      { h:"Mehr Asylgesuche", t:"Die Schweiz müsste bei einem Wegfall des Dublin-Abkommens mit mehr Asylgesuchen rechnen. Asylsuchende, die in einem EU-Staat abgewiesen wurden, könnten in der Schweiz ein neues Gesuch stellen. Bund und Kantone hätten im Asylbereich und bei der inneren Sicherheit jährliche Mehrkosten von hunderten Millionen Franken." },
+      { h:"Humanitäre Tradition gefährdet", t:"Die Initiative gefährdet die humanitäre Tradition. Wenn die Schweiz Abkommen zum Schutz der Menschenrechte nicht mehr wie bisher respektieren würde, würde sie sich aussenpolitisch isolieren und ihre Glaubwürdigkeit verlieren." },
+      { h:"Probleme statt Lösungen", t:"Die Initiative schafft Probleme und liefert keine Lösungen. Der Bundesrat hingegen geht die Herausforderungen des Bevölkerungswachstums an. Er will das inländische Potenzial an Arbeitskräften besser ausschöpfen, den gemeinnützigen Wohnungsbau fördern und die Zahl der Asylgesuche deutlich reduzieren. Im Paket Schweiz – EU (Bilaterale III) hat er eine Schutzklausel ausgehandelt, mit der die Zuwanderung bei schwerwiegenden Problemen vorübergehend eingeschränkt werden kann." },
+      { t:"Aus all diesen Gründen empfehlen Bundesrat und Parlament, die Nachhaltigkeitsinitiative abzulehnen." },
+      { h:"Empfehlung von Bundesrat und Parlament", t:"Nein" },
+      { t:"admin.ch/nachhaltigkeitsinitiative" },
+      { h:"Im Detail — Folgen (Einschränkung Arbeitsmarkt)", t:"Begrenzt die Schweiz die Bevölkerungszahl auf 10 Millionen, wäre es für Unternehmen des privaten und des öffentlichen Sektors schwierig, weiterhin die nötigen Arbeitskräfte zu rekrutieren. Der Schweizer Wirtschaft und öffentlichen Einrichtungen wie Spitälern und Pflegeheimen würden Arbeitskräfte fehlen. Die Kündigung des Abkommens über die Personenfreizügigkeit würde die Rekrutierung von Arbeitskräften aus dem EU/EFTA-Raum erschweren. Wegen der Kündigung würde es auch für Schweizerinnen und Schweizer schwieriger, im EU/EFTA-Raum zu arbeiten." },
+      { h:"Im Detail — Folgen (Wegfall der bilateralen Abkommen)", t:"Das Abkommen über die Personenfreizügigkeit ist mit den anderen Abkommen der Bilateralen I verknüpft. Bei einer Kündigung des Abkommens über die Personenfreizügigkeit treten diese automatisch ausser Kraft. Sie betreffen den Abbau von Handelshemmnissen, den Land- und Luftverkehr, die Landwirtschaft und das öffentliche Beschaffungswesen. Für die Unternehmen und auch für die Bäuerinnen und Bauern würde der Handel mit der EU teurer und komplizierter. Studien zeigen, dass mit dem Wegfall der Bilateralen I der Schweizer Wirtschaft Erträge in Milliardenhöhe entgehen würden und die Bevölkerung weniger Geld zur Verfügung hätte.⁷" },
+      { h:"Im Detail — Folgen (Wegfall von Schengen/Dublin)", t:"Die Kündigung der Personenfreizügigkeit würde auch die Beteiligung der Schweiz an den Schengen- und Dublin-Abkommen der EU gefährden. Deren Wegfall hätte weitreichende Auswirkungen für den Asylbereich und für die innere Sicherheit der Schweiz: – Anders als heute müsste die Schweiz Verfahren für Asylsuchende durchführen, die bereits in der EU um Asyl ersucht haben. Die Schweiz könnte diese Asylsuchenden nicht mehr in andere europäische Staaten überstellen. Asylsuchende, die in einem EU-Land abgewiesen wurden, könnten in der Schweiz zudem ein zweites Gesuch stellen. Die Schweiz müsste deshalb voraussichtlich mehr Asylverfahren durchführen." },
+      { h:"Im Detail — Folgen (Wegfall von Schengen/Dublin, Fortsetzung)", t:"– Die Schweizer Polizei- und Grenzschutzbehörden hätten keinen Zugang mehr zu den europäischen Sicherheits- und Fahndungsdatenbanken, die heute zentrale Instrumente für die innere Sicherheit sind. Im Asylbereich, bei der inneren Sicherheit und beim Grenzschutz wäre mit mehr Aufwand und zusätzlichen Kosten von mehreren hundert Millionen Franken pro Jahr zu rechnen.⁸" }
+    ],
+    C:[
+      { h:"Medienmitteilung 24.3.2026 — Lead", t:"Die Schweiz hat Ende 2025 rund 9.1 Millionen Einwohnerinnen und Einwohner. Die ständige Wohnbevölkerung hat innerhalb von 12 Jahren um 1 Million Menschen zugenommen. Diese masslose Zuwanderung muss gebremst werden. Dafür braucht es am 14. Juni ein JA zur Nachhaltigkeits-Initiative «Keine 10-Millionen-Schweiz!» Die IG Nachhaltigkeit präsentiert ihre Argumente für die Nachhaltigkeits-Initiative «Keine 10-Millionen-Schweiz!»" },
+      { t:"Für 100'000 Zuwanderer in die Schweiz braucht es zusätzlich 45'000 Wohnungen. Es braucht ein zusätzliches Spital mit 420 Betten, rund 468 Ärzten und über 2'000 Pflegende. Es braucht neue Schulhäuser, hunderte Schulklassen und Lehrpersonen. 100'000 zusätzliche Einwohner brauchen unsere Strassen, unsere Züge, Busse, Freizeitanlagen. Die Zuwanderung sorgt für noch mehr Zuwanderung. Diese schädliche Endlos-Spirale muss gestoppt werden." },
+      { t:"Natürlich gibt es ein paar Profiteure dieser masslosen Zuwanderung. Aber der grosse Teil der Schweizer Bevölkerung hat nichts davon – ausser den Problemen und den Kosten. Das Leben wird teurer, die Löhne steigen kaum noch, das Wirtschaftswachstum pro Kopf stagniert. So nimmt der Wohlstand schleichend ab. So darf es nicht weitergehen." },
+      { h:"Nationalrat Marcel Dettling, Parteipräsident", t:"«Wir wollen eine lebenswerte Schweiz. Wir wollen, dass auch nachfolgende Generationen in Wohlstand, Frieden und in einer schönen Landschaft leben können. Dass jedes Jahr 100'000 Personen mehr einwandern, das überfordert unsere Infrastrukturen, unsere Integrationsfähigkeit, unsere Gesellschaft als Ganzes. Es geht um eine vernünftige Zuwanderung. Auch mit Annahme der Initiative könnten immer noch rund 40'000 Fachkräfte und Personen pro Jahr in die Schweiz zuwandern. Das ist deutlich mehr als die 8'000 Zuwanderer, die uns der Bundesrat vor der EU-Personenfreizügigkeit versprochen hat.»" },
+      { h:"Nationalrat Thomas Matter (ZH) — «Zuwanderung sorgt für noch mehr Zuwanderung»", t:"«Uns ist die Kontrolle über die Zuwanderung entglitten. Die Zahlen und Fakten sprechen eine eindeutige Sprache: [...] Seit Einführung der EU-Personenfreizügigkeit sind netto 1,5 Millionen Zuwanderer in die Schweiz gekommen. Die Schweizer Bevölkerung wächst 16x schneller als in Deutschland. Der Ausländeranteil beträgt heute 2'414'408 Personen. Das sind 28 % der Bevölkerung. [...] Aktuell kommen pro Jahr über 100'000 Zuwanderer zusätzlich in die Schweiz [...] Seit dem Jahr 2000 wurden in der Schweiz über 655'000 Asylgesuche gestellt. [...] Pro Sekunde verschwindet rund ein Quadratmeter Grünfläche. Unsere schöne Schweiz wird zubetoniert.»" },
+      { h:"Argumentarium 24.3.2026 — Kapitel 1", t:"Uns ist die Kontrolle entglitten. Die masslose Zuwanderung und deren negativen Folgen bestimmen fast überall unseren Alltag. Wenn es so weitergeht, verliert die Schweiz ihre Identität. Viele Menschen sind besorgt: Sie wollen sich nicht plötzlich fremd im eigenen Land fühlen. Ob schleichende Islamisierung oder Expats, die nur noch Englisch reden: Es geht auch um den Schutz unserer Kultur und Identität – um unser Zusammenleben insgesamt. Uns vereint, dass wir unser Land lieben. Wir alle wollen weiterhin in einem sicheren und wohlhabenden Land leben. Wir wollen, dass die Schweiz uns und unseren Familien weiterhin ein gutes Leben bietet. Dafür müssen wir die Zuwanderung begrenzen. Am 14. Juni kommt nun endlich die Nachhaltigkeits-Initiative «Keine 10-Millionen-Schweiz!» zur Abstimmung." },
+      { t:"Wir alle sehen und spüren die Folgen der massiven Zuwanderung: Wohnungsnot, die Mieten werden immer teurer. Die Zubetonierung der Landschaft. Stau und überfüllte Züge. Steigende Kriminalität. Das Gesundheitswesen ist am Anschlag. In den Schulen sinkt die Bildungsqualität. Viele fühlen sich zunehmend fremd im eigenen Land." },
+      { h:"Argumentarium — Schlusskapitel (Abruf bricht ab)", t:"Finden Sie nicht auch, dass Sie jetzt schon zu oft im Stau stecken? Die Mieten viel zu hoch sind? Die Züge überfüllt sind? Fühlen Sie sich zunehmend fremd und unsicher im eigenen Land? Dann stellen Sie sich vor, dass noch einmal eine Million Zuwanderer in unser kleines Land gestopft werden, dass nochmals 2-mal die Stadt Zürich in die Schweiz gebaut wird. Fast alle Probleme, unter denen die Schweiz zu leiden hat, hängen zusammen mit dem masslosen Bevölkerungswachstum der letzten Jahre und Jahrzehnte. Dabei sind die Ressourcen unseres kleinen Landes in jeder Hinsicht beschränkt. Weil die Einwanderung nicht kontrolliert werden kann, droht der Schweiz demnächst eine Bevölkerung von 10 Millio[...]" },
+      { h:"Kampagnenseite — Einleitung", t:"Infolge der unkontrollierten Einwanderung in unser Land droht uns demnächst eine 10-Millionen-Schweiz. Die regelrechte Bevölkerungsexplosion überfordert unsere Infrastrukturen zerstört unsere Natur und treibt die Mieten noch mehr in die Höhe. Nach dem Zustrom von über 180'000 Menschen in einem einzigen Jahr muss jetzt endlich gehandelt werden." }
+    ],
+    D:[
+      { h:"Parteitag 25.10.2025 — Antrag des Präsidiums, Lead", t:"Die gefährliche SVP-Kündigungsinitiative entscheidet darüber, ob die Schweiz den rechtspopulistischen Weg der Abschottung von Trump, AfD oder Le Pen einschlägt oder ihre Offenheit mit der Personenfreizügigkeit und dem bilateralen Weg bewahrt. Eine Annahme der Initiative wäre ein hochgefährliches Experiment, dessen Folgen drastisch wären: Die bilateralen Abkommen mit der EU müssten gekündigt werden, soziale Errungenschaften wie der Lohnschutz würden gestoppt und der explodierende Arbeitskräftemangel im Gesundheitsbereich oder der Gastronomie würde sich massiv verschärfen." },
+      { h:"NEIN zu einem isolationistischen Experiment", t:"Die Annahme der SVP-Kündigungsinitiative würde die Beziehung zu Europa zerstören und die Schweiz international isolieren. Die bilateralen Abkommen und die Personenfreizügigkeit wären Geschichte. Wegen der sogenannten Guillotine-Klausel müssen auch weitere Abkommen wie das über den Land- und Luftverkehr, die Landwirtschaft oder die Forschung gekündigt werden. Zudem würde der Marktzugang für 50% unserer Exporte, die aktuell in die EU gehen, grobfahrlässig erschwert. Ein so radikales Experiment können wir uns in einer Zeit, in der sich Trump und Putin verbrüdern, nicht leisten." },
+      { h:"NEIN zum explodierenden Arbeitskräftemangel", t:"In der Schweiz werden jedes Jahr mehr Menschen pensioniert als es Junge gibt, die in den Arbeitsmarkt eintreten. Dadurch fehlen uns immer mehr Arbeitskräfte. Das gefährdet unseren Wohlstand, aber auch unsere Versorgung in systemrelevanten Bereichen wie der Pflege. Denn bereits heute fehlen fast 15'000 Pflegekräfte, bis im Jahr 2030 wird diese Lücke auf 30'000 Personen anwachsen. Gleichzeitig gibt es immer mehr Senior:innen. Es ist klar: Ohne Zuwanderung kann die Versorgung im Spital oder die Pflege im Altersheim nicht mehr sichergestellt werden. Aber auch auf Baustellen, im Reinigungsbereich oder bei der Logistik würde sich der Mangel an qualifizierten Arbeitskräften stark verschärfen." },
+      { h:"NEIN zum Angriff auf die soziale Schweiz", t:"Die SVP greift die bilateralen Verträge auch deshalb an, weil sie damit [...] Dumpinglöhne in Restaurants, auf dem Bau oder im Reinigungsbereich [...] Arbeitsmigrant:innen sollen wie zu Zeiten des Saisonniers-Status [...] und ohne soziale Rechte bei uns arbeiten, während skrupellose Firmen und Konzerne ihre Profite maximieren können." },
+      { h:"Antrag", t:"Nein-Parole zur SVP-Kündigungsinitiative." },
+      { h:"«In leichter Sprache: NEIN zur 10-Millionen-Initiative», 5.5.2026 — Worum geht es?", t:"Die Schweiz hat Verträge mit Europa. Darin steht: Menschen aus Europa können in der Schweiz arbeiten und wohnen. Die SVP will weniger als 10 Millionen Einwohnerinnen und Einwohner in der Schweiz. Deshalb will die SVP die Verträge kündigen." },
+      { h:"Die SP ist dagegen. (Liste der Quelle; / = Zeilenumbruch)", t:"An vielen Orten auf der Welt ist Krieg. Eine gute Zusammen-Arbeit mit Europa ist jetzt sehr wichtig. Verträge mit Europa / Keine Verträge mehr mit Europa / Keine Zusammen-Arbeit mehr mit Europa / -> Gute Beziehungen mit Europa sind sehr wichtig. Wirtschaft / Firmen können weniger Waren nach Europa liefern. / -> Das heisst weniger Arbeit und weniger Geld. Es gibt keinen Lohn-Schutz mehr. / -> Das heisst weniger Lohn für viele." }
+    ],
+    E:[
+      { h:"Medienmitteilung 9.3.2026 — Lead", t:"Eine breite Allianz aus Politik und Wirtschaft warnt vor den verheerenden Folgen der sogenannten «Nachhaltigkeits-Initiative» der SVP. Die leichtsinnige Initiative verlangt, die ständige Wohnbevölkerung der Schweiz bei 10 Millionen Menschen zu deckeln. Die Gegner sind sich einig: Der starre Deckel führt bereits in 3-4 Jahren ins Chaos. Die fixe Obergrenze bedroht Wohlstand, Sicherheit und Versorgung unseres Landes. Zudem setzt sie explizit die Bilateralen Verträge aufs Spiel. In einer zunehmend unberechenbaren Welt ist die Schweiz auf stabile Beziehungen, verlässliche Partnerschaften und klare Regeln angewiesen." },
+      { t:"Die Unsicherheit ist allgegenwärtig: Protektionismus, Kriege und technologische Umbrüche stellen die Schweiz vor grosse Herausforderungen. Gerade jetzt ist politische Stabilität unsere Lebensversicherung – doch die Chaos-Initiative der SVP setzt sie aufs Spiel. Bereits bei 9,5 Millionen Einwohnerinnen und Einwohnern müsste der Bundesrat einschneidende Massnahmen ergreifen. Ab etwa 2031 drohen gravierende Folgen: Die Schweiz würde unsicherer, die Versorgung knapper, Wartezeiten länger und die Kaufkraft kleiner. Besonders betroffen von einer schweizerischen Planwirtschaft mit Kontingenten und Bürokratie wären Randregionen, Rentner und das Gewerbe." },
+      { h:"Arbeitsplatz-Chaos: Versorgungskollaps und Mangelwirtschaft", t:"Ohne gezielte Zuwanderung fehlen Fachkräfte – mit Folgen für die Lebensqualität aller. Rund 1,7 Millionen Ausländer verarzten, reparieren, bedienen, forschen, pflegen, liefern, bauen, putzen und halten so die Schweiz am Laufen. Der Fachkräftemangel trifft besonders Bereiche, in denen heute schon Engpässe bestehen. Spitäler, Pflegeheime und Spitex finden weniger Personal – Operationen werden verschoben, Wartezeiten länger. Auch Bau, Verkehr, Gastronomie, Tourismus und Landwirtschaft sind auf qualifizierte Arbeitskräfte angewiesen. Fehlen diese, verzögern sich Projekte, Dienstleistungen werden teurer oder verschwinden." },
+      { h:"Bilateralen-Chaos: Weniger Wohlstand, weniger Sicherheit", t:"Die SVP-Initiative setzt den bilateralen Weg fahrlässig aufs Spiel und gefährdet Freihandelsabkommen weltweit. Eine Annahme führt wegen der Guillotine-Klausel automatisch zur Kündigung der Bilateralen I und stellt auch die Bilateralen II inkl. Schengen/Dublin infrage. Das ist wirtschaftlich und sicherheitspolitisch verantwortungslos. Die EU ist und bleibt unser wichtigster Handelspartner. Zudem verliert die Polizei ohne Schengener Informationssystem das zentrale Fahndungsinstrument. Gleichzeitig drohen wieder Grenzkontrollen, Staus und mehr Bürokratie. Schliesslich kommt es zum Asylchaos: Hunderttausende in der EU abgewiesene Wirtschaftsmigranten können in der Schweiz ein Zweitgesuch stellen." },
+      { h:"AHV-Chaos", t:"Die Initiative ignoriert die demografische Realität. Unsere Bevölkerung altert rasch: Jährlich verlassen bereits heute über 20'000 Menschen mehr den Arbeitsmarkt, als junge nachrücken. Gleichzeitig gerät die Finanzierung der AHV ohne Zuwanderer noch stärker unter Druck. Wenn weniger Erwerbstätige einzahlen, verschlechtert sich das Verhältnis zwischen Beitragszahlern und Rentnern weiter. Die Konsequenz: höhere Abgaben oder zusätzliche Reformen." },
+      { t:"Die Chaos-Initiative löst kein Problem, schafft aber viele neue. Gerade in unsicheren Zeiten braucht die Schweiz stabile Beziehungen, verlässliche Regeln und eine pragmatische Steuerung der Zuwanderung. Eine breite Allianz aus Wirtschaft und Politik empfiehlt deshalb am 14. Juni ein klares NEIN." },
+      { h:"Medienmitteilung 14.6.2026 — Reaktion auf das Resultat", t:"Die Schweiz will keinen starren Bevölkerungsdeckel. Die Stimmbevölkerung lehnt die Chaos-Initiative ab. Wer die Schweiz liebt, muss reale Probleme lösen, statt sie zu bewirtschaften. Dank der FDP liegen konkrete Lösungen auf dem Tisch." },
+      { t:"Experten, Medien und selbst politische Parteien behaupteten, dass die gefährliche Chaos-Initiative (sog. «Nachhaltigkeitsinitiative») unmöglich verhindert werden könne. Die FDP hat heute das Gegenteil bewiesen. In einem engagierten Abstimmungskampf zeigten wir auf, dass in unserem Land reale Herausforderungen hinsichtlich Bevölkerungsentwicklung existieren – dass die Initiative jedoch überhaupt keine Lösungen gebracht hätte. Im Gegenteil: Die Annahme wäre ein Schuss ins eigene Knie gewesen. Dank und Anerkennung gebührt allen Menschen in diesem Land, die sich trotz heftigen Anfeindungen gegen diese Initiative eingesetzt haben. «Nachhaltig» war an ihr nur eines: der Schaden, den sie verursacht hätte." }
+    ],
+    F:[
+      { h:"Medienmitteilung Delegiertenversammlung Zug, 28.3.2026", t:"Die Delegierten der Mitte Schweiz haben an ihrer Versammlung in Zug ihre Ausrichtung auf konstruktive Lösungen bekräftigt. Sie lehnen die Initiative 'Keine 10-Millionen-Schweiz!' klar ab, da sie den bilateralen Weg gefährdet und nur Scheinlösungen zu den Herausforderungen des Wachstums bietet. Zudem unterstützen sie die Revision des Zivildienstgesetzes." },
+      { t:"Am 28. März trafen sich die Delegierten der Mitte Schweiz zu ihrer ersten Versammlung im Jahr 2026 in Zug. In ihren Beschlüssen lehnten sie die Initiative 'Keine 10-Millionen-Schweiz!' deutlich ab und teilten damit die Bedenken von Parteipräsident Philipp Matthias Bregy. In seiner Rede betonte er, dass es sich um eine Scheinlösung handle, die die Schweiz isolieren und den bilateralen Weg sowie Arbeitsplätze – insbesondere in den KMU – gefährden würde." },
+      { h:"Zitat Philipp Matthias Bregy, Nationalrat (VS), Präsident Die Mitte Schweiz", t:"Wer Arbeitsplätze gefährdet, gefährdet letztlich Wohlstand, Stabilität und auch Sicherheit." },
+      { t:"Mit diesem Entscheid bekräftigen die Delegierten ihre Unterstützung für eine Politik, die auf qualitatives Wachstum setzt – getragen von Innovation, einer besseren Nutzung bestehender Infrastrukturen, einem modernen Arbeitsmarkt und einem erleichterten Zubau von Wohnraum." },
+      { h:"Rede Parteipräsident Philipp Matthias Bregy, DV Zug 28.3.2026 — «Wachstum, Zuwanderung und Lebensraum»", t:"An der Frage von Wachstum, Zuwanderung und Lebensraum zeigt sich, ob Politik nur zuschaut, vielleicht sogar lieber nur Probleme bewirtschaftet oder ob sie bereit ist, die Zukunft unseres Landes verantwortungsvoll zu gestalten. Wohnungsknappheit. Volle Züge. Stau auf den Strassen. Druck auf Schulen, Infrastruktur und Lebensraum. Viele Menschen in der Schweiz erleben jeden Tag Formen des Dichtestress. Als Mitte nehmen wir diese Sorgen ernst. Aber nicht wie die SVP, welche mit Scheinlösungen wie der Chaos-Initiative die Schweiz isoliert, statt die Zuwanderung aktiv zu steuern und ihre Nebenfolgen zu drosseln. Sie setzt damit nicht nur den bilateralen Weg aufs Spiel, sondern gefährdet die Schweizer Wirtschaft und damit Arbeitsplätze – gerade bei den KMU. Und wer Arbeitsplätze gefährdet, gefährdet letztlich Wohlstand, Stabilität und auch Sicherheit." },
+      { t:"Die Schweiz darf die Sorgen über die Zuwanderung nicht verdrängen. Aber sie darf sich dadurch auch nicht selbst in die Isolation treiben. Wir brauchen eine Politik, die Wachstum steuert und seine grössten Nebenfolgen mindert. Mit mehr Wohnraum. Mit besserer Infrastruktur. Mit einem Arbeitsmarkt, der flexibler funktioniert. Dass unsere Antwort im Parlament am Ende keine Mehrheit für einen direkten Gegenvorschlag gefunden hat, ändert nichts an unserer Aufgabe. Sie wird noch dringlicher. Genau darum hat unsere Fraktion in der Frühlingssession verschiedene Vorstösse eingereicht: für ein nachhaltigeres Wachstum, weniger Abhängigkeiten, flexiblere Arbeitsmodelle, eine Entlastung der Verkehrsinfrastruktur und mehr bezahlbaren Wohnraum." },
+      { h:"Rede Bregy — späterer Abschnitt derselben Rede", t:"Einzig die Frage zu stellen, wie viele Menschen in unserem Land Platz finden, ist viel zu einfach. Die eigentliche Frage ist doch: Wie viele Menschen brauchen wir für ein qualitatives Wachstum, für unseren Wohlstand und wie organisieren wir das Miteinander?" },
+      { h:"Medienmitteilung 14.6.2026 — Reaktion auf das Resultat", t:"Die beiden Abstimmungsresultate zeigen: Die Bevölkerung erwartet konkrete Antworten auf die Herausforderungen unserer Zeit – bei Wohnen, Infrastruktur und Fachkräftemangel ebenso wie bei der Sicherheitspolitik. Die Mitte nimmt diesen Auftrag an und arbeitet weiter an konkreten und mehrheitsfähigen Lösungen." },
+      { t:"Wir begrüssen die Ablehnung der Volksinitiative «Keine10-Millionen-Schweiz!» (Nachhaltigkeitsinitiative)». Gleichzeitig nehmen wir das Signal ernst, das die Bevölkerung mit dem Resultat gesendet hat. Viele Menschen machen sich Sorgen über die Auswirkungen des starken Bevölkerungswachstums auf Wohnen, Verkehr, Gesundheit und Infrastruktur." },
+      { h:"Das Resultat ist ein klarer Auftrag an Politik und Wirtschaft", t:"Die Bevölkerung erwartet Lösungen für Wohnungsnot, überlastete Infrastrukturen und den Fachkräftemangel. Jetzt müssen wir handeln und konkrete Antworten auf diese Herausforderungen liefern." },
+      { h:"Zitat Yvonne Bürgin", t:"Jetzt geht es darum, Wachstum besser zu steuern: mit mehr Wohnraum, einer leistungsfähigen Infrastruktur, der besseren Nutzung des inländischen Arbeitskräftepotenzials und einer Wirtschaft, die auf Wertschöpfung statt auf reine Quantität setzt." },
+      { t:"Es braucht jetzt konkrete Lösungen, nicht erst bei 9,5 Millionen Einwohner:innen. Die Herausforderungen sind real und dürfen nicht länger verdrängt werden. Die Mitte hat diese Entwicklungen früh erkannt und entsprechende Lösungen aufgezeigt. Nun ist das Parlament gefordert, die notwendigen Lösungen umzusetzen." }
+    ],
+    G:[
+      { h:"Übersicht «Abstimmungen: 14. Juni 2026» — Parolentext", t:"Die Chaos-Initiative würde zu einer Kündigung der Personenfreizügigkeit und der Bilateralen Verträge mit der EU führen. Die isoliert die Schweiz in Europa in einer Weltlage, in der die Schweiz auf verlässliche Beziehungen zu ihren engsten Partner*innen angewiesen ist." },
+      { h:"Abstimmungsempfehlung «Nein zur Chaos-Initiative der SVP» — Lead", t:"Am 14. Juni stimmen wir über die menschenfeindliche Chaos-Initiative der SVP ab, auch «10-Millionen-Schweiz-Initiative» genannt. Sie will Menschen in unserem Land entrechten und gleichzeitig die Beziehungen mit Europa zerstören. Es ist klar, dass wir zu dieser Initiative NEIN stimmen. Die Gründe:" },
+      { t:"NEIN zur Missachtung von Grund- und Menschenrechten: Die Abschaffung des Aufenthaltsrechts für Kriegsvertriebene, die Wiedereinführung des unmenschlichen Saisonnierstatuts und das Auseinanderreissen von Familien. Das sind nur drei Beispiele der ganzen Flut von grund-, menschen- und völkerrechtswidrigen Praktiken, die bei Annahme der Initiative in der Schweiz Einzug fänden." },
+      { t:"NEIN zur Isolation der Schweiz in unsicheren Zeiten: Die Annahme der Initiative würde die Kündigung der bilateralen Verträge mit der EU bedeuten. Wer sich in unsicheren Zeiten von der engsten Handelspartnerin und Verbündeten abwendet, setzt unseren Wohlstand aufs Spiel. [...] öffnet Grossmächten Tür und Tor für Machtspiele mit einer isolierten und exponierten Schweiz." },
+      { h:"Ein skrupelloser SVP-Plan", t:"Mit ihrer extremen Initiative verfolgt die SVP zwei reaktionäre Ziele: Sie will zahlreiche Grund- und Menschenrechte von Familien, Geflüchteten und Menschen ohne Schweizer Pass in der Schweiz abschaffen. Sie will die Schweiz vom restlichen Europa isolieren, indem die Personenfreizügigkeit und damit auch die bilateralen Verträge zur EU gekündigt würden. Das wären nämlich die Folgen, wenn die von der Initiative definierten Bevölkerungs-Schwellenwerte erreicht werden. Dann müssten – nach dem Willen der SVP – Bund und Kantone diese chaotischen und unmenschlichen Massnahmen ergreifen." },
+      { h:"Die Initiative tritt Grund- und Menschenrechte mit Füssen", t:"Sobald die Bevölkerung den Schwellenwert von 9.5 Millionen erreicht, dürften Kriegsvertriebene kein Bleiberecht mehr erhalten. [...] der Familiennachzug würde massiv erschwert. Die drohende Kündigung von internationalen Abkommen wie dem UNO-Migrationspakt, der Flüchtlingskonvention, der Kinderrechtskonvention und sogar der Europäischen Menschenrechtskonvention. [...] lässt befürchten, dass das Recht auf Asyl faktisch abgeschafft würde. Die Initiative höhlt also hauptsächlich die Rechte von vulnerablen, schutzsuchenden Personen aus. Damit tritt die SVP-Chaos-Initiative die Grundrechte und das Völkerrecht mit Füssen." },
+      { h:"Die Initiative führt das ausbeuterische Saisonnierstatut wieder ein", t:"Als Konsequenz der Initiative droht die Wiedereinführung des unmenschlichen Saisonnierstatuts. Der Wille der SVP: Migrant*innen sollen für kurze Zeit in die Schweiz kommen, um auf unseren Baustellen oder Feldern zu schuften. [...] ohne soziale Rechte, ohne finanzielle Absicherung und ohne ihre Familien. Eine Rückkehr dieser menschenverachtenden und ausbeuterischen Politik dürfen wir nicht zulassen." },
+      { h:"Die Initiative isoliert die Schweiz", t:"Explizit zum Ziel hat die Initiative die Kündigung des Personenfreizügigkeitsabkommens mit der EU. Das würde unsere Rechte und Freiheiten massiv einschränken: In Zukunft wäre es nicht mehr so einfach möglich, in anderen europäischen Staaten zu studieren, zu leben oder zu arbeiten. Hundertausende Auslandschweizer*innen in der EU könnten zudem ihr Aufenthaltsrecht verlieren. Die Kündigung der Personenfreizügigkeit hat zudem automatisch die Kündigung der bilateralen Verträge zur Folge. Eine Kündigung dieser Verträge würde die Beziehungen zur EU grundlegend erschüttern." },
+      { t:"Die EU ist unsere wichtigste Handelspartnerin: Die Hälfte unserer Exporte geht in die EU. [...] das ist zehnmal mehr als nach China und dreimal mehr als in die USA. Die Initiative würde diese Exporte erschweren und damit unseren Wohlstand gefährden. Es drohen Entlassungen, höhere Arbeitslosigkeit und Einkommensverluste von bis zu 2'500 Franken pro Jahr und Person. Hinzu kommt: Wer in unsicheren Zeiten die engste Handelspartnerin und Verbündete vor den Kopf stösst, öffnet Grossmächten Tür und Tor für Machtspiele mit einer isolierten und exponierten Schweiz. Dabei wäre es in der heutigen Weltlage umso wichtiger, dass die Schweiz sich um gute Beziehungen zu ihren europäischen Partnerländern bemüht, statt sich in ein isolationistisches, stark exponiertes Schneckenhaus zurückzuziehen." },
+      { h:"Zitat Greta Gysin, Nationalrätin TI", t:"Diese reaktionäre Initiative isoliert die Schweiz – ausgerechnet in einer ohnehin angespannten geopolitischen Lage. Gerade jetzt brauchen wir verlässliche und stabile Beziehungen zu unseren europaischen Partner*innen. Ein Alleingang ist ein Risiko, das wir uns nicht leisten können." },
+      { h:"Jobs, Löhne und Pflege in Gefahr", t:"Durch die Aufkündigung der Personenfreizügigkeit ist das Aufenthaltsrecht hunderttausender EU-Bürger*innen in der Schweiz sowie von ebenso vielen Schweizer*innen in der EU gefährdet. Der Familiennachzug für Menschen aus der EU würde massiv eingeschränkt oder abgeschafft. Familien drohen auseinandergerissen zu werden." },
+      { t:"Doch die Folgen gehen noch weiter: Während wir in der Exportwirtschaft zehntausende Arbeitsplätze verlieren könnten, würden Spitäler, Altersheime, Baustellen oder Restaurants plötzlich stillstehen. Massiver Personalmangel im Pflege- und Gesundheitsbereich, der Baubranche und Gastronomie würde den Alltag dominieren." },
+      { t:"Krankenkassenprämien, Baukosten und auch der Preis für einen Kaffee unterwegs würden ins Unermessliche steigen. Genauso wie die Warteschlange im Spitalnotfall. Insbesondere Grenzregionen – welche für die kleine Schweiz besonders wichtig sind – würden im Stau versinken. [...] greift die Initiative auch den Schweizer Lohnschutz an. Ein drastischer Einbruch bei Löhnen in vielen Branchen wäre die Folge. Kurzum: Die Initiative stürzt die Schweiz und uns alle ins Chaos. Darum dürfen wir nicht zulassen, dass diese menschenverachtende und chaotische SVP-Initiative an der Urne eine Chance hat. NEIN am 14. Juni!" }
+    ]
+  },
+  data:{
+    labelA:"Ja — Komitee, SVP", labelB:"Nein — Bundesrat, SP, FDP, Mitte, GRÜNE",
+    a:{ units:[
+        { id:"a0", type:"position", pid:"A", label:"Ja: Die ständige Wohnbevölkerung darf bis 2050 die 10-Millionen-Grenze nicht überschreiten",
+          passage:"§Die Nachhaltigkeits-Initiative sorgt für eine vernünftige Zuwanderung: Die ständige Wohnbevölkerung darf bis 2050 die 10-Millionen-Grenze nicht überschreiten.§ Das heisst: Es könnten immer noch rund 40 000 Personen und Fachkräfte pro Jahr einwandern." },
+        { id:"a1", type:"fact", pid:"A", label:"1 Million mehr in 12 Jahren, über 100 000 pro Jahr — Hauptgrund ist die Zuwanderung",
+          passage:"§Die ständige Wohnbevölkerung hat innerhalb von 12 Jahren um 1 Million Menschen zugenommen. Der Hauptgrund ist die massive Zuwanderung.§ Aktuell kommen pro Jahr über 100 000 Personen zusätzlich in die Schweiz: aus der EU, aus Drittstaaten oder über das Asylsystem: viele aus fremden, islamischen Kulturen." },
+        { id:"a2", type:"fact", pid:"A", label:"Die massive Zuwanderung ist hauptverantwortlich für die Wohnungsnot",
+          passage:"Die meisten Schweizerinnen und Schweizer können sich kein Wohneigentum mehr leisten – obwohl viel mehr gebaut wird. §Für die Wohnungsnot ist die massive Zuwanderung hauptverantwortlich.§" },
+        { id:"a3", type:"fact", pid:"A", label:"100 000 Zuwanderer brauchen 45 000 Wohnungen und 2200 Ärzte und Pflegende — jedes Jahr",
+          passage:"§Die Zuwanderung sorgt für noch mehr Zuwanderung. 100 000 Zuwanderinnen und Zuwanderer brauchen zusätzlich rund 45 000 Wohnungen und rund 2200 Ärztinnen, Ärzte und Pflegende.§ Jahr für Jahr. Diese Endlosspirale ist nicht nachhaltig." },
+        { id:"a4", type:"value", pid:"A", label:"Landschaft, Natur und Lebensqualität — die Schweiz wird zubetoniert",
+          passage:"§Unsere schöne Schweiz wird jeden Tag mehr und mehr zubetoniert. Grünflächen und Wiesen verschwinden.§ Es wird immer enger und höher gebaut. Natur und Ökologie sind unter Druck. Die Lebensqualität nimmt ab." },
+        { id:"a5", type:"fact", pid:"A", label:"Auch mit der Grenze könnten rund 40 000 Personen pro Jahr einwandern",
+          passage:"Die Nachhaltigkeits-Initiative sorgt für eine vernünftige Zuwanderung: Die ständige Wohnbevölkerung darf bis 2050 die 10-Millionen-Grenze nicht überschreiten. §Das heisst: Es könnten immer noch rund 40 000 Personen und Fachkräfte pro Jahr einwandern.§" },
+        { id:"a6", type:"value", pid:"C", label:"Nachfolgende Generationen sollen in Wohlstand, Frieden und schöner Landschaft leben",
+          passage:"«Wir wollen eine lebenswerte Schweiz. §Wir wollen, dass auch nachfolgende Generationen in Wohlstand, Frieden und in einer schönen Landschaft leben können.§ Dass jedes Jahr 100'000 Personen mehr einwandern, das überfordert unsere Infrastrukturen, unsere Integrationsfähigkeit, unsere Gesellschaft als Ganzes." },
+        { id:"a7", type:"fact", pid:"C", label:"Das Leben wird teurer, die Löhne stagnieren — der Wohlstand nimmt schleichend ab",
+          passage:"§Das Leben wird teurer, die Löhne steigen kaum noch, das Wirtschaftswachstum pro Kopf stagniert. So nimmt der Wohlstand schleichend ab.§ So darf es nicht weitergehen." },
+        { id:"a8", type:"fact", pid:"C", label:"Die Kontrolle ist entglitten — netto 1,5 Millionen seit der Personenfreizügigkeit",
+          passage:"«§Uns ist die Kontrolle über die Zuwanderung entglitten. Die Zahlen und Fakten sprechen eine eindeutige Sprache: [...] Seit Einführung der EU-Personenfreizügigkeit sind netto 1,5 Millionen Zuwanderer in die Schweiz gekommen. Die Schweizer Bevölkerung wächst 16x schneller als in Deutschland.§" },
+        { id:"a9", type:"fact", pid:"A", label:"Zuwanderung in den Sozialstaat — Einbrüche, Gewaltverbrechen, Messerangriffe",
+          passage:"§Viele wandern in unseren Sozialstaat ein. Meldungen über Einbrüche, Gewaltverbrechen und Messerangriffe sind alltäglich geworden.§" }
+      ],
+      links:[
+        { from:"a1", to:"a2", kind:"support", warrant:"Die Zahl der Zugewanderten begründet die Zuschreibung der Wohnungsnachfrage." },
+        { from:"a1", to:"a3", kind:"support", warrant:"Der jährliche Zustrom ist die Grösse, aus der der Zusatzbedarf gerechnet wird." },
+        { from:"a2", to:"a0", kind:"support", warrant:"Wer die Zuwanderung als Hauptursache der Wohnungsnot sieht, will sie begrenzen." },
+        { from:"a3", to:"a0", kind:"support", warrant:"Die «Endlosspirale» soll durch die Grenze unterbrochen werden." },
+        { from:"a4", to:"a0", kind:"support", warrant:"Der Schutz von Landschaft und Lebensqualität ist das erklärte Ziel der Initiative." },
+        { from:"a6", to:"a4", kind:"support", warrant:"Die schöne Landschaft für nachfolgende Generationen ist der Wert hinter der Zubetonierungs-Diagnose." },
+        { from:"a6", to:"a0", kind:"support", warrant:"Der Generationen-Wert trägt das Ja der SVP." },
+        { from:"a7", to:"a0", kind:"support", warrant:"Wenn der Wohlstand mit der Zuwanderung sinkt, spricht das für eine Begrenzung." },
+        { from:"a8", to:"a0", kind:"support", warrant:"Ein entglittener Kontrollverlust verlangt nach einer verbindlichen Grenze." },
+        { from:"a9", to:"a0", kind:"support", warrant:"Sozialstaat und Sicherheit sind weitere Folgen, mit denen die Begrenzung begründet wird." },
+        { from:"a5", to:"a0", kind:"support", warrant:"Die 40 000 sollen die Grenze als massvoll, nicht als Stopp ausweisen." }
+      ] },
+    b:{ units:[
+        { id:"b0", type:"position", pid:"B", label:"Nein: Bundesrat und Parlament empfehlen, die Nachhaltigkeitsinitiative abzulehnen",
+          passage:"§Aus all diesen Gründen empfehlen Bundesrat und Parlament, die Nachhaltigkeitsinitiative abzulehnen.§" },
+        { id:"b1", type:"fact", pid:"B", label:"Unternehmen sind auf ausländische Arbeitskräfte angewiesen — der Wohlstand würde leiden",
+          passage:"§Schweizer Unternehmen sind auf ausländische Arbeitskräfte angewiesen. Bei einer Begrenzung der ständigen Wohnbevölkerung könnten sie Arbeitskräfte nur noch eingeschränkt in der EU rekrutieren.§ Die Wirtschaft und der Wohlstand der Schweiz würden leiden." },
+        { id:"b3", type:"fact", pid:"B", label:"Kündigung der Personenfreizügigkeit — die Bilateralen I treten automatisch ausser Kraft",
+          passage:"Das Abkommen über die Personenfreizügigkeit ist mit den anderen Abkommen der Bilateralen I verknüpft. §Bei einer Kündigung des Abkommens über die Personenfreizügigkeit treten diese automatisch ausser Kraft.§" },
+        { id:"b4", type:"value", pid:"B", label:"Der bilaterale Weg sichert den Wohlstand langfristig — in unsicherer Zeit ein grosses Risiko",
+          passage:"Die EU ist die wichtigste politische und wirtschaftliche Partnerin der Schweiz. §Deshalb will der Bundesrat den bilateralen Weg fortführen und so den Wohlstand langfristig sichern.§" },
+        { id:"b5", type:"fact", pid:"B", label:"Ohne Schengen keine EU-Datenbanken, ohne Dublin mehr Asylgesuche und Mehrkosten",
+          passage:"§Bei einer Beendigung der Schengen-Zusammenarbeit könnte die Schweiz nicht mehr auf Datenbanken der EU zugreifen, die für den Schutz der Bevölkerung wichtig sind.§" },
+        { id:"b6", type:"fact", pid:"B", label:"Der Bundesrat setzt auf inländisches Potenzial, Wohnungsbau und eine Schutzklausel",
+          passage:"§Er will das inländische Potenzial an Arbeitskräften besser ausschöpfen, den gemeinnützigen Wohnungsbau fördern und die Zahl der Asylgesuche deutlich reduzieren.§ Im Paket Schweiz – EU (Bilaterale III) hat er eine Schutzklausel ausgehandelt, mit der die Zuwanderung bei schwerwiegenden Problemen vorübergehend eingeschränkt werden kann." },
+        { id:"b7", type:"fact", pid:"D", label:"Schon heute fehlen fast 15 000 Pflegekräfte — ohne Zuwanderung keine Versorgung",
+          passage:"§Denn bereits heute fehlen fast 15'000 Pflegekräfte, bis im Jahr 2030 wird diese Lücke auf 30'000 Personen anwachsen.§ Gleichzeitig gibt es immer mehr Senior:innen. Es ist klar: Ohne Zuwanderung kann die Versorgung im Spital oder die Pflege im Altersheim nicht mehr sichergestellt werden." },
+        { id:"b8", type:"fact", pid:"E", label:"Ohne Zuwanderer gerät die AHV-Finanzierung stärker unter Druck",
+          passage:"§Jährlich verlassen bereits heute über 20'000 Menschen mehr den Arbeitsmarkt, als junge nachrücken. Gleichzeitig gerät die Finanzierung der AHV ohne Zuwanderer noch stärker unter Druck.§" },
+        { id:"b9", type:"value", pid:"F", label:"Die Sorgen sind real — aber Steuerung statt Isolation",
+          passage:"§Die Schweiz darf die Sorgen über die Zuwanderung nicht verdrängen. Aber sie darf sich dadurch auch nicht selbst in die Isolation treiben.§ Wir brauchen eine Politik, die Wachstum steuert und seine grössten Nebenfolgen mindert." },
+        { id:"b10", type:"value", pid:"G", label:"Menschenrechte: Aufenthaltsrecht für Kriegsvertriebene, Saisonnierstatut, Familientrennung",
+          passage:"§NEIN zur Missachtung von Grund- und Menschenrechten: Die Abschaffung des Aufenthaltsrechts für Kriegsvertriebene, die Wiedereinführung des unmenschlichen Saisonnierstatuts und das Auseinanderreissen von Familien.§" }
+      ],
+      links:[
+        { from:"b7", to:"b1", kind:"support", warrant:"Die Pflegelücke konkretisiert die Abhängigkeit von ausländischen Arbeitskräften." },
+        { from:"b8", to:"b1", kind:"support", warrant:"Die AHV-Rechnung erweitert die Abhängigkeit von Arbeitskräften auf die Sozialwerke." },
+        { from:"b1", to:"b0", kind:"support", warrant:"Wer die Arbeitskräfte nicht mehr rekrutieren kann, verliert Wohlstand — ein Ablehnungsgrund." },
+        { from:"b3", to:"b4", kind:"support", warrant:"Weil die Bilateralen I an der Personenfreizügigkeit hängen, steht mit ihr der ganze bilaterale Weg auf dem Spiel." },
+        { from:"b4", to:"b0", kind:"support", warrant:"Die Fortführung des bilateralen Wegs ist der zentrale Grund des Bundesrats gegen die Initiative." },
+        { from:"b3", to:"b5", kind:"support", warrant:"Mit der Kündigung wäre auch die Beteiligung an Schengen und Dublin gefährdet." },
+        { from:"b5", to:"b0", kind:"support", warrant:"Sicherheits- und Asylfolgen sind weitere Ablehnungsgründe." },
+        { from:"b6", to:"b0", kind:"support", warrant:"Wer mildere Mittel hat, braucht die Obergrenze nicht." },
+        { from:"b9", to:"b6", kind:"support", warrant:"Steuerung statt Isolation ist die Haltung, die die milderen Mittel begründet." },
+        { from:"b10", to:"b0", kind:"support", warrant:"Für die GRÜNEN sind die Grundrechtsfolgen ein eigenständiger Ablehnungsgrund." }
+      ] },
+    mappings:[
+      { a:"a3", b:"b7", kind:"factual", note:"Zuwanderung als Ursache des Pflegebedarfs (2200 Ärzte und Pflegende pro 100 000) — oder als einzige Deckung der Pflegelücke (15 000 fehlend)? Beide rechnen mit Zahlen; keine legt die Nettobilanz vor." },
+      { a:"a7", b:"b1", kind:"factual", note:"Wohlstandsverlust in Gegenrichtung: durch die Zuwanderung (SVP) — durch ihre Begrenzung (Bundesrat). Im Prinzip prüfbar; keine Seite zeigt die Rechnung." },
+      { a:"a4", b:"b4", kind:"value", note:"Landschaft und Lebensqualität gegen Wohlstand und verlässliche Partnerschaft — die Rangfolge-Frage der Vorlage; kein Faktum entscheidet sie." },
+      { a:"a1", b:"b9", kind:"agreement", note:"Beide anerkennen den Wachstumsdruck: das Komitee als Kontrollverlust, die Mitte als Sorgen, «die man nicht verdrängen darf». Der Streit beginnt bei der Antwort." },
+      { a:"a5", b:"b3", kind:"factual", note:"Was löst die Grenze aus — eine Begrenzung auf rund 40 000 pro Jahr oder die Kündigung der Personenfreizügigkeit samt Bilateralen I? Der Initiativtext entscheidet; die Ja-Texte nennen den Mechanismus nicht." },
+      { a:"a2", b:"b6", kind:"agreement", note:"Beide sehen die Wohnungsnachfrage; das Komitee will sie über die Zuwanderung senken, der Bundesrat über den Wohnungsbau decken — der Befund ist geteilt, das Mittel nicht." }
+    ]
+  }
+};
+
+
+/* ===== zivildienst ===== */
+/* ---------- Debatten-Karte: Änderung des Zivildienstgesetzes (ZDG), Abstimmung 14.6.2026 (Kartierung: vom Tool; Textstellen verbatim) ----------
+   positions/full = POS/FULL aus zivildienst.ds.js, unverändert übernommen (positions ohne die Legendenfelder full/stype/badge). */
+AM["zivildienst"] = { title:"Zivildienstgesetz", kind:"debate",
+  intro:"Fallbeispiel: die Änderung des Zivildienstgesetzes, abgestimmt am 14. Juni 2026 (52,46 % Ja, angenommen) — links das Ja von Bundesrat und Parlament, SVP, FDP und Die Mitte, rechts das Nein des Referendumskomitees, der SP und der GRÜNEN. Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.",
+  note:"Markiert: die Textstelle, die der Knoten zusammenfasst — wörtlich aus dem Abstimmungsbüchlein bzw. aus den Parteitexten (erhoben 18.9.2026, [...] = Auslassung der Erhebung). Knoten-Formulierung und Kartierung: vom Tool.",
+  positions:[
+    { id:"A", short:"Komitee", name:"Referendumskomitee", c:"#7c3aed", side:"nein", src:"Erläuterungen des Bundesrates (Abstimmungsbüchlein) zur Volksabstimmung vom 14.6.2026, PDF v2, Argumente des Referendumskomitees, S. 30–31 (vollständig)", url:"https://www.admin.ch/de/aenderung-zivildienst" },
+    { id:"B", short:"Bundesrat", name:"Bundesrat und Parlament", c:"#1d4ed8", side:"ja", src:"Erläuterungen des Bundesrates (Abstimmungsbüchlein) zur Volksabstimmung vom 14.6.2026, PDF v2 (korrigierte Fassung), Argumente von Bundesrat und Parlament S. 32–33 (vollständig) sowie «Im Detail» S. 25–28 (Auszüge)", url:"https://www.admin.ch/de/aenderung-zivildienst" },
+    { id:"C", short:"SVP", name:"SVP Schweiz", c:"#b45309", side:"ja", src:"SVP Schweiz, Medienmitteilung «JA zum Zivildienst-Gesetz: Klares Zeichen gegen Armee-Abschleicher», 27.3.2026; SVP-Klartext April 2026, «JA zum Zivildienstgesetz – Armeebestände langfristig sichern» (Werner Salzmann), 9.4.2026", url:"https://www.svp.ch/aktuell/publikationen/medienmitteilungen/ja-zum-zivildienst-gesetz-klares-zeichen-gegen-armee-abschleicher/",
+        urls:[{ l:"Medienmitteilung 27.3.2026", u:"https://www.svp.ch/aktuell/publikationen/medienmitteilungen/ja-zum-zivildienst-gesetz-klares-zeichen-gegen-armee-abschleicher/" }, { l:"SVP-Klartext 9.4.2026", u:"https://www.svp.ch/aktuell/parteizeitung/2026-2/svp-klartext-april-2026/ja-zum-zivildienstgesetz-armeebestaende-langfristig-sichern/" }] },
+    { id:"D", short:"SP", name:"SP Schweiz", c:"#15803d", side:"nein", src:"SP Schweiz, Schlussdokumentation Parteitag 28.2.2026, Traktandum 6 «Parolenfassungen für eidgenössische Abstimmungen», S. 11–12; Kampagnenseite «NEIN zum neuen Zivildienstgesetz am 14. Juni»", url:"https://www.sp-ps.ch/wp-content/uploads/2026/02/Schlussdokumentation_d-1.pdf",
+        urls:[{ l:"Parteitag 28.2.2026 (PDF)", u:"https://www.sp-ps.ch/wp-content/uploads/2026/02/Schlussdokumentation_d-1.pdf" }, { l:"Kampagnenseite", u:"https://www.sp-ps.ch/nein-zum-neuen-zivildienstgesetz-am-14-juni/" }] },
+    { id:"E", short:"FDP", name:"FDP.Die Liberalen", c:"#0891b2", side:"ja", src:"FDP.Die Liberalen, Medienmitteilung «Ein starkes Zeichen für die Sicherheit der Schweiz», 14.6.2026 (Abschnitt zum Zivildienstgesetz, ~70 Wörter; kein DV-Parolenbeschluss auffindbar)", url:"https://www.fdp.ch/aktuell/medienmitteilungen/medienmitteilung-detail/news/ein-starkes-zeichen-fuer-die-sicherheit-der-schweiz" },
+    { id:"F", short:"Die Mitte", name:"Die Mitte Schweiz", c:"#be123c", side:"ja", src:"Die Mitte Schweiz, Medienmitteilung «Delegiertenversammlung: Die Mitte lehnt die Chaos-Initiative klar ab», 28.3.2026 (Abschnitt Zivildienstgesetz); Medienmitteilung «Bevölkerung erwartet Antworten auf Herausforderungen unserer Zeit», 14.6.2026", url:"https://die-mitte.ch/bevoelkerung-erwartet-antworten-auf-herausforderungen/",
+        urls:[{ l:"Medienmitteilung DV 28.3.2026", u:"https://die-mitte.ch/delegiertenversammlung-die-mitte-lehnt-die-chaos-initiative-klar-ab/" }, { l:"Medienmitteilung 14.6.2026", u:"https://die-mitte.ch/bevoelkerung-erwartet-antworten-auf-herausforderungen/" }] },
+    { id:"G", short:"GRÜNE", name:"GRÜNE Schweiz", c:"#4d7c0f", side:"nein", src:"GRÜNE Schweiz, Abstimmungsempfehlung «Nein zur Änderung des Zivildienstgesetzes» (Kampagnenseite, undatiert) und Übersicht «Abstimmungen: 14. Juni 2026»", url:"https://gruene.ch/abstimmungsempfehlung/zivildienst-referendum",
+        urls:[{ l:"Abstimmungsempfehlung", u:"https://gruene.ch/abstimmungsempfehlung/zivildienst-referendum" }, { l:"Übersicht «Abstimmungen: 14. Juni 2026»", u:"https://gruene.ch/abstimmungen-14-juni-2026" }] }
+  ],
+  full:{
+    A:[
+      { h:"Argumente Referendumskomitee", t:"Die Vorlage reduziert die Zahl der Zivildienstleistenden massiv, stärkt die Armee jedoch nicht. Die Zivis werden fehlen, wo sie am dringendsten gebraucht werden. Das schadet dem sozialen Zusammenhalt, der Umwelt und der Sicherheit der Schweiz. Armee und Zivildienst dürfen nicht gegeneinander ausgespielt werden. Wir sind auf alle angewiesen, die sich engagieren wollen. Die Vorlage verstösst gegen die Verfassung und ist bloss der erste Schritt zur vollständigen Abschaffung des Zivildienstes." },
+      { h:"Schädlich und nutzlos", t:"Der Bundesrat rechnet mit 40 Prozent weniger Zulassungen von Zivis. Zivis sind dort im Einsatz, wo Personal fehlt: in Heimen, Spitälern, sozialen Institutionen und Schulen, im Umweltschutz und in der Land- und Alpwirtschaft. Die Vorlage schwächt dieses Engagement massiv. Die Armee hingegen wird von weniger Zivis nicht profitieren. Denn viele, die sich vom Zivildienst abschrecken lassen, werden sich medizinisch ausmustern lassen, um keinen Militärdienst mehr leisten zu müssen. So nimmt die soziale, solidarische Schweiz Schaden." },
+      { h:"Gefährlich", t:"Die Abschreckung führt dazu, dass insgesamt weniger junge Menschen einen Dienst an der Gesellschaft leisten. Das ist für unser Milizsystem gerade in der aktuellen geopolitischen Lage verantwortungslos. Denn für die Sicherheit der Schweiz brauchen wir auch den Zivildienst. Die Zivis haben in der Coronapandemie und bei der Betreuung der ukrainischen Flüchtlinge nach dem Angriff Russlands eine wichtige Rolle gespielt. Wir dürfen nicht junge Menschen abschrecken, die für die Schweiz einen sinnvollen Dienst leisten wollen!" },
+      { h:"Verfassungswidrig", t:"Die Armeebestände sind nicht gefährdet – im Gegenteil: Die Armee hat seit vielen Jahren mehr Soldat:innen als erlaubt. Ein allfälliger Rückgang des Personalbestands Ende der 20er-Jahre wird durch kontinuierliches Wachstum in den 30er-Jahren rasch ausgeglichen. Zudem zählt die Armee Zehntausende nicht mit, obwohl sie aufgeboten werden können. Deshalb ist die Vorlage nicht im öffentlichen Interesse. Eine Massnahme führt dazu, dass Zivis bis zu 5 Monate länger Dienst leisten müssen; eine andere dazu, dass Soldat:innen trotz Gewissenskonflikt in den Militärdienst einrücken müssen. Die Vorlage diskriminiert und bestraft und verletzt die Gewissensfreiheit." },
+      { h:"Salamitaktik", t:"Die Vorlage ist für die Befürworter:innen nur der erste Schritt. Sie wollen auch die Gewissensprüfung wieder einführen und schliesslich den Zivildienst ganz im Zivilschutz auflösen. Diese Entwicklung müssen wir jetzt stoppen!" },
+      { t:"Darum empfiehlt das Referendumskomitee: Nein" },
+      { t:"Der Text auf dieser Doppelseite stammt vom Referendumskomitee. Es ist für den Inhalt und die Wortwahl verantwortlich." }
+    ],
+    B:[
+      { h:"Argumente Bundesrat und Parlament", t:"Der Zivildienst ist die Ausnahme von der Regel, dass alle Schweizer Männer Militärdienst leisten müssen. Mit der Vorlage wird dieser Grundsatz konsequent durchgesetzt. Vor allem die vielen späten Wechsel aus der Armee in den Zivildienst sind ein Problem, das gelöst werden soll. Zudem ist der Zivildienst heute zu attraktiv. Deshalb sollen Vorteile für Zivildienstpflichtige beseitigt werden. Bundesrat und Parlament befürworten die Vorlage insbesondere aus folgenden Gründen:" },
+      { h:"Militärdienstpflicht gilt", t:"Die Verfassung ist klar: Es gibt keine freie Wahl zwischen Militär- und Zivildienst. Der Zivildienst ist ein ziviler Ersatzdienst für Personen, die aus Gewissensgründen keinen Militärdienst leisten können. Die Vorlage stärkt diesen Grundsatz." },
+      { h:"Längere Dienstdauer", t:"Zivildienstpflichtige weisen ihren Gewissenskonflikt dadurch nach, dass sie im Zivildienst 1,5-mal so viele Diensttage leisten, wie sie im Militär noch leisten müssten. Wenn jemand schon viele Diensttage im Militär geleistet hat, ist dieser Nachweis aber schwach, weil nur noch wenige zusätzliche Diensttage hinzukommen. Daher soll der Zivildienst neu mindestens 150 Diensttage dauern, auch wenn jemand spät in den Zivildienst wechselt. Das macht späte Wechsel aus der Armee weniger attraktiv als heute." },
+      { h:"Besserstellung verhindern", t:"Zivildienstpflichtige können im heutigen System ihre Einsätze flexibler planen, als dies im Militär der Fall ist. Mediziner und Medizinstudenten haben zudem einen Vorteil, weil sie ihren Zivildiensteinsatz für ihren Berufsweg oft besser nutzen können als einen Einsatz im Militär. Die Vorlage beseitigt diese unerwünschten Besserstellungen im Zivildienst." },
+      { h:"Armeebestand sichern", t:"Die Armee wird in Zukunft voraussichtlich nicht über genügend Personal und insbesondere nicht über ausreichend Fachkräfte verfügen. Die Vorlage soll dazu führen, dass nicht mehr so viele gut ausgebildete Angehörige der Armee in den Zivildienst wechseln. Das trägt dazu bei, dass die Armee langfristig über genügend geeignete Soldaten und Kader verfügt." },
+      { t:"Aus all diesen Gründen empfehlen Bundesrat und Parlament, die Änderung des Zivildienstgesetzes anzunehmen." },
+      { h:"Im Detail — Ausgangslage (S. 25)", t:"Wer den Militärdienst nicht mit seinem Gewissen vereinbaren kann, hat seit 1996 die Möglichkeit, Zivildienst zu leisten. Er muss dafür ein Gesuch stellen. Zu Beginn hat eine Kommission geprüft, ob der Gewissenskonflikt glaubhaft war. Seit 2009 weisen Gesuchsteller ihren Gewissenskonflikt mit ihrer Bereitschaft nach, im Zivildienst 1,5-mal so viele Diensttage zu leisten wie im Militär. Seit 2009 werden jährlich durchschnittlich über 6000 Personen zum Zivildienst zugelassen. 2025 waren es 7211 Personen. Das ist der höchste Wert seit Einführung des Zivildienstes." },
+      { h:"Im Detail — Sechs Massnahmen: Mindestanzahl Diensttage (S. 26)", t:"Die Vorlage sieht sechs Massnahmen vor, mit denen sichergestellt werden soll, dass der Militärdienst die Regel und der Zivildienst die Ausnahme bleibt. Wer in den Zivildienst wechselt, muss neu mindestens 150 Zivildiensttage leisten, unabhängig davon, wie viele Diensttage im Militär noch verbleiben würden. Damit wird verhindert, dass die zusätzliche Dienstzeit im Zivildienst nur noch wenige Wochen oder gar Tage beträgt, weil bereits viele Militärdiensttage geleistet wurden. Diese Massnahme soll dazu führen, dass die Armee weniger Soldaten verliert, in deren Ausbildung sie investiert hat." },
+      { h:"Im Detail — Gleiche Bedingungen für Kader · Keine Sonderregel für Mediziner (S. 27)", t:"Heute müssen Unteroffiziere und Offiziere, die in den Zivildienst wechseln, nur 10 Prozent mehr Diensttage leisten, als im Militär noch verbleiben würden. Neu sollen auch Unteroffiziere und Offiziere 1,5-mal so viele Diensttage leisten müssen. Diese Massnahme soll die Abgänge beim Armeekader reduzieren. Der Armee fehlt medizinisches Personal. Mediziner und Medizinstudenten können heute den Zivildienst als berufliche Erfahrung nutzen, indem sie einen Einsatz in ihrem Fachgebiet absolvieren. Dies macht es für sie attraktiv, Zivildienst zu leisten. Darum sollen Zivildiensteinsätze, die ein Studium der Human-, Zahn- oder Veterinärmedizin erfordern, künftig nicht mehr erlaubt sein. Mediziner und Medizinstudenten können bei einem Gewissenskonflikt aber weiterhin Zivildienst in einem anderen Tätigkeitsbereich leisten." },
+      { h:"Im Detail — Keine Umgehung der Schiesspflicht (S. 27)", t:"Wer bereits alle Militärdiensttage geleistet hat und in den Zivildienst wechselt, muss gemäss heutigem System keine Zivildiensteinsätze mehr leisten. Im Militär bestünden aber weiterhin gewisse Pflichten, etwa die jährliche Schiesspflicht, das sogenannte Obligatorische. Deshalb sollen Personen, die alle Militärdiensttage absolviert haben, neu nicht mehr in den Zivildienst wechseln dürfen. Bei einem Aufgebot zum Aktiv- oder Assistenzdienst kann jedoch weiterhin ein Zivildienstgesuch gestellt werden." },
+      { h:"Im Detail — Jährlich Dienst leisten · Rascher Einsatz nach Zulassung (S. 27–28, korrigierte Fassung)", t:"Analog zur Regelung im Militär müssen Zivildienstpflichtige ab dem Jahr nach ihrem ersten Einsatz jährlich Dienst leisten, bis alle Diensttage geleistet sind. Bisher konnten Zivildiensteinsätze freier geplant werden. Der Zivildienst kennt einen sogenannten langen Einsatz von 180 Tagen. Er entspricht der Rekrutenschule im Militär, dauert aber länger. Wer während der Rekrutenschule ein Gesuch zum Zivildienst stellt, muss neu den langen Einsatz bereits im Jahr nach der Zulassung absolvieren. So gilt die gleiche Regel wie im Militär: Aus der Rekrutenschule entlassene Personen werden rasch wieder aufgeboten." },
+      { h:"Im Detail — Auswirkungen (S. 28)", t:"Wie stark sich die Vorlage auf die Anzahl der Zivildienstpflichtigen und die Armeebestände auswirkt, lässt sich nicht genau vorhersagen. Es ist aber davon auszugehen, dass es mit der Vorlage weniger Wechsel in den Zivildienst geben wird. Dadurch wird der Zivildienst langfristig jedoch weniger für die Gesellschaft leisten können." }
+    ],
+    C:[
+      { h:"Medienmitteilung Parteivorstand, Maienfeld, 27.3.2026", t:"Ohne Soldaten keine Armee. Ohne Armee keine Sicherheit für die Schweizer Bevölkerung. An seiner Sitzung in Maienfeld (GR) spricht sich der Parteivorstand der SVP Schweiz einstimmig für das neue Zivildienst-Gesetz aus. Die dringend nötigen Verschärfungen stärken die Wehrpflicht." },
+      { t:"Nationalrat Walter Gartmann (SG) hat gegenüber dem Parteivorstand aufgezeigt, dass die Korrekturen beim Zivildienst dringend nötig sind: „Die Bedrohungslage hat dramatisch zugenommen. Wir müssen die Armee stärken. Es kann nicht sein, dass immer mehr Armeeangehörige vom Militärdienst in den Zivildienst wechseln. So gefährden wir die Verteidigungsfähigkeit der Armee. Die Soldaten und Offiziere sind das Rückgrat unserer Armee.\"" },
+      { t:"Die wichtigsten Punkte der Vorlage: Künftig sollen alle Personen, die vom Militär in den Zivildienst wechseln, mindestens 150 Diensttage leisten. Zudem soll die Regelung, wonach Zivildienstleistende anderthalbmal mehr Diensttage leisten müssen als Angehörige der Armee, auch für Unteroffiziere und Offiziere gelten. Der Zivildienst muss jährlich geleistet werden." },
+      { t:"Bezeichnenderweise sind die SP und die Grünen gegen die Verschärfungen im Zivildienstgesetz. „Sie zeigen damit ihr wahres Gesicht\", so Nationalrat Gartmann, „sie wollen die Armee weiter aushungern, schwächen und in letzter Konsequent abschaffen.\" Der Parteivorstand der SVP Schweiz hat einstimmig und abschliessend die JA-Parole zum Zivildienst-Gesetz beschlossen." },
+      { h:"SVP-Klartext April 2026 — Ständerat Werner Salzmann, 9.4.2026", t:"Die geplante Änderung des Zivildienstgesetzes ist ein wichtiger Schritt, um die stetige Abwanderung aus der Armee zu bremsen. Die vorgeschlagenen Massnahmen gehen jedoch noch nicht weit genug, um die für die Verteidigung nötige Stärke der Armee langfristig sicherzustellen." },
+      { t:"Die Schweiz steht angesichts der weltweiten Bedrohungslage vor wachsenden Herausforderungen. Nebst der mangelhaften Ausrüstung der Armee machen auch deren Bestände Sorgen. Immer mehr Armeeangehörige wechseln vom Militärdienst in den Zivildienst. Dies gefährdet die Verteidigungsfähigkeit der Armee und erschwert eine verlässliche Planung." },
+      { t:"Die nun vorgeschlagenen Änderungen des Zivildienstgesetzes enthalten erste Verbesserungen. So sollen künftig alle Personen, die vom Militär in den Zivildienst wechseln, mindestens 150 Diensttage leisten. Zudem soll die Regelung, wonach Zivildienstleistende anderthalbmal mehr Diensttage leisten müssen als Angehörige der Armee, auch für Unteroffiziere und Offiziere gelten. Weiter sollen Personen mit abgeschlossenem Medizinstudium nicht mehr in den Zivildienst wechseln dürfen. Jeder Zivildienstleistende soll jährlich einen Einsatz leisten, und der sogenannte lange Einsatz soll spätestens im Jahr nach der Zulassung zum Zivildienst erfolgen." },
+      { t:"Aus diesen Gründen braucht es am 14. Juni ein klares JA zur Änderung des Zivildienstgesetzes. Diese Massnahmen sind längst überfällig und werden den stetigen Anstieg der Abgänge aus der Armee in den Zivildienst zumindest bremsen. Langfristig braucht es jedoch weitergehende Reformen. Entscheidend wäre insbesondere die Wiedereinführung einer Gewissensprüfung für den Zivildienst. Gleichzeitig wäre es sinnvoll, Zivildienst und Zivilschutz in einem Katastrophenschutz zusammenzuführen. Nur mit solchen strukturellen Anpassungen können wir die Wehrgerechtigkeit wieder herstellen und den Wehrwillen stärken. Dies ist eine wichtige Grundlage für die langfristige Verteidigungsfähigkeit unserer Armee und somit für die Sicherheit unserer Schweiz." }
+    ],
+    D:[
+      { h:"Parteitag 28.2.2026, Traktandum 6 — Empfehlung des Präsidiums", t:"Zivildienstleistende sind dort im Einsatz, wo schon heute Personal fehlt: in Spitälern, Alters- und Pflegeheimen, sozialen Organisationen und Schulen – aber auch in der Landwirtschaft und beim Naturschutz. Die geplanten Verschärfungen schwächen dieses Engagement massiv. Sie führen dazu, dass weniger junge Menschen Zivildienst leisten können – obwohl ihr Einsatz für das gesellschaftliche Zusammenleben dringend gebraucht wird." },
+      { h:"Schädlicher Leistungsabbau in Schulen und in der Pflege", t:"Die Verschärfung reduziert die Zulassungen zum Zivildienst um über 40%. Das gefährdet die Versorgung in Schulen, Pflege und Betreuung – gerade dort, wo schon heute die Kapazitätsgrenzen überschritten sind. Zudem dürfen Medizinstudierende nicht mehr im medizinischen Bereich eingesetzt werden." },
+      { h:"Schikane von Zivildienstleistenden ist keine Lösung", t:"Die Vorlage führt beim Übertritt in den Zivildienst zahlreiche Schikanen ein. Zivildienstleistende sollen ihren sechsmonatigen Einsatz innert zwölf Monaten planen und vollständig leisten müssen. Zudem soll die Mindestdauer neu 150 Tage betragen – selbst, wenn im Militär nur noch wenige Diensttage offen wären. Das verlängert die Dienstzeit übermässig, macht Einsätze kaum planbar und ignoriert die Realität von Ausbildung, Familie und Beruf." },
+      { h:"Gewissensfreiheit wird angegriffen", t:"Wer aus Gewissensgründen den Militärdienst ablehnt, übernimmt im Zivildienst Verantwortung. Dieses verfassungsmässige Recht für junge Menschen wird mit der Vorlage eingeschränkt. Damit wird nicht nur die Gewissensfreiheit angegriffen, sondern auch der gesellschaftliche Wert des Zivildienstes herabgesetzt." },
+      { t:"Empfehlung des Präsidiums: Nein zu den Verschärfungen des Zivildienstes." },
+      { h:"Kampagnenseite «NEIN zum neuen Zivildienstgesetz am 14. Juni»", t:"Zivildienstleistungen sind unverzichtbar - insbesondere in Spitälern, Alters- und Pflegeheimen, Schulen, beim Natur- und Umweltschutz sowie in der Land- und Alpwirtschaft. Das neue Zivildienstgesetz führt zu einem massiven Abbau dieser Leistungen, obwohl sie dringend gebraucht werden. Wir dürfen junge Menschen nicht davon abhalten, sich für die Gemeinschaft einzusetzen. Darum sagen wir Nein zum neuen Zivildienstgesetz:" },
+      { h:"Die Vorlage schadet Seniorinnen und Schüler", t:"Die Vorlage will die Zulassungen zum Zivildienst um 40 Prozent senken, obwohl Zivildienstleistende genau dort im Einsatz sind, wo heute Personal fehlt. Spitäler, Alters- und Pflegeheime und Schulen müssten Leistungen streichen." },
+      { h:"Die Vorlage gefährdet Naturschutz und Biodiversität", t:"Zivildienstleistende leisten einen unverzichtbaren Beitrag für unsere Umwelt – sie pflegen wertvolle Alpweiden, bekämpfen invasive Pflanzen und schützen unsere Biodiversität. Ohne ihren Einsatz würden wertvolle Flächen verwildern und einheimische Arten verdrängt. Allein im Naturschutz leisteten sie im letzten Jahr über 230'000 Diensttage – ein unersetzlicher Beitrag, den der geplante Abbau direkt gefährdet." },
+      { h:"Die Vorlage will einen sinnvollen Dienst an der Gemeinschaft erschweren", t:"Die Vorlage führt beim Übertritt vom Militär- in den Zivildienst zahlreiche Schikanen ein. Doch wer aus Gewissensgründen den Militärdienst ablehnt, übernimmt im Zivildienst Verantwortung. Mit der Vorlage wird nicht nur die Gewissensfreiheit angegriffen, sondern auch der gesellschaftliche Wert des Zivildienstes herabgesetzt. Junge Menschen sollen nicht abgeschreckt werden, einen sinnvollen Dienst für die Gesellschaft zu leisten." }
+    ],
+    E:[
+      { h:"Medienmitteilung «Ein starkes Zeichen für die Sicherheit der Schweiz», 14.6.2026", t:"Die heutige Annahme der Revision des Bundesgesetzes über den zivilen Ersatzdienst (Zivildienstgesetz) ist ein wichtiger Schritt zur Wiederherstellung unserer Verteidigungsfähigkeit und zur Stärkung der Sicherheit der Schweiz. Denn eine moderne Armee und ein moderner Zivilschutz können ihre Aufgaben nur erfolgreich wahrnehmen, wenn sie auch über genügend personelle Bestände verfügen." },
+      { t:"Eine Mehrheit des Schweizer Stimmvolkes sagte heute: Der Zivildienst soll eine Ausnahme und keine Alternative zum Militärdienst bleiben. Angesichts des akuten Personalmangels bei der Armee sowie der instabilen sicherheitspolitischen Lage ist es zentral, dass die Dienstpflicht nicht zu einem Menü «à la carte» wird." }
+    ],
+    F:[
+      { h:"Medienmitteilung zur Delegiertenversammlung Zug, 28.3.2026", t:"Mit grosser Mehrheit sprachen sich die Delegierten zudem für die Revision des Zivildienstgesetzes aus. Sie erachten diese als zentral für die Sicherung der Armeebestände und die Gewährleistung der Verteidigungsfähigkeit der Schweiz." },
+      { t:"Bundesrat Martin Pfister wies in seiner Ansprache auf die verschärfte internationale Sicherheitslage hin. Angesichts der Rückkehr des Krieges nach Europa, hybrider Bedrohungen und geopolitischer Unsicherheiten betonte er die Notwendigkeit, die Verteidigungsfähigkeit der Schweiz zu stärken. Die Mitte unterstützt diesen Kurs und setzt sich für eine glaubwürdige, gut ausgerüstete und durch eine Mehrwehrtsteuererhöhung transparent finanzierte Armee ein." },
+      { h:"Medienmitteilung 14.6.2026 — Zivildienstgesetz angenommen: Armee stärken, Zivildienst erhalten", t:"Die Mitte begrüsst die Annahme der Revision des Zivildienstgesetzes. Das Resultat zeigt das Vertrauen der Bevölkerung in die bestehenden Institutionen und deren Arbeit. Das Ergebnis macht deutlich: Die Menschen wollen Sicherheit und Stabilität, gleichzeitig ist ihnen ein starker Zivildienst wichtig." },
+      { h:"Sicherheit braucht verlässliche Strukturen", t:"Sicherheit ist keine Selbstverständlichkeit mehr. Die Lage in Europa zeigt, wie wichtig eine einsatzfähige Armee und verlässliche Strukturen für unser Land sind. Die Schweiz braucht genügend gut ausgebildete Soldat:innen, Spezialist:innen und Kaderpersonen, um den sicherheitspolitischen Herausforderungen wirksam begegnen zu können. Die Revision leistet dazu einen wichtigen Beitrag." },
+      { h:"Zitat Philipp Matthias Bregy, Parteipräsident", t:"Mit diesem Entscheid ist die Arbeit nicht abgeschlossen. Jetzt müssen wir die Zukunft der Dienstpflicht gestalten und dafür sorgen, dass Armee, Bevölkerungsschutz und Zivildienst langfristig auf genügend engagierte Menschen zählen können." },
+      { h:"Armee und Zivildienst gehören zusammen", t:"Militärdienst und Zivildienst leisten beide einen wichtigen Beitrag für unser Land. Es geht nicht um ein Gegeneinander, sondern um ein funktionierendes Gesamtsystem. Die Mitte hat sich von Beginn an für eine ausgewogene Lösung eingesetzt. Die Revision stärkt die Armee, ohne den Zivildienst abzuschaffen oder Grundrechte einzuschränken. Gleichzeitig bleibt der Zivildienst ein wichtiger Pfeiler unseres Gemeinwesens." },
+      { h:"Umsetzung sorgfältig begleiten", t:"Nun gilt es, die beschlossenen Massnahmen sorgfältig umzusetzen und ihre Wirkung laufend zu überprüfen. Für Die Mitte gehen die Arbeiten weiter. Die Diskussion über die Zukunft der Dienstpflicht sowie die Sicherstellung der personellen Ressourcen von Armee, Bevölkerungsschutz und Zivildienst bleibt für Die Mitte auf der politischen Agenda." }
+    ],
+    G:[
+      { h:"Parolentext, Übersicht «Abstimmungen: 14. Juni 2026»", t:"Mit sechs Änderungen soll der Wechsel vom Armeedienst in den Zivildienst erschwert werden. Diese Änderungen widersprechen dem Gleichbehandlungsgebot von Zivil- und Armeedienst und sind grundrechtswidrig." },
+      { h:"Abstimmungsempfehlung «Nein zur Änderung des Zivildienstgesetzes» — Wieso NEIN stimmen?", t:"Die Änderungen sind grund- und völkerrechtswidrig: Die Mindestanzahl von 150 Diensttagen ungeachtet der bereits geleisteten Militärdiensttage widerspricht dem Gleichbehandlungsgebot. Die Änderungen schwächen Bereiche in denen bereits heute Personalmangel besteht: Weniger Zivildienstleistende bedeutet weniger Unterstützung in Spitälern, Pflegeheimen, Schulen und im Natur- und Umweltschutz. Gefährliche Bevorzugung der Armee: Die Änderungen des Zivildienstgesetzes haben zum Ziel, den Bestand der Armee zu erhöhen. Dieser war aber bereits in den letzten Jahren widerrechtlich zu hoch. Dabei hat die Armee keinen Mangel an Dienstpflichtigen." },
+      { h:"Um was geht es?", t:"Die rechte Mehrheit im Parlament will den Zivildienst schwächen. Mit sechs Änderungen des Zivildienstgesetzes soll der Zivildienst unattraktiver gemacht werden. So soll unter anderem die Dienstdauer für Personen, die bereits Militärdiensttage geleistet haben, massiv erhöht werden. Diese Änderungen widersprechen dem Gleichbehandlungsgebot von Zivil- und Armeedienst und sind grundrechtswidrig. Das Ziel ist mehr Militärdienstleistende, obschon die Armee in den letzten Jahren zu viel Personal hatte. Wenn in Zukunft weniger junge Männer Zivildienst leisten, heisst das aber auch weniger Unterstützung in Spitälern, Pflegeheimen, Schulen oder dem Natur- und Umweltschutz. Dank dem Referendum können diese Änderungen am 14. Juni verhindert werden." },
+      { h:"Verstoss gegen grund- und völkerrechtliche Vorgaben", t:"Die vorgesehenen Änderungen sind nicht nur schikanös, sie verletzen auch grund- und völkerrechtliche Vorgaben. Dass nach Abschluss des Militärdienstes nicht mehr in den Zivildienst gewechselt werden kann, verstösst gegen die Glaubens- und Gewissensfreiheit. Es darf nicht sein, dass Personen gegen ihren Willen Militärdienst leisten müssen." },
+      { h:"Zitat Gerhard Andrey, Nationalrat FR", t:"«Der Angriff auf den Zivildienst zugunsten der Armee schwächt eine gesellschaftlich wichtige Institution. Zivildienstleistende leisten konkrete und unverzichtbare Unterstützung für die Bevölkerung, wo diese sie am dringendsten benötigt.»" },
+      { h:"Unverhältnismässige Bevorzugung der Armee", t:"Die Änderungen des Zivildienstgesetzes haben zum Ziel, den Bestand der Armee zu erhöhen. Dabei war dieser in den letzten Jahren widerrechtlich zu hoch. Der Effektivbestand der Armee war in den letzten Jahren mit 147'000 Armeeangehörigen widerrechtlich höher als die bislang im Gesetz vorgesehenen 140'000 Personen, die es braucht, damit der Sollbestand von 100'000 tatsächlich besetzten Positionen sichergestellt ist." },
+      { t:"Nebst der Änderung des Zivildienstgesetzes kommt am 14. Juni auch noch die Chaos-Initiative der SVP zu Abstimmung, die wir ebenfalls klar ablehnen." }
+    ]
+  },
+  data:{
+    labelA:"Ja — Bundesrat, SVP, FDP, Mitte", labelB:"Nein — Komitee, SP, GRÜNE",
+    a:{ units:[
+        { id:"a0", type:"position", pid:"B", label:"Ja: Bundesrat und Parlament empfehlen, die Änderung des Zivildienstgesetzes anzunehmen",
+          passage:"§Aus all diesen Gründen empfehlen Bundesrat und Parlament, die Änderung des Zivildienstgesetzes anzunehmen.§" },
+        { id:"a1", type:"fact", pid:"B", label:"Seit 2009 über 6000 Zulassungen pro Jahr — 2025 waren es 7211, der höchste Wert",
+          passage:"§Seit 2009 werden jährlich durchschnittlich über 6000 Personen zum Zivildienst zugelassen. 2025 waren es 7211 Personen.§ Das ist der höchste Wert seit Einführung des Zivildienstes." },
+        { id:"a2", type:"fact", pid:"B", label:"Der Gewissenskonflikt wird mit 1,5-mal so vielen Diensttagen nachgewiesen",
+          passage:"§Zivildienstpflichtige weisen ihren Gewissenskonflikt dadurch nach, dass sie im Zivildienst 1,5-mal so viele Diensttage leisten, wie sie im Militär noch leisten müssten.§ Wenn jemand schon viele Diensttage im Militär geleistet hat, ist dieser Nachweis aber schwach, weil nur noch wenige zusätzliche Diensttage hinzukommen." },
+        { id:"a3", type:"fact", pid:"B", label:"Neu mindestens 150 Diensttage — das macht späte Wechsel weniger attraktiv",
+          passage:"Wenn jemand schon viele Diensttage im Militär geleistet hat, ist dieser Nachweis aber schwach, weil nur noch wenige zusätzliche Diensttage hinzukommen. §Daher soll der Zivildienst neu mindestens 150 Diensttage dauern, auch wenn jemand spät in den Zivildienst wechselt. Das macht späte Wechsel aus der Armee weniger attraktiv als heute.§" },
+        { id:"a4", type:"fact", pid:"B", label:"Die Armee wird künftig nicht genügend Personal und Fachkräfte haben",
+          passage:"§Die Armee wird in Zukunft voraussichtlich nicht über genügend Personal und insbesondere nicht über ausreichend Fachkräfte verfügen.§ Die Vorlage soll dazu führen, dass nicht mehr so viele gut ausgebildete Angehörige der Armee in den Zivildienst wechseln." },
+        { id:"a5", type:"fact", pid:"B", label:"Weniger Wechsel gut ausgebildeter Armeeangehöriger sichert Soldaten und Kader",
+          passage:"Die Armee wird in Zukunft voraussichtlich nicht über genügend Personal und insbesondere nicht über ausreichend Fachkräfte verfügen. §Die Vorlage soll dazu führen, dass nicht mehr so viele gut ausgebildete Angehörige der Armee in den Zivildienst wechseln. Das trägt dazu bei, dass die Armee langfristig über genügend geeignete Soldaten und Kader verfügt.§" },
+        { id:"a6", type:"fact", pid:"B", label:"Die Wirkung lässt sich nicht genau vorhersagen — erwartet werden weniger Wechsel",
+          passage:"§Wie stark sich die Vorlage auf die Anzahl der Zivildienstpflichtigen und die Armeebestände auswirkt, lässt sich nicht genau vorhersagen. Es ist aber davon auszugehen, dass es mit der Vorlage weniger Wechsel in den Zivildienst geben wird.§ Dadurch wird der Zivildienst langfristig jedoch weniger für die Gesellschaft leisten können." },
+        { id:"a7", type:"value", pid:"C", label:"SVP: Wehrgerechtigkeit wiederherstellen und den Wehrwillen stärken",
+          passage:"Entscheidend wäre insbesondere die Wiedereinführung einer Gewissensprüfung für den Zivildienst. Gleichzeitig wäre es sinnvoll, Zivildienst und Zivilschutz in einem Katastrophenschutz zusammenzuführen. §Nur mit solchen strukturellen Anpassungen können wir die Wehrgerechtigkeit wieder herstellen und den Wehrwillen stärken.§" },
+        { id:"a8", type:"value", pid:"E", label:"FDP: Die Dienstpflicht darf kein Menü «à la carte» werden",
+          passage:"Eine Mehrheit des Schweizer Stimmvolkes sagte heute: Der Zivildienst soll eine Ausnahme und keine Alternative zum Militärdienst bleiben. §Angesichts des akuten Personalmangels bei der Armee sowie der instabilen sicherheitspolitischen Lage ist es zentral, dass die Dienstpflicht nicht zu einem Menü «à la carte» wird.§" },
+        { id:"a9", type:"value", pid:"F", label:"Die Mitte: kein Gegeneinander — Militär- und Zivildienst als Gesamtsystem",
+          passage:"§Militärdienst und Zivildienst leisten beide einen wichtigen Beitrag für unser Land. Es geht nicht um ein Gegeneinander, sondern um ein funktionierendes Gesamtsystem.§ Die Mitte hat sich von Beginn an für eine ausgewogene Lösung eingesetzt. Die Revision stärkt die Armee, ohne den Zivildienst abzuschaffen oder Grundrechte einzuschränken." }
+      ],
+      links:[
+        { from:"a1", to:"a0", kind:"support", warrant:"Der höchste Zulassungswert seit Einführung des Zivildienstes ist der Befund, an dem die Vorlage ansetzt." },
+        { from:"a2", to:"a3", kind:"support", warrant:"Weil der Nachweis über den Faktor 1,5 bei späten Wechseln schwach wird, soll eine Mindestdauer hinzukommen." },
+        { from:"a3", to:"a5", kind:"support", warrant:"Weniger attraktive späte Wechsel sind das Mittel, mit dem die Abgänge gebremst werden sollen." },
+        { from:"a4", to:"a5", kind:"support", warrant:"Der erwartete Personalmangel ist der Grund, weshalb Abgänge in den Zivildienst gebremst werden sollen." },
+        { from:"a5", to:"a0", kind:"support", warrant:"Wer den Armeebestand über weniger Wechsel sichern will, stimmt der Vorlage zu." },
+        { from:"a6", to:"a0", kind:"support", warrant:"Weniger Wechsel in den Zivildienst ist die Wirkung, mit der die Vorlage begründet wird." },
+        { from:"a7", to:"a0", kind:"support", warrant:"Wehrgerechtigkeit und Wehrwille sind für die SVP der Massstab, an dem sie die Vorlage bejaht." },
+        { from:"a8", to:"a4", kind:"support", warrant:"Der «akute Personalmangel» der FDP-Lesart deckt sich mit der Bestandsdiagnose des Bundesrats." },
+        { from:"a9", to:"a0", kind:"support", warrant:"Für Die Mitte ist die Zustimmung möglich, weil die Revision den Zivildienst nicht abschafft." }
+      ] },
+    b:{ units:[
+        { id:"b0", type:"position", pid:"A", label:"Nein: Das Referendumskomitee empfiehlt, die Änderung abzulehnen",
+          passage:"§Darum empfiehlt das Referendumskomitee: Nein§" },
+        { id:"b1", type:"fact", pid:"A", label:"Der Bundesrat rechnet mit 40 Prozent weniger Zulassungen von Zivis",
+          passage:"§Der Bundesrat rechnet mit 40 Prozent weniger Zulassungen von Zivis.§ Zivis sind dort im Einsatz, wo Personal fehlt: in Heimen, Spitälern, sozialen Institutionen und Schulen, im Umweltschutz und in der Land- und Alpwirtschaft." },
+        { id:"b2", type:"fact", pid:"A", label:"Zivis arbeiten dort, wo Personal fehlt: Heime, Spitäler, Schulen, Umwelt, Landwirtschaft",
+          passage:"§Zivis sind dort im Einsatz, wo Personal fehlt: in Heimen, Spitälern, sozialen Institutionen und Schulen, im Umweltschutz und in der Land- und Alpwirtschaft.§ Die Vorlage schwächt dieses Engagement massiv." },
+        { id:"b3", type:"fact", pid:"A", label:"Die Armee profitiert nicht — viele lassen sich stattdessen ausmustern",
+          passage:"Die Vorlage schwächt dieses Engagement massiv. §Die Armee hingegen wird von weniger Zivis nicht profitieren. Denn viele, die sich vom Zivildienst abschrecken lassen, werden sich medizinisch ausmustern lassen, um keinen Militärdienst mehr leisten zu müssen.§" },
+        { id:"b4", type:"value", pid:"A", label:"Die Vorlage diskriminiert, bestraft und verletzt die Gewissensfreiheit",
+          passage:"Eine Massnahme führt dazu, dass Zivis bis zu 5 Monate länger Dienst leisten müssen; eine andere dazu, dass Soldat:innen trotz Gewissenskonflikt in den Militärdienst einrücken müssen. §Die Vorlage diskriminiert und bestraft und verletzt die Gewissensfreiheit.§" },
+        { id:"b5", type:"value", pid:"A", label:"Armee und Zivildienst nicht gegeneinander ausspielen — es braucht alle",
+          passage:"Das schadet dem sozialen Zusammenhalt, der Umwelt und der Sicherheit der Schweiz. §Armee und Zivildienst dürfen nicht gegeneinander ausgespielt werden. Wir sind auf alle angewiesen, die sich engagieren wollen.§" },
+        { id:"b6", type:"fact", pid:"D", label:"SP: über 230'000 Diensttage allein im Naturschutz im letzten Jahr",
+          passage:"Zivildienstleistende leisten einen unverzichtbaren Beitrag für unsere Umwelt – sie pflegen wertvolle Alpweiden, bekämpfen invasive Pflanzen und schützen unsere Biodiversität. Ohne ihren Einsatz würden wertvolle Flächen verwildern und einheimische Arten verdrängt. §Allein im Naturschutz leisteten sie im letzten Jahr über 230'000 Diensttage – ein unersetzlicher Beitrag, den der geplante Abbau direkt gefährdet.§" },
+        { id:"b7", type:"value", pid:"D", label:"SP: Der gesellschaftliche Wert des Zivildienstes wird herabgesetzt",
+          passage:"Doch wer aus Gewissensgründen den Militärdienst ablehnt, übernimmt im Zivildienst Verantwortung. §Mit der Vorlage wird nicht nur die Gewissensfreiheit angegriffen, sondern auch der gesellschaftliche Wert des Zivildienstes herabgesetzt. Junge Menschen sollen nicht abgeschreckt werden, einen sinnvollen Dienst für die Gesellschaft zu leisten.§" },
+        { id:"b8", type:"value", pid:"G", label:"GRÜNE: 150 Diensttage widersprechen dem Gleichbehandlungsgebot",
+          passage:"Die Änderungen sind grund- und völkerrechtswidrig: §Die Mindestanzahl von 150 Diensttagen ungeachtet der bereits geleisteten Militärdiensttage widerspricht dem Gleichbehandlungsgebot.§" },
+        { id:"b9", type:"fact", pid:"G", label:"GRÜNE: Effektivbestand 147'000 statt 140'000 — widerrechtlich zu hoch",
+          passage:"Die Änderungen des Zivildienstgesetzes haben zum Ziel, den Bestand der Armee zu erhöhen. Dabei war dieser in den letzten Jahren widerrechtlich zu hoch. §Der Effektivbestand der Armee war in den letzten Jahren mit 147'000 Armeeangehörigen widerrechtlich höher als die bislang im Gesetz vorgesehenen 140'000 Personen§, die es braucht, damit der Sollbestand von 100'000 tatsächlich besetzten Positionen sichergestellt ist." }
+      ],
+      links:[
+        { from:"b1", to:"b0", kind:"support", warrant:"Der erwartete Rückgang um 40 Prozent ist der Ausgangspunkt des Neins." },
+        { from:"b2", to:"b0", kind:"support", warrant:"Weil Zivis dort arbeiten, wo Personal fehlt, gilt der Rückgang als Verlust." },
+        { from:"b6", to:"b2", kind:"support", warrant:"Die Diensttage im Naturschutz beziffern eines dieser Einsatzfelder." },
+        { from:"b3", to:"b0", kind:"support", warrant:"Wenn die Armee von weniger Zivis nicht profitiert, entfällt der Nutzen der Vorlage." },
+        { from:"b9", to:"b3", kind:"support", warrant:"War der Bestand ohnehin höher als erlaubt, fehlt dem Bestandsargument die Grundlage." },
+        { from:"b4", to:"b0", kind:"support", warrant:"Eine Verletzung der Gewissensfreiheit ist für das Komitee ein eigenständiger Ablehnungsgrund." },
+        { from:"b8", to:"b4", kind:"support", warrant:"Die Ungleichbehandlung der bereits geleisteten Diensttage ist der rechtliche Kern dieses Einwands." },
+        { from:"b5", to:"b0", kind:"support", warrant:"Wer beide Dienste braucht, lehnt eine Vorlage ab, die den einen zulasten des anderen schwächt." },
+        { from:"b7", to:"b5", kind:"support", warrant:"Der gesellschaftliche Wert des Zivildienstes ist der Grund, weshalb er nicht verrechnet werden soll." }
+      ] },
+    mappings:[
+      { a:"a5", b:"b3", kind:"factual",
+        note:"Dieselbe Kausalkette, entgegengesetzt beantwortet: weniger Wechsel sichern «genügend geeignete Soldaten und Kader» — oder die Armee profitiert nicht, weil sich Abgeschreckte ausmustern lassen. Prüfbar wäre, wohin die Nicht-Zugelassenen gehen; keiner der beiden Texte legt Zahlen dazu vor." },
+      { a:"a3", b:"b8", kind:"factual",
+        note:"Was die Mindestdauer von 150 Tagen bewirkt: sie macht späte Wechsel «weniger attraktiv als heute» (Bundesrat) — oder sie behandelt bereits geleistete Militärdiensttage ungleich (GRÜNE). Beide beschreiben dieselbe Regel; ob sie das Gleichbehandlungsgebot verletzt, ist eine Rechtsfrage." },
+      { a:"a4", b:"b9", kind:"factual",
+        note:"Gegenteilige Bestandsdiagnosen: künftig zu wenig Personal und Fachkräfte (Bundesrat) — zuletzt 147'000 statt 140'000 und damit «widerrechtlich zu hoch» (GRÜNE). Die eine Aussage betrifft die Zukunft, die andere die Vergangenheit; beide Zahlen sind nachschlagbar." },
+      { a:"a6", b:"b1", kind:"factual",
+        note:"«40 Prozent weniger Zulassungen» schreibt das Komitee dem Bundesrat zu; im erhobenen Text des Bundesrats steht die Zahl nicht, dort heisst es, die Wirkung «lässt sich nicht genau vorhersagen». Woher die 40 Prozent stammen, wäre in den Materialien zur Vorlage nachzuschlagen." },
+      { a:"a7", b:"b4", kind:"value",
+        note:"Wehrgerechtigkeit und Wehrwille gegen Gewissensfreiheit und Gleichbehandlung — die Rangfolge-Frage der Vorlage; kein Faktum entscheidet sie." },
+      { a:"a9", b:"b5", kind:"agreement",
+        note:"Beide Seiten lehnen ein Gegeneinander von Armee und Zivildienst ab und nennen beide Dienste wichtig — die Sätze sind fast deckungsgleich, die Schlussfolgerung ist entgegengesetzt." }
+    ]
+  }
+};
+
+
+function wrapText(text, maxChars) {
+  const words = String(text).split(/\s+/);
+  const lines = [];
+  let line = '';
+  for (let w of words) {
+    while (w.length > maxChars) { lines.push(w.slice(0, maxChars - 1) + '-'); w = w.slice(maxChars - 1); }
+    if (!line) line = w;
+    else if ((line + ' ' + w).length <= maxChars) line += ' ' + w;
+    else { lines.push(line); line = w; }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function computeLevels(units, links) {
+  const out = {};
+  const touched = new Set();
+  units.forEach(u => { out[u.id] = []; });
+  links.forEach(l => { out[l.from].push(l.to); touched.add(l.from); touched.add(l.to); });
+
+  const level = {};
+  const visiting = new Set();
+  function lv(id) {
+    if (id in level) return level[id];
+    if (visiting.has(id)) return 0;
+    visiting.add(id);
+    const targets = out[id];
+    level[id] = targets.length ? 1 + Math.max(...targets.map(lv)) : 0;
+    visiting.delete(id);
+    return level[id];
+  }
+  units.forEach(u => lv(u.id));
+  const maxConnected = Math.max(0, ...units.filter(u => touched.has(u.id)).map(u => level[u.id]));
+  units.forEach(u => { if (!touched.has(u.id)) level[u.id] = maxConnected + 1; });
+  return level;
+}
+
+const ROLE_LABEL = { major: 'HAUPTTHESE', claim: 'THESE', premise: 'PRÄMISSE' };
+const TYPE_LABEL = { position: 'POSITION', fact: 'FAKT', value: 'WERT' };
+
+function computeRoles(units, links) {
+  if (!units.length) return {};
+  const incoming = {}, outgoing = {}, incomingSupport = {};
+  units.forEach(u => { incoming[u.id] = 0; outgoing[u.id] = 0; incomingSupport[u.id] = 0; });
+  links.forEach(l => {
+    outgoing[l.from]++;
+    incoming[l.to]++;
+    if (l.kind !== 'attack') incomingSupport[l.to]++;
+  });
+  const positions = units.filter(u => u.type === 'position');
+  let majorId;
+  if (positions.length === 1) {
+    majorId = positions[0].id;
+  } else {
+    const sinks = units.filter(u => !outgoing[u.id]);
+    const pool = sinks.length ? sinks : units;
+    majorId = pool.reduce((best, u) => incomingSupport[u.id] > incomingSupport[best.id] ? u : best, pool[0]).id;
+  }
+  const roles = {};
+  units.forEach(u => {
+    roles[u.id] = u.id === majorId ? 'major' : (incoming[u.id] > 0 ? 'claim' : 'premise');
+  });
+  return roles;
+}
+
+const NODE_W = 200, GAP_X = 22, GAP_Y = 64, PAD = 10, LINE_H = 15.5, MAX_CHARS = 27;
+
+function layoutGraph(units, links, availW) {
+  const level = computeLevels(units, links);
+  const maxLevel = Math.max(...Object.values(level));
+
+  const layers = Array.from({ length: maxLevel + 1 }, () => []);
+  units.forEach(u => layers[level[u.id]].push(u));
+
+  for (let li = 1; li <= maxLevel; li++) {
+    const prevIndex = Object.fromEntries(layers[li - 1].map((u, i) => [u.id, i]));
+    layers[li].sort((a, b) => {
+      const key = u => {
+        const ts = links.filter(l => l.from === u.id && l.to in prevIndex).map(l => prevIndex[l.to]);
+        return ts.length ? ts.reduce((s, x) => s + x, 0) / ts.length : units.indexOf(u);
+      };
+      return key(a) - key(b);
+    });
+  }
+
+  const geo = {};
+  units.forEach(u => {
+    const short = u.label || u.text;
+    const display = short.length > 110 ? short.slice(0, 107) + '…' : short;
+    const lines = wrapText(display, MAX_CHARS);
+    geo[u.id] = { lines, h: PAD + 14 + lines.length * LINE_H + PAD };
+  });
+
+  const perRow = Math.max(2, Math.floor((availW - 20 + GAP_X) / (NODE_W + GAP_X)));
+  const rows = [];
+  layers.forEach((ly, li) => {
+    for (let i = 0; i < ly.length; i += perRow) rows.push({ units: ly.slice(i, i + perRow), layer: li });
+  });
+
+  const rowW = rows.map(r => r.units.length * NODE_W + (r.units.length - 1) * GAP_X);
+  const w = Math.max(440, ...rowW) + 20;
+  let y = 12;
+  rows.forEach((row, ri) => {
+    const x0 = (w - (row.units.length * NODE_W + (row.units.length - 1) * GAP_X)) / 2;
+    row.units.forEach((u, i) => { geo[u.id].x = x0 + i * (NODE_W + GAP_X); geo[u.id].y = y; });
+    const rowH = Math.max(0, ...row.units.map(u => geo[u.id].h));
+    const next = rows[ri + 1];
+    y += rowH + (next ? (next.layer === row.layer ? 18 : GAP_Y) : 14);
+  });
+  return { geo, w, h: y };
+}
+
+function shiftGeo(geo, dx, dy) {
+  Object.values(geo).forEach(g => { g.x += dx; g.y += dy; });
+}
+
+function addMarkers(svg, markerId) {
+  const defs = document.createElementNS(SVGNS, 'defs');
+  const m = (id, fill) => `<marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="${fill}"/></marker>`;
+  defs.innerHTML = m(markerId, '#94a3b8') + m(markerId + '-attack', '#dc2626') + m(markerId + '-valdis', '#9333ea');
+  svg.appendChild(defs);
+}
+
+function drawGraph(svg, units, links, geo, opts) {
+  const { roles = null, typed = true, markerId, registry = [], onNode = null } = opts;
+
+  const inSlots = {};
+  links.forEach((l, li) => { if (geo[l.from] && geo[l.to]) (inSlots[l.to] = inSlots[l.to] || []).push(li); });
+  const attachX = {};
+  Object.keys(inSlots).forEach(to => {
+    const list = inSlots[to].sort((a, b) => geo[links[a].from].x - geo[links[b].from].x);
+    list.forEach((li, i) => { attachX[li] = geo[to].x + NODE_W * (i + 1) / (list.length + 1); });
+  });
+
+  links.forEach((l, li) => {
+    const f = geo[l.from], t = geo[l.to];
+    if (!f || !t) return;
+    const attack = l.kind === 'attack';
+    const x1 = f.x + NODE_W / 2, y1 = f.y;
+    const x2 = attachX[li] !== undefined ? attachX[li] : t.x + NODE_W / 2;
+    const y2 = t.y + t.h + 3;
+    const bend = Math.max(28, (y1 - y2) / 2);
+    const d = `M ${x1} ${y1} C ${x1} ${y1 - bend}, ${x2} ${y2 + bend}, ${x2} ${y2}`;
+    const g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('class', 'edge-group' + (attack ? ' attack' : ''));
+    const vis = document.createElementNS(SVGNS, 'path');
+    vis.setAttribute('d', d);
+    vis.setAttribute('class', 'edge-visible');
+    vis.setAttribute('marker-end', `url(#${attack ? markerId + '-attack' : markerId})`);
+    const hit = document.createElementNS(SVGNS, 'path');
+    hit.setAttribute('d', d);
+    hit.setAttribute('class', 'edge-hit');
+    g.append(vis, hit);
+    g.addEventListener('mousemove', e => {
+      g.classList.add('hovered');
+      const label = attack ? 'Greift an — warum es dagegen spricht' : 'Stützt — Begründung';
+      showTooltip(`<span class="tt-label">${esc(label)}</span>${esc(l.warrant || '(keine angegeben)')}`, e.clientX, e.clientY);
+    });
+    g.addEventListener('mouseleave', () => { g.classList.remove('hovered'); hideTooltip(); });
+    svg.appendChild(g);
+    registry.push({ el: g, from: l.from, to: l.to });
+  });
+
+  units.forEach(u => {
+    const gnode = geo[u.id];
+    const role = roles ? roles[u.id] : null;
+    const g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('class', 'node ' + u.type
+      + (role ? ' role-' + role : '')
+      + (typed ? '' : ' untyped'));
+    g.dataset.unit = u.id;
+    g.setAttribute('transform', `translate(${gnode.x}, ${gnode.y})`);
+
+    const rect = document.createElementNS(SVGNS, 'rect');
+    rect.setAttribute('class', 'node-box');
+    rect.setAttribute('width', NODE_W);
+    rect.setAttribute('height', gnode.h);
+    rect.setAttribute('rx', 8);
+    g.appendChild(rect);
+
+    const tl = document.createElementNS(SVGNS, 'text');
+    tl.setAttribute('class', 'node-type');
+    tl.setAttribute('x', PAD);
+    tl.setAttribute('y', PAD + 8);
+    const who = u.pid && CURPIX[u.pid] ? ' · ' + CURPIX[u.pid].short.toUpperCase() : '';
+    tl.textContent = (role
+      ? ROLE_LABEL[role] + (typed ? ' · ' + (TYPE_LABEL[u.type] || u.type.toUpperCase()) : '')
+      : (TYPE_LABEL[u.type] || u.type.toUpperCase())) + who;
+    g.appendChild(tl);
+
+    const txt = document.createElementNS(SVGNS, 'text');
+    txt.setAttribute('class', 'node-text');
+    gnode.lines.forEach((line, i) => {
+      const ts = document.createElementNS(SVGNS, 'tspan');
+      ts.setAttribute('x', PAD);
+      ts.setAttribute('y', PAD + 14 + (i + 0.8) * LINE_H);
+      ts.textContent = line;
+      txt.appendChild(ts);
+    });
+    g.appendChild(txt);
+
+    g.addEventListener('mousemove', e => {
+      g.classList.add('hovered');
+      registry.forEach(r => {
+        const incident = r.from === u.id || r.to === u.id;
+        r.el.classList.toggle('hovered', incident);
+        r.el.classList.toggle('dimmed', !incident);
+      });
+      const label = (role ? ROLE_LABEL[role].toLowerCase() + ' · ' : '') + (TYPE_LABEL[u.type] || u.type)
+        + (u.pid && CURPIX[u.pid] ? ' · ' + CURPIX[u.pid].short : '');
+      showTooltip(`<span class="tt-label">${esc(label)}</span>${esc((u.passage || u.text || '').replace(/§/g, ''))}<br><span class="tt-label" style="margin-top:4px">Klick zeigt die Textstelle unten</span>`, e.clientX, e.clientY);
+    });
+    g.addEventListener('mouseleave', () => {
+      g.classList.remove('hovered');
+      registry.forEach(r => r.el.classList.remove('hovered', 'dimmed'));
+      hideTooltip();
+    });
+    if (onNode) g.addEventListener('click', () => onNode(u));
+    svg.appendChild(g);
+  });
+}
+
+function renderArgMap(holder, data, opts = {}) {
+  holder.innerHTML = '';
+  const { units, links } = data;
+  const availW = Math.max(660, holder.clientWidth || 900);
+  const layout = layoutGraph(units, links, availW);
+  const svgW = Math.max(660, layout.w);
+  shiftGeo(layout.geo, (svgW - layout.w) / 2, 0);
+
+  const svg = document.createElementNS(SVGNS, 'svg');
+  svg.setAttribute('width', svgW);
+  svg.setAttribute('height', layout.h);
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${layout.h}`);
+  const markerId = 'arrow-' + holder.id;
+  addMarkers(svg, markerId);
+  drawGraph(svg, units, links, layout.geo, {
+    roles: computeRoles(units, links), typed: opts.typed !== false, markerId, registry: [], onNode: opts.onNode || null,
+  });
+  holder.appendChild(svg);
+  holder.scrollLeft = (svgW - holder.clientWidth) / 2;
+}
+
+function renderDebateMap(holder, data, opts = {}) {
+  holder.innerHTML = '';
+  const availW = Math.max(660, holder.clientWidth || 1000);
+  const typed = opts.typed !== false;
+  const rolesA = computeRoles(data.a.units, data.a.links);
+  const rolesB = computeRoles(data.b.units, data.b.links);
+
+  const svg = document.createElementNS(SVGNS, 'svg');
+  const markerId = 'arrow-' + holder.id;
+  const registry = [];
+
+  const GUTTER = 100, TITLE_H = 30;
+  const half = Math.max(460, (availW - GUTTER) / 2);
+  const la = layoutGraph(data.a.units, data.a.links, half);
+  const lb = layoutGraph(data.b.units, data.b.links, half);
+  shiftGeo(la.geo, 0, TITLE_H);
+  shiftGeo(lb.geo, la.w + GUTTER, TITLE_H);
+  const svgW = la.w + GUTTER + lb.w;
+  const svgH = TITLE_H + Math.max(la.h, lb.h);
+  svg.setAttribute('width', svgW);
+  svg.setAttribute('height', svgH);
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+  addMarkers(svg, markerId);
+
+  const mkTitle = (text, x, cls) => {
+    const t = document.createElementNS(SVGNS, 'text');
+    t.setAttribute('class', 'map-col-title ' + cls);
+    t.setAttribute('x', x);
+    t.setAttribute('y', 18);
+    t.setAttribute('text-anchor', 'middle');
+    t.textContent = text;
+    svg.appendChild(t);
+  };
+  mkTitle(data.labelA || 'Position A', la.w / 2, 'a');
+  mkTitle(data.labelB || 'Position B', la.w + GUTTER + lb.w / 2, 'b');
+
+  drawGraph(svg, data.a.units, data.a.links, la.geo, { roles: rolesA, typed, markerId, registry, onNode: opts.onNode || null });
+  drawGraph(svg, data.b.units, data.b.links, lb.geo, { roles: rolesB, typed, markerId, registry, onNode: opts.onNode || null });
+
+  const firstNode = svg.querySelector('.node');
+  data.mappings.forEach(m => {
+    const ga = la.geo[m.a], gb = lb.geo[m.b];
+    if (!ga || !gb) return;
+    const x1 = ga.x + NODE_W, y1 = ga.y + ga.h / 2;
+    const x2 = gb.x, y2 = gb.y + gb.h / 2;
+    const mx = (x1 + x2) / 2;
+    const d = `M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`;
+    const g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('class', 'cross-group ' + m.kind);
+    const vis = document.createElementNS(SVGNS, 'path');
+    vis.setAttribute('d', d);
+    vis.setAttribute('class', 'cross-link');
+    const hit = document.createElementNS(SVGNS, 'path');
+    hit.setAttribute('d', d);
+    hit.setAttribute('class', 'edge-hit');
+    g.append(vis, hit);
+    const partners = on => [m.a, m.b].forEach(id => {
+      const n = svg.querySelector(`.node[data-unit="${CSS.escape(id)}"]`);
+      if (n) n.classList.toggle('hovered', on);
+    });
+    g.addEventListener('mousemove', e => {
+      g.classList.add('hovered');
+      partners(true);
+      showTooltip(`<span class="tt-label">${esc(KIND_LABEL[m.kind])}</span>${esc(m.note || '')}`, e.clientX, e.clientY);
+    });
+    g.addEventListener('mouseleave', () => { g.classList.remove('hovered'); partners(false); hideTooltip(); });
+    svg.insertBefore(g, firstNode);
+    registry.push({ el: g, from: m.a, to: m.b });
+  });
+
+  holder.appendChild(svg);
+  holder.scrollLeft = (svgW - holder.clientWidth) / 2;
+}
+
+/* ---------- Klick auf einen Knoten → zugrunde liegender Text ---------- */
+
+function showNode(panelId, u, meta) {
+  const p = document.getElementById(panelId);
+  p.classList.remove('idle');
+  p.innerHTML = '';
+  const lab = document.createElement('div'); lab.className = 'tp-label'; lab.textContent = 'Zugrunde liegender Text';
+  p.appendChild(lab);
+  const head = document.createElement('div'); head.className = 'tp-head';
+  if (meta.color) { const dt = document.createElement('span'); dt.className = 'sdot'; dt.style.background = meta.color; head.appendChild(dt); }
+  const b = document.createElement('b'); b.textContent = meta.who; head.appendChild(b);
+  if (meta.src) { const s = document.createElement('span'); s.className = 'smeta'; s.textContent = meta.src; head.appendChild(s); }
+  p.appendChild(head);
+  const q = document.createElement('div'); q.className = 'tp-quote';
+  String(u.passage || u.text || '').split('§').forEach((chunk, i) => {
+    if (i % 2 === 1) { const m = document.createElement('mark'); m.textContent = chunk; q.appendChild(m); }
+    else q.appendChild(document.createTextNode(chunk));
+  });
+  p.appendChild(q);
+  ((meta.urls && meta.urls.length) ? meta.urls : (meta.url ? [{ l:'Quelle öffnen', u:meta.url }] : [])).forEach((s, i) => { if (i) p.appendChild(document.createTextNode(' · ')); const a = document.createElement('a'); a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; a.className = 'dsrc'; a.textContent = s.l + ' →'; p.appendChild(a); });
+  if (meta.note) { const n = document.createElement('div'); n.className = 'tp-note'; n.textContent = meta.note; p.appendChild(n); }
+}
+
+
+
+function buildDetails(holderId, groups) {
+  const holder = document.getElementById(holderId);
+  groups.forEach(g => {
+    const d = document.createElement('details');
+    const s = document.createElement('summary');
+    if (g.color) { const dt = document.createElement('span'); dt.className = 'sdot'; dt.style.background = g.color; s.appendChild(dt); }
+    s.appendChild(document.createTextNode(g.title));
+    if (g.meta) { const m = document.createElement('span'); m.className = 'smeta'; m.textContent = g.meta; s.appendChild(m); }
+    d.appendChild(s);
+    const body = document.createElement('div'); body.className = 'dbody';
+    g.paras.forEach(p => {
+      if (p.h) { const b = document.createElement('b'); b.className = 'dph'; b.textContent = p.h; body.appendChild(b); }
+      const el2 = document.createElement('p'); el2.textContent = p.t; body.appendChild(el2);
+    });
+    ((g.urls && g.urls.length) ? g.urls : (g.url ? [{ l:'Quelle öffnen', u:g.url }] : [])).forEach((s, i) => { if (i) body.appendChild(document.createTextNode(' · ')); const a = document.createElement('a'); a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; a.textContent = s.l + ' →'; a.className = 'dsrc'; a.style.margin = '0 0 12px'; body.appendChild(a); });
+    d.appendChild(body);
+    holder.appendChild(d);
+  });
+}
+
+let CURPIX = {};
+function pidxOf(a){ const m = {}; (a.positions || []).forEach(p => { m[p.id] = p; }); return m; }
+function showFor(key){
+  const a = AM[key], P = pidxOf(a);
+  return u => {
+    const p = P[u.pid];
+    showNode('tp-' + key, u, { who: p ? p.name : (a.title || ''), color: p ? p.c : null, src: p ? p.src : '', url: p ? p.url : null, urls: p ? p.urls : null,
+      note: a.note || 'Markiert: die Textstelle, die der Knoten zusammenfasst — wörtlich. Knoten-Formulierung und Kartierung: vom Tool.' });
+  };
+}
+Object.keys(AM).forEach(key => {
+  const a = AM[key];
+  buildDetails('texts-' + key, (a.positions || []).map(p => ({
+    title: p.name, meta: (p.src || '') + ' — verbatim; [...] = Auslassung der Erhebung', color: p.c, paras: (a.full && a.full[p.id]) || [], url: p.url, urls: p.urls
+  })));
+});
+
+function redraw() {
+  const act = document.querySelector('.tab.active').dataset.tab;
+  const a = AM[act];
+  CURPIX = pidxOf(a);
+  const holder = $('#map-' + act);
+  const typed = $('#typed-' + act).checked;
+  if (a.kind === 'debate') renderDebateMap(holder, a.data, { typed, onNode: showFor(act) });
+  else renderArgMap(holder, a.data, { typed, onNode: showFor(act) });
+}
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    redraw();
+  });
+});
+Object.keys(AM).forEach(key => { $('#typed-' + key).addEventListener('change', redraw); });
+let resizeTimer;
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(redraw, 150); });
+document.querySelector('.panel').classList.add('active');
+redraw();
+</script>
+</body>
+</html>

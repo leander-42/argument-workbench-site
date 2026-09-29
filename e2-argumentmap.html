@@ -1,0 +1,1010 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Argument map · Experten</title>
+<style>body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style>
+</head>
+<body>
+<style>
+:root {
+  --bg: #f6f7f9;
+  --card: #ffffff;
+  --ink: #1a202c;
+  --muted: #64748b;
+  --border: #e2e8f0;
+  --accent: #4f46e5;
+
+  --c-position: #4f46e5;
+  --c-position-bg: #eef2ff;
+  --c-fact: #0d9488;
+  --c-fact-bg: #f0fdfa;
+  --c-value: #d97706;
+  --c-value-bg: #fffbeb;
+
+  --c-agree: #16a34a;
+  --c-factdis: #dc2626;
+  --c-valdis: #9333ea;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.5;
+}
+header { background: var(--card); border-bottom: 1px solid var(--border); }
+.header-inner {
+  max-width: 1680px; margin: 0 auto; padding: 20px 24px 14px;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+}
+h1 { margin: 0; font-size: 26px; letter-spacing: -0.02em; }
+.mode-desc { margin: 8px 0 0; font-size: 13px; color: var(--muted); max-width: 720px; }
+.model-badge {
+  font-size: 12px; color: var(--muted); background: var(--bg);
+  border: 1px solid var(--border); border-radius: 20px; padding: 4px 12px; white-space: nowrap;
+}
+main { max-width: 1680px; margin: 0 auto; padding: 0 24px 40px; }
+
+.tabs { display: flex; gap: 4px; margin-top: 14px; flex-wrap: wrap; }
+.tab {
+  border: 1px solid var(--border); border-bottom: none; background: #eef0f4;
+  color: var(--muted); padding: 9px 22px; font-size: 14px; font-weight: 600;
+  border-radius: 10px 10px 0 0; cursor: pointer; font-family: inherit;
+}
+.tab.active { background: var(--card); color: var(--ink); }
+.panel { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 0 12px 12px 12px; padding: 20px; }
+.panel.active { display: block; }
+
+.fine-print { font-size: 12px; color: var(--muted); margin: 0; }
+.hidden { display: none !important; }
+
+.legend {
+  margin: 4px 0 12px; font-size: 13px; color: var(--muted);
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+}
+.legend-hint { flex-basis: 100%; }
+.chip {
+  display: inline-block; font-size: 12px; font-weight: 600; padding: 2px 10px;
+  border-radius: 20px; border: 1px solid;
+}
+.chip.role-mc { color: #0f172a; background: #f1f5f9; border-color: #334155; }
+.chip.role-c { color: #334155; background: #f8fafc; border-color: #94a3b8; }
+.chip.role-p { color: #64748b; background: #fff; border-color: #cbd5e1; }
+.edge-sample { display: inline-block; width: 30px; border-top: 2px solid #94a3b8; vertical-align: middle; }
+.edge-sample.attack { border-top: 2px dashed var(--c-factdis); }
+.edge-sample.agree { border-top-color: var(--c-agree); }
+.edge-sample.factdis { border-top-color: var(--c-factdis); }
+.edge-sample.valdis { border-top-color: var(--c-valdis); }
+.typed-toggle {
+  display: inline-flex; align-items: center; gap: 6px; font-size: 13px;
+  color: var(--ink); border: 1px solid var(--border); border-radius: 20px;
+  padding: 3px 12px; cursor: pointer; user-select: none;
+}
+
+.pane { border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; margin-top: 16px; background: var(--card); }
+.pane h2 { margin: 0 0 10px; font-size: 13px; text-transform: uppercase; letter-spacing: 0.06em; color: var(--muted); }
+.map-holder { overflow-x: auto; }
+.map-holder svg { display: block; }
+
+.node-box { rx: 8; stroke-width: 1.5; }
+.node.position .node-box { fill: var(--c-position-bg); stroke: var(--c-position); }
+.node.fact .node-box { fill: var(--c-fact-bg); stroke: var(--c-fact); }
+.node.value .node-box { fill: var(--c-value-bg); stroke: var(--c-value); }
+.node { cursor: pointer; }
+.node.hovered .node-box { stroke-width: 3; }
+.node-type { font-size: 9.5px; font-weight: 700; letter-spacing: 0.08em; }
+.node.position .node-type { fill: var(--c-position); }
+.node.fact .node-type { fill: var(--c-fact); }
+.node.value .node-type { fill: var(--c-value); }
+.node-text { font-size: 12px; fill: var(--ink); }
+.node.role-major .node-box { stroke-width: 2.5; }
+.node.untyped .node-box { fill: #f8fafc; stroke: #94a3b8; }
+.node.untyped .node-type { fill: #475569; }
+.node.untyped.role-major .node-box { fill: #f1f5f9; stroke: #334155; }
+
+.edge-visible { fill: none; stroke: #94a3b8; stroke-width: 1.5; }
+.edge-hit { fill: none; stroke: transparent; stroke-width: 14; cursor: pointer; }
+.edge-group.hovered .edge-visible { stroke: var(--accent); stroke-width: 2.5; }
+.edge-group.dimmed .edge-visible { opacity: 0.12; }
+.edge-group.attack .edge-visible { stroke: var(--c-factdis); stroke-dasharray: 6 4; }
+.edge-group.attack.hovered .edge-visible { stroke: #b91c1c; }
+
+.map-col-title { font-size: 13px; font-weight: 700; }
+.map-col-title.a { fill: #1d4ed8; }
+.map-col-title.b { fill: #b45309; }
+.cross-group { cursor: pointer; }
+.cross-link { fill: none; stroke-width: 2; opacity: 0.75; }
+.cross-group.agreement .cross-link { stroke: var(--c-agree); }
+.cross-group.factual .cross-link { stroke: var(--c-factdis); }
+.cross-group.value .cross-link { stroke: var(--c-valdis); }
+.cross-group.hovered .cross-link { stroke-width: 3.5; opacity: 1; }
+.cross-group.dimmed .cross-link { opacity: 0.1; }
+
+.tooltip {
+  position: fixed; z-index: 50; max-width: 340px;
+  background: #1e293b; color: #f1f5f9; font-size: 12.5px; line-height: 1.45;
+  border-radius: 8px; padding: 8px 12px; pointer-events: none;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+}
+.tooltip .tt-label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: #94a3b8; margin-bottom: 3px; }
+
+/* click → zugrunde liegender Text */
+.textpanel { border: 1px solid var(--border); border-radius: 10px; background: #fbfbfd; padding: 12px 16px; margin-top: 12px; font-size: 13.5px; }
+.textpanel.idle { color: var(--muted); font-size: 12.5px; }
+.tp-label { font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.tp-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 7px; }
+.tp-head .smeta { font-size: 11.5px; color: var(--muted); }
+.sdot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; flex: none; }
+.tp-quote { background: #f1f5f9; border-left: 3px solid var(--accent); border-radius: 6px; padding: 11px 13px; line-height: 1.65; max-width: 82ch; }
+.tp-quote mark { background: #fef08a; padding: 1px 2px; border-radius: 2px; }
+.tp-note { font-size: 11.5px; color: var(--muted); margin-top: 7px; }
+.dsrc { display: inline-block; margin-top: 8px; font-size: 12px; color: var(--accent); font-weight: 600; text-decoration: none; }
+.dsrc:hover { text-decoration: underline; }
+
+/* zugrunde liegende Texte (ganz unten) */
+.texts { margin-top: 16px; }
+.texts h2 { font-size: 13px; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin: 0 0 8px; }
+.texts details { border: 1px solid var(--border); border-radius: 8px; background: #fff; margin-bottom: 8px; }
+.texts summary { cursor: pointer; padding: 10px 14px; font-weight: 600; font-size: 13.5px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.texts summary:hover { background: #f8fafc; }
+.texts .smeta { font-size: 11px; color: var(--muted); font-weight: 400; }
+.texts .dbody { padding: 2px 16px 12px; }
+.texts .dbody p { font-size: 13px; line-height: 1.65; max-width: 82ch; margin: 0 0 10px; }
+.texts .dph { display: block; font-size: 11px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); margin: 6px 0 2px; font-weight: 700; }
+</style>
+<style>.s2crumb{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8a8781;margin:14px 0 2px}.s2crumb b{color:#4f46e5;font-weight:600}</style>
+<header>
+  <div class="header-inner">
+    <div>
+      <a href="index.html" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;letter-spacing:.06em;color:#94a3b8;text-decoration:none">← Übersicht</a>
+      <p class="s2crumb" style="color:#94a3b8"><b style="color:#a5b4fc">Experten</b> · Mehrere Positionen</p>
+      <h1 style="margin-top:4px">Argument map</h1>
+      <p class="mode-desc">Die Struktur der Positionen als Karte: Hauptthese, Zwischenthesen und Prämissen mit Stütz- und Angriffspfeilen (Hover zeigt die Begründung). Bei der Vernehmlassung folgen die zwei Seiten der Haltung zur Vorlage, nicht einer Abstimmung; bei der Debatte den Voten pro und contra. <strong>Klick auf einen Knoten zeigt die wörtliche Textstelle</strong>; die vollständigen Texte stehen zuunterst.</p>
+    </div>
+    <span class="model-badge">Prototyp — vorberechnete Extraktion</span>
+  </div>
+</header>
+
+<main>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="bila3">Vernehmlassung Paket Schweiz–EU</button>
+  <button class="tab" data-tab="neutralvoten">Neutralität — Parlamentsdebatte</button>
+</nav>
+
+<section id="panel-bila3" class="panel">
+  <p class="fine-print">Fallbeispiel: acht Vernehmlassungsantworten zum Paket Schweiz–EU (Bilaterale III), Herbst 2025. Eine Vernehmlassung kennt kein Ja und Nein — die zwei Seiten der Karte folgen der erklärten Haltung zur Vorlage: links die sechs Organisationen, die das Paket tragen (mit oder ohne Bedingungen), rechts die zwei, die es ablehnen (SVP: «auf die Vorlage ist zu verzichten»; sgv: «in der vorliegenden Form» nicht). Bedingungen und Vorbehalte — alle 14 Lohnschutz-Massnahmen als Voraussetzung, Massnahme 14 abgelehnt — stehen als eigene Knoten in der Karte. Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.</p>
+  <div class="pane">
+    <h2>Debatten-Karte</h2>
+    <div class="legend">
+      <span class="chip role-mc">Hauptthese</span>
+      <span class="chip role-c">These</span>
+      <span class="chip role-p">Prämisse</span>
+      <span class="edge-sample"></span> stützt
+      <span class="edge-sample attack"></span> greift an
+      <span class="edge-sample agree"></span> Einigkeit
+      <span class="edge-sample factdis"></span> faktische Uneinigkeit
+      <span class="edge-sample valdis"></span> Wert-Uneinigkeit
+      <label class="typed-toggle"><input type="checkbox" id="typed-bila3" checked> Fakt/Wert-Typen zeigen</label>
+      <span class="legend-hint">— Hover auf Knoten und Pfeile zeigt Volltext und Begründung; <strong>Klick auf einen Knoten zeigt unten die wörtliche Textstelle samt Quelle.</strong></span>
+    </div>
+    <div id="map-bila3" class="map-holder"></div>
+  </div>
+  <div id="tp-bila3" class="textpanel idle">Klick auf einen Knoten zeigt hier die zugrunde liegende Textstelle — wörtlich, mit Quelle.</div>
+  <div class="texts">
+    <h2>Zugrunde liegende Texte</h2>
+    <div id="texts-bila3"></div>
+  </div>
+</section>
+
+<section id="panel-neutralvoten" class="panel">
+  <p class="fine-print">Fallbeispiel: die Debatte zur Neutralitätsinitiative (24.092) im Nationalrat (4.3.2026) und im Ständerat (12.3.2026), vierzehn Voten als Auszüge aus dem Amtlichen Bulletin. Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.</p>
+  <div class="pane">
+    <h2>Debatten-Karte</h2>
+    <div class="legend">
+      <span class="chip role-mc">Hauptthese</span>
+      <span class="chip role-c">These</span>
+      <span class="chip role-p">Prämisse</span>
+      <span class="edge-sample"></span> stützt
+      <span class="edge-sample attack"></span> greift an
+      <span class="edge-sample agree"></span> Einigkeit
+      <span class="edge-sample factdis"></span> faktische Uneinigkeit
+      <span class="edge-sample valdis"></span> Wert-Uneinigkeit
+      <label class="typed-toggle"><input type="checkbox" id="typed-neutralvoten" checked> Fakt/Wert-Typen zeigen</label>
+      <span class="legend-hint">— Hover auf Knoten und Pfeile zeigt Volltext und Begründung; <strong>Klick auf einen Knoten zeigt unten die wörtliche Textstelle samt Quelle.</strong></span>
+    </div>
+    <div id="map-neutralvoten" class="map-holder"></div>
+  </div>
+  <div id="tp-neutralvoten" class="textpanel idle">Klick auf einen Knoten zeigt hier die zugrunde liegende Textstelle — wörtlich, mit Quelle.</div>
+  <div class="texts">
+    <h2>Zugrunde liegende Texte</h2>
+    <div id="texts-neutralvoten"></div>
+  </div>
+</section>
+
+</main>
+
+<div id="tooltip" class="tooltip hidden"></div>
+<script>
+const $ = (sel) => document.querySelector(sel);
+const SVGNS = 'http://www.w3.org/2000/svg';
+
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+}
+
+const tooltip = $('#tooltip');
+function showTooltip(html, x, y) {
+  tooltip.innerHTML = html;
+  tooltip.classList.remove('hidden');
+  const r = tooltip.getBoundingClientRect();
+  tooltip.style.left = Math.min(x + 14, window.innerWidth - r.width - 12) + 'px';
+  tooltip.style.top = Math.min(y + 14, window.innerHeight - r.height - 12) + 'px';
+}
+function hideTooltip() { tooltip.classList.add('hidden'); }
+
+const KIND_LABEL = { agreement: 'Einigkeit', factual: 'Faktische Uneinigkeit', value: 'Wert-Uneinigkeit' };
+
+
+const AM = {};
+/* ===== bila3 ===== */
+/* ---------- Debatten-Karte: Vernehmlassung «Paket Schweiz–EU» (Bilaterale III), acht Stellungnahmen Herbst 2025 (Kartierung: vom Tool; Textstellen verbatim) ----------
+   Keine Abstimmung: Die zwei Seiten folgen der Haltung zur Vorlage (badge in bila3.ds.js) — a = trägt das Paket (mit/ohne Bedingungen), b = lehnt es ab (SVP, sgv).
+   positions/full = POS/FULL aus bila3.ds.js, unverändert übernommen. */
+AM["bila3"] = { title:"Vernehmlassung Paket Schweiz–EU", kind:"debate",
+  intro:"Fallbeispiel: acht Vernehmlassungsantworten zum Paket Schweiz–EU (Bilaterale III), Herbst 2025. Eine Vernehmlassung kennt kein Ja und Nein — die zwei Seiten der Karte folgen der erklärten Haltung zur Vorlage: links die sechs Organisationen, die das Paket tragen (mit oder ohne Bedingungen), rechts die zwei, die es ablehnen (SVP: «auf die Vorlage ist zu verzichten»; sgv: «in der vorliegenden Form» nicht). Bedingungen und Vorbehalte — alle 14 Lohnschutz-Massnahmen als Voraussetzung, Massnahme 14 abgelehnt — stehen als eigene Knoten in der Karte. Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.",
+  note:"Markiert: die Textstelle, die der Knoten zusammenfasst — wörtlich aus der Vernehmlassungsantwort (erhobener Auszug). Knoten-Formulierung, Seiten-Zuordnung nach Haltung und Kartierung: vom Tool.",
+  positions:[
+    { id:"A", short:"economiesuisse", name:"economiesuisse", c:"#7c3aed", side:null, src:"Stellungnahme economiesuisse zum Paket Stabilisierung und Weiterentwicklung der Beziehungen Schweiz–EU, 11.9.2025 (PDF; Auszüge)", url:"https://backend-api.economiesuisse.ch//sites/default/files/2025-09/25_09_11_Stellungnahme%20Vernehmlassung%20Bilaterale%20III.pdf",
+        urls:[{ l:"Stellungnahme economiesuisse (PDF)", u:"https://backend-api.economiesuisse.ch//sites/default/files/2025-09/25_09_11_Stellungnahme%20Vernehmlassung%20Bilaterale%20III.pdf" }, { l:"Vernehmlassungsakten «Dachverbände der Wirtschaft» (demokratis.ch)", u:"https://www.demokratis.ch/vernehmlassung/f6dkyu3x/dokument/1CW5gaSN7LxyLYHHxnGgQb" }] },
+    { id:"B", short:"SP", name:"SP Schweiz", c:"#1d4ed8", side:null, src:"Vernehmlassungsantwort der SP Schweiz, Bilaterale III, 30.10.2025 (Auszüge)", url:"https://www.sp-ps.ch/wp-content/uploads/2025/10/2025-10-30-Vernehmlassungsantwort-der-SP-Schweiz-Bilaterale-III.pdf" },
+    { id:"C", short:"Die Mitte", name:"Die Mitte", c:"#b45309", side:null, src:"Stellungnahme Die Mitte zum Paket Schweiz–EU, 29.10.2025 (Auszüge)", url:"https://die-mitte.ch/wp-content/uploads/2025/10/251029_STN.Mitte_EDA_Paket-CH-EU.pdf" },
+    { id:"D", short:"SVP", name:"SVP Schweiz", c:"#15803d", side:null, src:"Vernehmlassungsantwort der SVP Schweiz zum Paket Schweiz–EU, 31.10.2025 (Auszüge)", url:"https://www.svp.ch/wp-content/uploads/251031-Paket-CH-EU-Vernehmlassungsantwort-SVP-Schweiz.pdf" },
+    { id:"E", short:"sgv", name:"Schweizerischer Gewerbeverband sgv", c:"#0891b2", side:null, src:"Vernehmlassungsantwort sgv zum EU-Paket, 31.10.2025 (Auszüge)", url:"https://www.sgv-usam.ch/media/kqaf2fpp/20251031_vnla_sgv_eu-paket_de.pdf" },
+    { id:"F", short:"SGB", name:"Schweizerischer Gewerkschaftsbund SGB", c:"#be123c", side:null, src:"Stellungnahme SGB zum EU-Paket, Teile 1–3 (PDF, Datum gemäss Medienmitteilung 22.10.2025) und Medienmitteilung «SGB sagt Ja zum Europa-Paket – Nein zur Liberalisierung der Stromversorgung», 22.10.2025 (Auszüge)", url:"https://www.sgb.ch/fileadmin/redaktion/docs/consultations/2025/251022_SGB-Stellungnahme_EU-Paket_Teile_1-3.pdf",
+        urls:[{ l:"Stellungnahme SGB (PDF)", u:"https://www.sgb.ch/fileadmin/redaktion/docs/consultations/2025/251022_SGB-Stellungnahme_EU-Paket_Teile_1-3.pdf" }, { l:"Medienmitteilung SGB 22.10.2025", u:"https://www.sgb.ch/themen/arbeit/detail/sgb-sagt-ja-zum-europa-paket-nein-zur-liberalisierung-der-stromversorgung" }] },
+    { id:"G", short:"FDP", name:"FDP.Die Liberalen", c:"#4d7c0f", side:null, src:"Vernehmlassungsantwort FDP.Die Liberalen zum Paket Schweiz–EU, 31.10.2025 (Auszüge)", url:"https://www.fdp.ch/fileadmin/documents/fdp.ch/01_Positionen_VL_Aktuelles/DE/Positionen/2_Vernehmlassungen/2025/Oktober/20251031_VL_Bila_d.pdf",
+        urls:[{ l:"Vernehmlassungsantwort FDP (PDF)", u:"https://www.fdp.ch/fileadmin/documents/fdp.ch/01_Positionen_VL_Aktuelles/DE/Positionen/2_Vernehmlassungen/2025/Oktober/20251031_VL_Bila_d.pdf" }, { l:"Vernehmlassungsakten «Parteien» (demokratis.ch)", u:"https://www.demokratis.ch/vernehmlassung/f6dkyu3x/dokument/1CW5gaSL7ew1oLMs9BD8mR" }] },
+    { id:"H", short:"GRÜNE", name:"GRÜNE Schweiz", c:"#9333ea", side:null, src:"Vernehmlassungsantwort GRÜNE Schweiz zum Paket Stabilisierung und Weiterentwicklung der Beziehungen Schweiz–EU, 27.10.2025 (PDF), und Zusammenfassung auf gruene.ch, 4.11.2025 (Auszüge)", url:"https://gruene.ch/vernehmlassungen/paket-stabilisierung-und-weiterentwicklung-der-beziehungen-schweiz-eu",
+        urls:[{ l:"Zusammenfassung gruene.ch, 4.11.2025", u:"https://gruene.ch/vernehmlassungen/paket-stabilisierung-und-weiterentwicklung-der-beziehungen-schweiz-eu" }, { l:"Vernehmlassungsantwort (PDF), 27.10.2025", u:"https://gruene.ch/wp-content/uploads/2025/11/ver_251027_Bilaterale3_d.pdf" }] }
+  ],
+  full:{
+    A:[
+      { h:"Grundsatzposition", t:"economiesuisse unterstützt das aussenpolitisch mit der EU ausgehandelte Vertragspaket der Bilateralen III. Die Abkommen bilden eine solide Grundlage für die Stabilisierung und Weiterentwicklung des bilateralen Wegs." },
+      { t:"Die bilateralen Wirtschaftsabkommen mit der EU, insbesondere diejenigen für die Teilnahme am EU-Binnenmarkt, dienen der Stärkung des Schweizer Wirtschaftsstandorts." },
+      { t:"Unser Land ist dank der wirtschaftlichen Offenheit wohlhabend geworden. So verdient die Exportnation Schweiz zwei von fünf Franken im Handel mit dem Ausland." },
+      { h:"Lohnschutz", t:"Der liberale Arbeitsmarkt muss gewahrt bleiben. Die vom Bundesrat vorgeschlagene Massnahme 14 im Bereich des Kündigungsschutzes wird abgelehnt. Die inländischen Lohnschutzmassnahmen 1-13 werden als Paket gutgeheissen und müssen integral verabschiedet werden." },
+      { h:"Institutionen und Schutzklausel", t:"Mit der dynamischen Rechtsübernahme wird sichergestellt, dass das «Level Playing Field» über die Zeitdauer der Abkommen erhalten bleibt, wovon auch die Schweiz profitiert." },
+      { t:"Mit der Einführung eines Streitbeilegungsmechanismus kommt die EU einem langjährigen Anliegen der Schweiz nach." },
+      { t:"Die Anwendung der Massnahmen zur Schutzklausel muss sich auf den Geltungsbereich des Ausländer- und Integrationsgesetzes (AIG) beschränken." }
+    ],
+    B:[
+      { h:"Grundsatzposition", t:"Für die SP ist klar: Die Europäische Union mit ihren 27 Mitgliedsstaaten ist nicht nur aus geographischen und wirtschaftlichen Gründen unsere naheliegendste Partnerin, sie ist es vor allem aus Gründen der gemeinsamen politischen Werte: Die Freunde der Schweiz sind in Europa." },
+      { t:"Für die SP ist und bleibt es zentral, dass jeder europäische Assoziierungs- und Integrationsschritt sozialpolitisch eingebettet ist. Das bestehende Gesamtpaket – also die aussenpolitische Einigung mit der EU und die innenpolitischen Massnahmen zusammen – erfüllt dies: Die im Bereich des Lohnschutzes vom Bundesrat vorgeschlagenen Massnahmen stellen sicher, dass das Lohnniveau in der Schweiz erhalten bleibt. Dies war stets eine Bedingung der SP." },
+      { t:"Da diese nun erfüllt ist, stellt das in die Vernehmlassung gegebene Gesamtpaket für die SP eine tragfähige Lösung dar." },
+      { h:"Lohnschutz", t:"Ein wirtschaftlich offener Binnenmarkt braucht soziale Sicherungen, die die Menschen schützen und nicht den Preiswettbewerb auf Kosten der Löhne fördern." },
+      { t:"Vor diesem Hintergrund begrüsst die SP Schweiz ausdrücklich, dass es in einem zweiten Schritt gelungen ist, eine innenpolitische Vereinbarung mit konkreten und verbindlichen Massnahmen zur Stärkung des Lohnschutzes zu treffen." },
+      { t:"Integraler Teil des Paketes ist ferner der verstärkte Kündigungsschutz für gewählte Arbeitnehmendenvertreter:innen." },
+      { h:"Streitbeilegung und Rechtsübernahme", t:"Ein verlässlicher, rechtlich geregelter Streitbeilegungsmechanismus ist für die Schweiz als kleinere Vertragspartei von zentralem Interesse." },
+      { t:"Dynamische Rechtsübernahme bedeutet dabei ausdrücklich nicht automatische Übernahme. Die Schweiz prüft jeden neuen EU-Rechtsakt bewusst." }
+    ],
+    C:[
+      { h:"Grundsatzposition", t:"Angesichts der Verschlechterung der internationalen Rahmenbedingungen sind stabile, verlässliche und vorhersehbare Beziehungen zur EU, unserer wichtigsten Handelspartnerin, für die Schweiz von zentraler Bedeutung." },
+      { t:"Die Beziehung zur EU über bilaterale Verträge hat sich über die letzten 25 Jahre als Königsweg etabliert." },
+      { t:"Für Die Mitte war es deshalb stets zentral, dass das Verhandlungsergebnis ein Gleichgewicht zwischen wirtschaftlicher Vernetzung, grösstmöglicher Unabhängigkeit und sozialer Verantwortung wahrt." },
+      { t:"Nach eingehender Prüfung ist Die Mitte der Ansicht, dass der Bundesrat diese Anforderung erfüllt und in der Gesamtheit ein akzeptables Verhandlungsergebnis erzielt hat. [...] Die innenpolitische Umsetzung weist jedoch noch massgebliche Mängel auf." },
+      { h:"Lohnschutz", t:"Neben der Zuwanderungssteuerung ist der Lohnschutz ein weiterer tragender Pfeiler der innenpolitischen Akzeptanz der Personenfreizügigkeit." },
+      { t:"Die Mitte wird sich im Rahmen des Pakets für eine vollständige Umsetzung der dreizehn vereinbarten Massnahmen einsetzen." },
+      { t:"Die Verständigung zwischen Sozialpartnern und Kantonen war somit ein wichtiger Meilenstein. [...] Die vom Bundesrat vorgeschlagene vierzehnte Massnahme zum Kündigungsschutz beurteilt sie kritisch, ist jedoch bereit, einen möglichen Kompromiss der Sozialpartner zu prüfen." },
+      { h:"Streitbeilegung und Schutzklausel", t:"Der Streitbeilegungsmechanismus sieht in seiner Ausgestaltung vor, dass die Schweiz von ihren Verpflichtungen abweichen kann, falls sie dies für notwendig erachtet, sofern sie im Gegenzug akzeptiert, dass die EU das Gleichgewicht mittels verhältnismässigen Ausgleichsmassnahmen wieder herstellt." },
+      { t:"Der Bundesrat hat mit der Konkretisierung der bislang wirkungslosen Schutzklausel einen Fortschritt erzielt, da diese neu einseitig durch die Schweiz aktiviert werden kann. Dieser Vorschlag ist für Die Mitte eine Minimallösung." }
+    ],
+    D:[
+      { h:"Grundsatzposition", t:"Das vorliegende EU-Vertragspaket steht im totalen Widerspruch zu den Grundlagen der Schweizerischen Eidgenossenschaft. Mehr noch: Dieser Vertrag zerstört das Wesen der Schweiz." },
+      { t:"Die schweizerischen Institutionen haben sich den EU-Institutionen unterzuordnen. Das Schweizer Volk als oberster Souverän und Gesetzgeber wird entmachtet – und die Kantone werden degradiert." },
+      { t:"Das EU-Vertragspaket bedeutet: Fremdes Recht, fremde Richter, willkürliche Strafen und regelmässige Tributzahlungen, deren Höhe die EU festlegt. Das sind kolonialstaatliche Verhältnisse." },
+      { t:"Fremdes Recht und fremde Richter. Das Hauptproblem dieses EU-Vertragspakets ist die zwingende Übernahme von fremdem Recht und fremden Richtern." },
+      { h:"Flankierende Massnahmen", t:"Die zusätzlichen flankierenden Massnahmen sind teuer, schränken den freien Arbeitsmarkt weiter ein und schiessen über das Ziel hinaus, etwa wenn ein asymmetrischer Kündigungsschutz für Gewerkschaftsvertreter eingeführt wird." },
+      { h:"Rechtsübernahme, Streitbeilegung, EU-Gerichtshof", t:"Während sich der geneigte Leser hierunter eine Volksabstimmung oder einen Beschluss von National- und Ständerat vorstellt, werden diese Entscheide wohl mehrheitlich von Vertretern der Bundesverwaltung getroffen werden." },
+      { t:"Nicht mehr der Schweizer Souverän (Volk und Stände) wäre unser oberster Gesetzgeber, sondern die EU. Für die Rechtsauslegung wäre künftig der EU-Gerichtshof zuständig." },
+      { t:"Dieser vertritt die Interessen der EU, also der Gegenpartei, und ist somit aus Schweizer Sicht kein neutraler Gerichtshof." },
+      { h:"Zuwanderung, Kosten, Schlussforderung", t:"Die vorgeschlagenen Änderungen weiten die Zuwanderung sogar noch aus, statt sie einzuschränken. Problematisch sind die weiter vereinfachten Einwanderungsbestimmungen für eine Vielzahl von EU-Bürgern, das generöse Berechnungsverfahren für den Daueraufenthaltsanspruch sowie die extensiven Auslegungen des Familienbegriffs." },
+      { t:"Höhere Steuern und Abgaben: Neu verlangt die EU vom Nicht-EU-Mitgliedsland Schweiz einen «regelmässigen finanziellen Beitrag». Der Bundesrat spricht in der Vernehmlassungsvorlage von jährlich 1,4 Milliarden Franken." },
+      { t:"Auf die Vorlage ist zu verzichten. Dem Parlament ist weder jetzt noch in Zukunft eine Vorlage mit zwingender EU-Rechtsübernahme und Unterstellung unter die EU-Gerichtsbarkeit zu unterbreiten." }
+    ],
+    E:[
+      { h:"Grundsatzposition", t:"Der Schweizerische Gewerbeverband sgv hat in den vergangenen Jahren die bilateralen Verträge stets unterstützt. Diese haben den Schweizer KMU viele Vorteile gebracht. Beim neuen EU-Vertragspaket geht es aber nicht einfach um eine Weiterführung der bilateralen Verträge." },
+      { t:"Das neue EU-Vertragspaket sowie die Umsetzungsgesetzgebung enthalten aber zuviele kritische Punkte. Diese betreffen hauptsächlich die institutionellen Regeln. Hier droht eine Zunahme von Bürokratiekosten, eine Stärkung der Bundesverwaltung und eine Schwächung der demokratischen Einflussmöglichkeiten der KMU und der Schweizer Stimmbevölkerung." },
+      { t:"Insgesamt kann der Schweizerische Gewerbeverband sgv das in die Vernehmlassung geschickte Paket inkl. die innerstaatlichen Umsetzungsmassnahmen in der vorliegenden Form und zum heutigen Zeitpunkt nicht unterstützen." },
+      { h:"Lohnschutz", t:"Der sgv lehnt den Kündigungsschutzartikel ab. Zum vorliegenden Massnahmenpaket ist diese Massnahme sachfremd. Ihr Ursprung liegt in einer Auseinandersetzung mit der ILO." },
+      { h:"Rechtsübernahme, Referendum, Schutzklausel", t:"Dynamische Rechtsübernahme ist zwar nicht automatische Rechtsübernahme. Die Mitwirkungsmöglichkeit (decision shaping) ist aber relativ schwach." },
+      { t:"Diverse Punkte des Vertragspakets, im Besonderen die Einführung der dynamischen Rechtsübernahme, haben verfassungsrechtliche Implikationen. Das Ausschalten des bewährten Ständemehrs in einer Abstimmung mit derart hoher Relevanz wäre politisch nicht nachvollziehbar." },
+      { t:"Die Schutzklausel darf den Zugang zu dringend benötigten Fachkräften nicht einschränken. Branchenbezogene oder kantonale Schutzklauseln lehnt der Verband ab." }
+    ],
+    F:[
+      { h:"Grundsatzposition", t:"Der SGB unterstützt das Europapaket, wenn die Löhne und der Service public gesichert sind; die Vernehmlassungsantwort des SGB fokussiert auf diese Themen." },
+      { t:"Die vorgeschlagenen 14 Massnahmen im Bereich Lohnschutz sowie die Garantien im Landverkehrsabkommen sind eine zwingende Voraussetzung. Das Stromabkommen lehnt der SGB ab." },
+      { t:"Der SGB spricht sich klar dafür aus, dass das Paket dem fakultativen Referendum unterstellt wird, wie das bisher bei den Bilateralen Verträgen der Fall gewesen ist." },
+      { h:"Lohnschutz", t:"Der SGB unterstützt das EU-Paket im Bereich des Lohnschutzes, wenn alle diese innenpolitischen Massnahmen vom Parlament übernommen und beschlossen werden." },
+      { t:"Arbeitnehmende, die sich im Betrieb oder in Gesamtarbeitsverträgen sozialpartnerschaftlich einsetzen, müssen gegen Kündigungen geschützt sein." },
+      { h:"Stromabkommen und Service public — aus der Medienmitteilung «SGB sagt Ja zum Europa-Paket – Nein zur Liberalisierung der Stromversorgung», 22.10.2025", t:"Gleichzeitig lehnt der SGB das geplante Stromabkommen ab. Es würde den bewährten Service public in der Stromversorgung aufheben und die funktionierende Grundversorgung abschaffen." },
+      { t:"Die Energieversorgung muss eine öffentliche Aufgabe bleiben." }
+    ],
+    G:[
+      { h:"Grundsatzposition", t:"Die FDP.Die Liberalen bekräftigt ihre langjährige Position und unterstützt die Fortführung des bilateralen Weges. Dieser stellt ein wichtiges Werkzeug dar, damit die Schweiz ihre heutige wirtschaftliche Stärke und ihren Wohlstand sichern kann." },
+      { t:"Der Status quo der Bilateralen I und II erodiert und ist somit keine langfristige Option." },
+      { t:"Der Wohlstand der Schweiz verdient Realismus statt Illusionen." },
+      { h:"Lohnschutz", t:"Die innenpolitische Umsetzung darf weder die bewährte Sozialpartnerschaft zerstören noch zu einer merklichen Ausweitung staatlicher Kontroll- und Regulierungskompetenzen führen." },
+      { h:"Kündigungsschutz", t:"Bei der parlamentarischen Beratung ist klar, dass die FDP haltlose Forderungen vonseiten der Gewerkschaften, insbesondere in Bezug auf den erweiterten Schutz vor missbräuchlichen Kündigungen von Arbeitnehmervertretungen und Mitgliedern von paritätisch zusammengesetzten Organen von Personalvorsorgeeinrichtungen, entschieden ablehnt." },
+      { t:"Die flankierenden Massnahmen sollen erhalten und nicht ausgeweitet werden." },
+      { h:"Zuwanderung, Schutzklausel, Rechtsübernahme", t:"Personen aus dem EU-Raum können nur dann einwandern, wenn sie eine Arbeitsstelle haben oder über ausreichende Eigenmittel verfügen." },
+      { t:"Die FDP begrüsst zudem, dass der Bundesrat eine Schutzklausel ausgehandelt hat, und fordert, dass diese auf ihre Wirksamkeit geprüft wird." },
+      { t:"Konkret fordert die FDP, dass das Parlament und die Kantone hinsichtlich der dynamischen Rechtsübernahme schon bei Entstehung der entsprechenden Rechtsakte im Gesetzgebungs- und Integrationsverfahren der EU mitwirken kann." }
+    ],
+    H:[
+      { h:"Grundsatzposition — Zusammenfassung auf gruene.ch, 4.11.2025", t:"Die bilateralen Beziehungen zwischen der Schweiz und der Europäischen Union sind für die Schweiz von herausragender Bedeutung." },
+      { t:"Die GRÜNEN sind darum sehr erfreut über den erfolgreichen Abschluss der Verhandlungen zwischen der Schweiz und der EU und sind mit dem Verhandlungsergebnis sehr zufrieden." },
+      { t:"Die verhandelten Abkommen stabilisieren nicht nur den bilateralen Weg, sondern sie eröffnen auch neue Bereich der Zusammenarbeit." },
+      { t:"Nicht einverstanden sind die GRÜNEN teilweise mit der innenpolitischen Umsetzung des Bundesrates." },
+      { t:"Die GRÜNEN verlangen hier vom Bundesrat, die innenpolitische Umsetzung anzupassen und den mehrfach an der Urne geäusserten Willen der Stimmberechtigten zum Ausbau der erneuerbaren Energien zu respektieren." },
+      { h:"Lohnschutz — Vernehmlassungsantwort (PDF), 27.10.2025", t:"Die Sicherung des Lohnschutzes ist das zentrale Element, um die Akzeptanz der Bilateralen Verträge in der Schweiz sicherzustellen." },
+      { h:"Streitbeilegung, Referendumsfrage — Vernehmlassungsantwort (PDF)", t:"Die GRÜNEN weisen insbesondere darauf hin, dass sie mit dem vorgesehen Streitbeilegungsmechanismus einverstanden sind. Dieser stärkt die Rechtssicherheit." },
+      { t:"Es gibt, wie selbst ein Gutachten des Bundesamtes für Justiz festhält und wie es auch der Bundesrat im erläuterten Bericht bekräftigt, keinerlei verfassungsrechtlichen Spielraum, das vorliegende Verhandlungspaket dem obligatorischen Referendum zu unterstellen." },
+      { h:"Stromabkommen — Zusammenfassung auf gruene.ch", t:"Für die GRÜNEN ist v.a. das Stromabkommen zentral, denn es stellt einen wichtigen Baustein für eine vollständig erneuerbare Strom- und Energieversorgung dar." }
+    ]
+  },
+  data:{ labelA:"Tragen das Paket (mit oder ohne Bedingungen) — economiesuisse, SP, Die Mitte, SGB, FDP, GRÜNE", labelB:"Lehnen das Paket ab — SVP (grundsätzlich), sgv («in der vorliegenden Form»)",
+    a:{
+      units:[
+        { id:"a0", type:"position", pid:"A", label:"Das Paket unterstützen: eine solide Grundlage für den bilateralen Weg", passage:"§economiesuisse unterstützt das aussenpolitisch mit der EU ausgehandelte Vertragspaket der Bilateralen III. Die Abkommen bilden eine solide Grundlage für die Stabilisierung und Weiterentwicklung des bilateralen Wegs.§" },
+        { id:"a1", type:"fact", pid:"A", label:"Zwei von fünf Franken verdient die Exportnation im Handel mit dem Ausland", passage:"Unser Land ist dank der wirtschaftlichen Offenheit wohlhabend geworden. §So verdient die Exportnation Schweiz zwei von fünf Franken im Handel mit dem Ausland.§" },
+        { id:"a2", type:"fact", pid:"G", label:"Der Status quo der Bilateralen I und II erodiert — keine langfristige Option", passage:"§Der Status quo der Bilateralen I und II erodiert und ist somit keine langfristige Option.§" },
+        { id:"a3", type:"fact", pid:"B", label:"Dynamische Rechtsübernahme ist nicht automatisch — jeder Rechtsakt wird geprüft", passage:"§Dynamische Rechtsübernahme bedeutet dabei ausdrücklich nicht automatische Übernahme. Die Schweiz prüft jeden neuen EU-Rechtsakt bewusst.§" },
+        { id:"a4", type:"fact", pid:"B", label:"Ein geregelter Streitbeilegungsmechanismus liegt im Interesse der kleineren Partei", passage:"§Ein verlässlicher, rechtlich geregelter Streitbeilegungsmechanismus ist für die Schweiz als kleinere Vertragspartei von zentralem Interesse.§" },
+        { id:"a5", type:"value", pid:"C", label:"Stabile, verlässliche Beziehungen zur wichtigsten Handelspartnerin sind zentral", passage:"§Angesichts der Verschlechterung der internationalen Rahmenbedingungen sind stabile, verlässliche und vorhersehbare Beziehungen zur EU, unserer wichtigsten Handelspartnerin, für die Schweiz von zentraler Bedeutung.§" },
+        { id:"a6", type:"value", pid:"G", label:"Der bilaterale Weg ist das Werkzeug, um Stärke und Wohlstand zu sichern", passage:"§Die FDP.Die Liberalen bekräftigt ihre langjährige Position und unterstützt die Fortführung des bilateralen Weges. Dieser stellt ein wichtiges Werkzeug dar, damit die Schweiz ihre heutige wirtschaftliche Stärke und ihren Wohlstand sichern kann.§" },
+        { id:"a7", type:"value", pid:"F", label:"Bedingung: alle 14 Lohnschutz-Massnahmen und die Landverkehrs-Garantien", passage:"§Die vorgeschlagenen 14 Massnahmen im Bereich Lohnschutz sowie die Garantien im Landverkehrsabkommen sind eine zwingende Voraussetzung.§ Das Stromabkommen lehnt der SGB ab." },
+        { id:"a8", type:"value", pid:"B", label:"Jeder Integrationsschritt muss sozialpolitisch eingebettet sein", passage:"§Für die SP ist und bleibt es zentral, dass jeder europäische Assoziierungs- und Integrationsschritt sozialpolitisch eingebettet ist.§" },
+        { id:"a9", type:"value", pid:"A", label:"Der liberale Arbeitsmarkt muss gewahrt bleiben — Massnahme 14 abgelehnt", passage:"§Der liberale Arbeitsmarkt muss gewahrt bleiben. Die vom Bundesrat vorgeschlagene Massnahme 14 im Bereich des Kündigungsschutzes wird abgelehnt.§ Die inländischen Lohnschutzmassnahmen 1-13 werden als Paket gutgeheissen und müssen integral verabschiedet werden." }
+      ],
+      links:[
+        { from:"a1", to:"a6", kind:"support", warrant:"Die Zahl trägt das Werkzeug-Argument: Der Wohlstand, den der bilaterale Weg sichern soll, kommt aus dem Handel mit dem Ausland." },
+        { from:"a2", to:"a0", kind:"support", warrant:"Wenn der Status quo keine langfristige Option ist, führt die Fortführung des bilateralen Weges über das Paket." },
+        { from:"a6", to:"a0", kind:"support", warrant:"Die Fortführung des bilateralen Weges ist genau das, was die Hauptthese dem Paket zuschreibt: Stabilisierung und Weiterentwicklung." },
+        { from:"a5", to:"a0", kind:"support", warrant:"Wer stabile und vorhersehbare Beziehungen als zentral setzt, trägt ein Paket, das sie stabilisieren soll." },
+        { from:"a3", to:"a0", kind:"support", warrant:"Ist die Übernahme geprüft statt automatisch, entfällt der Haupteinwand gegen den institutionellen Teil des Pakets." },
+        { from:"a4", to:"a0", kind:"support", warrant:"Ein geregeltes Verfahren schützt die kleinere Partei — der institutionelle Teil ist damit Gewinn, nicht Preis." },
+        { from:"a8", to:"a7", kind:"support", warrant:"Die soziale Einbettung ist der Grund, aus dem der Lohnschutz zur zwingenden Voraussetzung wird." },
+        { from:"a7", to:"a0", kind:"support", warrant:"Mit dem Lohnschutz als Voraussetzung wird die Unterstützung bedingt — und bleibt Unterstützung." },
+        { from:"a9", to:"a7", kind:"attack", warrant:"Massnahmen 1–13 ja, 14 nein: Die Bedingung «alle 14» wird von innerhalb der Seite bestritten." },
+        { from:"a9", to:"a0", kind:"support", warrant:"Die Massnahmen 1–13 werden als Paket gutgeheissen — die Unterstützung des Vertragspakets gilt ohne die 14." }
+      ] },
+    b:{
+      units:[
+        { id:"b0", type:"position", pid:"D", label:"Auf die Vorlage ist zu verzichten", passage:"§Auf die Vorlage ist zu verzichten. Dem Parlament ist weder jetzt noch in Zukunft eine Vorlage mit zwingender EU-Rechtsübernahme und Unterstellung unter die EU-Gerichtsbarkeit zu unterbreiten.§" },
+        { id:"b1", type:"fact", pid:"D", label:"Hauptproblem: die zwingende Übernahme von fremdem Recht und fremden Richtern", passage:"Fremdes Recht und fremde Richter. §Das Hauptproblem dieses EU-Vertragspakets ist die zwingende Übernahme von fremdem Recht und fremden Richtern.§" },
+        { id:"b2", type:"fact", pid:"D", label:"Der EU-Gerichtshof vertritt die Gegenpartei — kein neutraler Gerichtshof", passage:"§Dieser vertritt die Interessen der EU, also der Gegenpartei, und ist somit aus Schweizer Sicht kein neutraler Gerichtshof.§" },
+        { id:"b3", type:"fact", pid:"D", label:"Ein «regelmässiger finanzieller Beitrag»: 1,4 Milliarden Franken jährlich", passage:"Höhere Steuern und Abgaben: Neu verlangt die EU vom Nicht-EU-Mitgliedsland Schweiz einen «regelmässigen finanziellen Beitrag». §Der Bundesrat spricht in der Vernehmlassungsvorlage von jährlich 1,4 Milliarden Franken.§" },
+        { id:"b4", type:"fact", pid:"E", label:"Es drohen Bürokratiekosten, mehr Bundesverwaltung, weniger demokratischer Einfluss", passage:"Das neue EU-Vertragspaket sowie die Umsetzungsgesetzgebung enthalten aber zuviele kritische Punkte. Diese betreffen hauptsächlich die institutionellen Regeln. §Hier droht eine Zunahme von Bürokratiekosten, eine Stärkung der Bundesverwaltung und eine Schwächung der demokratischen Einflussmöglichkeiten der KMU und der Schweizer Stimmbevölkerung.§" },
+        { id:"b5", type:"fact", pid:"E", label:"Verfassungsrechtliche Implikationen — Ausschalten des Ständemehrs «nicht nachvollziehbar»", passage:"§Diverse Punkte des Vertragspakets, im Besonderen die Einführung der dynamischen Rechtsübernahme, haben verfassungsrechtliche Implikationen.§ Das Ausschalten des bewährten Ständemehrs in einer Abstimmung mit derart hoher Relevanz wäre politisch nicht nachvollziehbar." },
+        { id:"b6", type:"value", pid:"D", label:"Das Volk als oberster Souverän und Gesetzgeber wird entmachtet", passage:"Die schweizerischen Institutionen haben sich den EU-Institutionen unterzuordnen. §Das Schweizer Volk als oberster Souverän und Gesetzgeber wird entmachtet – und die Kantone werden degradiert.§" },
+        { id:"b7", type:"value", pid:"E", label:"Bilaterale stets unterstützt — dieses Paket ist aber keine blosse Weiterführung", passage:"§Der Schweizerische Gewerbeverband sgv hat in den vergangenen Jahren die bilateralen Verträge stets unterstützt. Diese haben den Schweizer KMU viele Vorteile gebracht.§ Beim neuen EU-Vertragspaket geht es aber nicht einfach um eine Weiterführung der bilateralen Verträge." },
+        { id:"b8", type:"fact", pid:"E", label:"Der Kündigungsschutzartikel ist sachfremd — abgelehnt", passage:"§Der sgv lehnt den Kündigungsschutzartikel ab. Zum vorliegenden Massnahmenpaket ist diese Massnahme sachfremd.§ Ihr Ursprung liegt in einer Auseinandersetzung mit der ILO." }
+      ],
+      links:[
+        { from:"b2", to:"b1", kind:"support", warrant:"Fremde Richter: Ein Gerichtshof der Gegenpartei ist die zweite Hälfte des Hauptproblems." },
+        { from:"b1", to:"b6", kind:"support", warrant:"Die zwingende Übernahme fremden Rechts ist der Mechanismus, durch den das Volk als Gesetzgeber entmachtet würde." },
+        { from:"b1", to:"b0", kind:"support", warrant:"Die Schlussforderung nennt genau diese Übernahme — «weder jetzt noch in Zukunft»." },
+        { from:"b6", to:"b0", kind:"support", warrant:"Wer das Volk als obersten Souverän setzt, kann eine Vorlage nicht tragen, die ihn entmachtet." },
+        { from:"b3", to:"b0", kind:"support", warrant:"Der jährliche Beitrag ist ein eigenständiger Kostengrund gegen die Vorlage." },
+        { from:"b8", to:"b4", kind:"support", warrant:"Eine sachfremde Massnahme ist einer der «kritischen Punkte» der Umsetzungsgesetzgebung." },
+        { from:"b4", to:"b0", kind:"support", warrant:"Für den sgv sind das die Punkte, weshalb er das Paket «in der vorliegenden Form» nicht unterstützt — die Karte führt sie in die Verzichts-These." },
+        { from:"b5", to:"b0", kind:"support", warrant:"Was verfassungsrechtliche Implikationen hat, gehört für den sgv vor Volk und Stände — ohne Ständemehr trägt er das Paket in dieser Form nicht." },
+        { from:"b7", to:"b0", kind:"support", warrant:"Weil das Paket für den sgv keine blosse Weiterführung ist, trägt seine bisherige Unterstützung der Bilateralen es nicht." }
+      ] },
+    mappings:[
+      { a:"a3", b:"b1", kind:"factual", note:"«Ausdrücklich nicht automatisch» (SP) gegen «zwingende Übernahme» (SVP): Wer im Einzelfall entscheidet und was ein Nein kostet, steht in den Vertragstexten — keiner der beiden Auszüge zitiert sie. Der sgv (Seite b) teilt die Unterscheidung der SP, nennt die Mitwirkung aber «relativ schwach»." },
+      { a:"a4", b:"b2", kind:"factual", note:"Schützt ein rechtlich geregeltes Verfahren die kleinere Vertragspartei (SP) — oder unterstellt es die Schweiz dem Gericht der Gegenpartei (SVP)? Welche Rolle der EU-Gerichtshof im Verfahren hat, steht im Vertragstext; beide behaupten, keiner zitiert." },
+      { a:"a5", b:"b6", kind:"value", note:"Stabile, vorhersehbare Beziehungen zur wichtigsten Handelspartnerin (Mitte) — oder das Volk als oberster Gesetzgeber (SVP)? Eine Rangfolge zweier Güter; kein Faktum entscheidet sie." },
+      { a:"a6", b:"b7", kind:"agreement", note:"Beide tragen den bilateralen Weg: Die FDP will ihn fortführen, der sgv hat die Verträge «stets unterstützt». Der Streit beginnt danach — ob dieses Paket eine Weiterführung ist oder «nicht einfach» eine." },
+      { a:"a9", b:"b8", kind:"agreement", note:"economiesuisse und sgv lehnen die Massnahme 14 gleich ab — der eine trägt das Paket trotzdem, der andere nicht. Die Frage trennt nicht entlang der Seiten." },
+      { a:"a1", b:"b3", kind:"factual", note:"Zwei Zahlen, die aneinander vorbeigehen: «zwei von fünf Franken» im Aussenhandel (ohne Quelle im Auszug) — 1,4 Milliarden Franken jährlich (nach Bundesrat). Beide nachschlagbar; keine antwortet auf die andere." }
+    ] } };
+
+
+/* ===== neutralvoten ===== */
+/* ---------- Debatten-Karte: Neutralitätsinitiative, Parlamentsdebatte NR 4.3.2026 / SR 12.3.2026 (Kartierung: vom Tool; Textstellen verbatim) ---------- */
+AM["neutralvoten"] = { title:"Neutralität — Parlamentsdebatte", kind:"debate", intro:"Fallbeispiel: die Debatte zur Neutralitätsinitiative (24.092) im Nationalrat (4.3.2026) und im Ständerat (12.3.2026), vierzehn Voten als Auszüge aus dem Amtlichen Bulletin. Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.", note:"Markiert: die Textstelle, die der Knoten zusammenfasst — wörtlich aus dem Amtlichen Bulletin. Knoten-Formulierung und Kartierung: vom Tool.",
+  positions:[
+    { id:"A", short:"Pfister", name:"Gerhard Pfister (Mitte)", c:"#7c3aed", side:"nein", src:"Amtliches Bulletin, Nationalrat, 04.03.2026, AB NR 2026 S. 144–145 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838315/download?filename=AB+NR%2C+2026%2C+S.+144+ff._12_20260304.pdf" }] },
+    { id:"B", short:"Reimann", name:"Lukas Reimann (SVP)", c:"#1d4ed8", side:"ja", src:"Amtliches Bulletin, Nationalrat, 04.03.2026, AB NR 2026 S. 145–146 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838315/download?filename=AB+NR%2C+2026%2C+S.+144+ff._12_20260304.pdf" }] },
+    { id:"C", short:"Badertscher", name:"Christine Badertscher (Grüne)", c:"#b45309", side:"nein", src:"Amtliches Bulletin, Nationalrat, 04.03.2026, AB NR 2026 S. 147–148 (Auszug; Zwischenfrage und Antwort vollständig)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838315/download?filename=AB+NR%2C+2026%2C+S.+144+ff._12_20260304.pdf" }] },
+    { id:"D", short:"Grüter", name:"Franz Grüter (SVP)", c:"#15803d", side:"ja", src:"Amtliches Bulletin, Nationalrat, 04.03.2026, AB NR 2026 S. 148 (Zwischenfrage, vollständig)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838315/download?filename=AB+NR%2C+2026%2C+S.+144+ff._12_20260304.pdf" }] },
+    { id:"E", short:"Molina", name:"Fabian Molina (SP)", c:"#0891b2", side:"nein", src:"Amtliches Bulletin, Nationalrat, 04.03.2026, AB NR 2026 S. 149 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838315/download?filename=AB+NR%2C+2026%2C+S.+144+ff._12_20260304.pdf" }] },
+    { id:"F", short:"Gredig", name:"Corina Gredig (GLP)", c:"#be123c", side:"nein", src:"Amtliches Bulletin, Nationalrat, 04.03.2026, AB NR 2026 S. 149–150 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838315/download?filename=AB+NR%2C+2026%2C+S.+144+ff._12_20260304.pdf" }] },
+    { id:"G", short:"Michel S.", name:"Simon Michel (FDP)", c:"#4d7c0f", side:"nein", src:"Amtliches Bulletin, Nationalrat, 04.03.2026, AB NR 2026 S. 151 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70484" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838315/download?filename=AB+NR%2C+2026%2C+S.+144+ff._12_20260304.pdf" }] },
+    { id:"H", short:"Michel M.", name:"Matthias Michel (FDP)", c:"#9333ea", side:"nein", src:"Amtliches Bulletin, Ständerat, 12.03.2026, AB SR 2026 S. 220 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838316/download?filename=AB+SR%2C+2026%2C+S.+220+ff._12_20260312.pdf&inline=true&locale=de" }] },
+    { id:"I", short:"Germann", name:"Hannes Germann (SVP)", c:"#0f766e", side:"ja", src:"Amtliches Bulletin, Ständerat, 12.03.2026, AB SR 2026 S. 221 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838316/download?filename=AB+SR%2C+2026%2C+S.+220+ff._12_20260312.pdf&inline=true&locale=de" }] },
+    { id:"J", short:"Sommaruga", name:"Carlo Sommaruga (SP)", c:"#c2410c", side:"nein", src:"Amtliches Bulletin, Ständerat, 12.03.2026, AB SR 2026 S. 223 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838316/download?filename=AB+SR%2C+2026%2C+S.+220+ff._12_20260312.pdf&inline=true&locale=de" }] },
+    { id:"K", short:"Jositsch", name:"Daniel Jositsch (SP)", c:"#6d28d9", side:"nein", src:"Amtliches Bulletin, Ständerat, 12.03.2026, AB SR 2026 S. 223–224 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838316/download?filename=AB+SR%2C+2026%2C+S.+220+ff._12_20260312.pdf&inline=true&locale=de" }] },
+    { id:"L", short:"Rieder", name:"Beat Rieder (Mitte)", c:"#1e40af", side:"nein", src:"Amtliches Bulletin, Ständerat, 12.03.2026, AB SR 2026 S. 224 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838316/download?filename=AB+SR%2C+2026%2C+S.+220+ff._12_20260312.pdf&inline=true&locale=de" }] },
+    { id:"M", short:"Poggia", name:"Mauro Poggia (MCG/SVP)", c:"#a16207", side:"ja", src:"Amtliches Bulletin, Ständerat, 12.03.2026, AB SR 2026 S. 224–225 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838316/download?filename=AB+SR%2C+2026%2C+S.+220+ff._12_20260312.pdf&inline=true&locale=de" }] },
+    { id:"N", short:"Cassis", name:"Bundesrat Ignazio Cassis", c:"#047857", side:"nein", src:"Amtliches Bulletin, Ständerat, 12.03.2026, AB SR 2026 S. 225–226 (Auszug)", url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838316/download?filename=AB+SR%2C+2026%2C+S.+220+ff._12_20260312.pdf&inline=true&locale=de" }] }
+  ],
+  full:{ 
+    A:[
+      { t:"Die Aussenpolitische Kommission Ihres Rates befasste sich an drei Sitzungen mit dieser Volksinitiative. Am 30. Juni 2025 führte sie dazu eine allgemeine Aussprache durch. Am 25. und 26. August 2025 wurde die Initiative im Detail beraten. Trotz der Ablehnung des Gegenvorschlags in der Gesamtabstimmung beschloss die Kommission, den direkten Gegenentwurf des Ständerates in die Vernehmlassung zu geben. In einer dritten Sitzung, am 16. und 17. Februar dieses Jahres, nahm die Kommission Kenntnis von den mehrheitlich ablehnenden Ergebnissen der Vernehmlassung zum direkten Gegenentwurf. Sie beschloss, nicht mehr auf ihre Entscheide zur Initiative und zum Gegenentwurf zurückzukommen." },
+      { t:"Zum Inhalt: Ich lege Ihnen zuerst die Gründe dar, warum die Mehrheit der Kommission die Volksinitiative zur Ablehnung empfiehlt. Dann führe ich ergänzend die Argumente auf, warum die Mehrheit der Kommission Ihnen beantragt, nicht auf den Bundesbeschluss 2 einzutreten, und im Unterschied zum Ständerat dem Volk keinen direkten Gegenentwurf vorlegen will. Abschliessend gehe ich auf die Anträge zum direkten Gegenentwurf ein, sollte dieser Rat beschliessen, doch auf den Bundesbeschluss 2 einzutreten." },
+      { t:"Die wichtigsten Argumente der Kommissionsmehrheit gegen diese Initiative sind die des Bundesrates: Erstens ist die Initiative eine Abkehr von der bisherigen instrumentellen Handhabung der Neutralität. Die Schweiz hat die Neutralität immer als Instrument der Vertretung ihrer aussen- und sicherheitspolitischen Interessen angewandt und nicht als eigenes Ziel, als Selbstzweck." },
+      { t:"Zweitens verlangt die Initiative, dass die sicherheits- und verteidigungspolitische Zusammenarbeit nur noch im Fall eines direkten militärischen Angriffs auf die Schweiz zulässig sein soll. Das wäre aber für eine wirklich glaubhafte Verteidigungskapazität der Schweiz zu wenig und vor allem zu spät." },
+      { t:"Drittens wären Sanktionen gegen kriegführende Staaten nur noch mit einem Mandat der UNO erlaubt. Abgesehen davon, dass die UNO seit Längerem in solchen Fragen sehr blockiert ist, sind Sanktionen unabhängig von der UNO für die internationale Staatengemeinschaft und auch für die Schweiz ein wichtiges Instrument, um Völkerrechtsverletzungen zu sanktionieren." },
+      { t:"Viertens würde mit der Verfassungsbestimmung die bisherige und nach Meinung der Kommissionsmehrheit bewährte Kontinuität des Handlungsspielraums innerhalb der bestehenden Neutralität stark eingeschränkt. Es ist klar, dass die Initianten das explizit wollen und diese Frage auch anders beurteilen, nämlich dass diese Einschränkung der Neutralität politisch geboten sei. Genau dafür ist ja das Volksrecht der Initiative da, um dem Souverän diese Frage vorzulegen und ihn dann entscheiden zu lassen." }
+    ],
+    B:[
+      { t:"\"Wenn zwei Halbwüchsige sich prügeln, dann hält sich der kleine Bruder mit Vorteil fern. Er hätte nichts zu gewinnen. Mit dieser Erfahrung herangewachsen, haben wir Bürger eines Kleinstaates nicht den Ehrgeiz, uns militärisch in den Streit der Grossen einzumischen.\" Dies schrieb Divisionär Hans Bachofner in \"Bewaffnete Neutralität heute\". Das sind passende Worte zur Neutralitäts-Initiative, die mit der Unterstützung von 130 000 Schweizerinnen und Schweizern zustande gekommen ist. Ich bitte Sie, unserer Minderheit zuzustimmen und die Initiative zur Annahme zu empfehlen." },
+      { t:"Die Initiative stellt sicher, dass die Schweiz ihre bewährte Neutralität konsequent beibehält, ohne Ausnahme und nicht flexibel von Fall zu Fall. Eine klare und glaubwürdige Neutralität schützt unser Land vor fremden Konflikten, und sie stärkt unsere Rolle als verlässlicher Vermittler. Mit der Annahme der Neutralitäts-Initiative sichern wir langfristig Frieden, Stabilität und Unabhängigkeit in der Schweiz. Die Neutralität ist ein Erfolgsmodell. Sie sichert den Zusammenhalt des Landes im Innern, und sie bewahrte die Eidgenossenschaft vor Konflikten mit anderen Staaten." },
+      { t:"Die Neutralität war aber nicht nur Selbstzweck, sondern ermöglichte auch ein humanitäres und aktives Handeln, zum Beispiel durch die guten Dienste, die Diplomatie, das Internationale Komitee vom Roten Kreuz. Was Kant in seinem Buch \"Zum ewigen Frieden\" beschreibt, wurde in weiten Teilen mit der immerwährenden, bewaffneten Neutralität der Schweiz verwirklicht. Wenn alle Staaten eine Neutralitätspolitik verfolgen würden, so würde dadurch zwar die Neutralität selbst gegenstandslos, aber es verschwände auch der Krieg, und das Ziel des Weltfriedens wäre erreicht." },
+      { t:"Die Neutralität der Schweiz geniesst hohe Zustimmung. Gemäss der ETH-Studie \"Sicherheit 2025\" befürworteten über 50 Prozent der Stimmberechtigten die Neutralität. Laut einer weiteren Studie soll die Neutralität sogar Identitätsmerkmal Nummer 1 der Schweiz sein, knapp vor der direkten Demokratie." },
+      { t:"Trotzdem ist die Neutralität im nationalen Recht kaum kodifiziert, und im internationalen Recht ist nun umstritten, inwiefern das Neutralitätsrecht noch Teil des universellen Völkerrechts ist. Was genau unter \"Neutralität\" zu verstehen ist und wie sich die Schweiz diesbezüglich zu verhalten hat, ist trotz der grundsätzlichen Zustimmung zur Neutralität speziell auch in Friedenszeiten sehr umstritten. Es bedarf deshalb einer Klärung in der Bundesverfassung, und diese Klärung nimmt die Neutralitäts-Initiative vor." }
+    ],
+    C:[
+      { t:"Die Grüne Fraktion lehnt die Neutralitäts-Initiative in aller Deutlichkeit ab. Die Initiative ist nicht nur unnötig – der Grundsatz der Schweizer Neutralität ist bereits heute in der Bundesverfassung verankert –, sondern sie schadet auch den aussenpolitischen Interessen und der Sicherheit der Schweiz. Die Neutralität wird von niemandem infrage gestellt." },
+      { t:"Mit der Initiative soll jedoch ein Problem gelöst werden, das gar nicht existiert, und dadurch werden neue, unnötige, wenn nicht gar gefährliche Probleme geschaffen. Als besonders problematisch erachten wir den eigentlichen Kern der Initiative, den Umstand, dass der Schweiz verboten werden soll, eigenständige Sanktionen zu erlassen oder sich den Sanktionen ihrer Partner anzuschliessen – dies sogar in Fällen schwerster Völkerrechtsverletzungen oder Kriegsverbrechen, wie sie etwa Russland in der Ukraine begeht. Das käme nicht nur einer moralischen Bankrotterklärung der Schweiz gleich, sondern würde auch ihren aussenpolitischen Interessen und ihrer Sicherheit erheblich schaden." },
+      { t:"In der heutigen, äusserst schwierigen geopolitischen Lage sollte, ja muss sich die Schweiz für eine Stärkung des Multilateralismus und der internationalen Zusammenarbeit einsetzen, insbesondere auch im sicherheitspolitischen Bereich. Die Schweiz darf sich nicht zurückziehen, denn für einen Alleingang ist sie zu klein." },
+      { h:"Zwischenfrage Grüter Franz (V, LU)", t:"Frau Kollegin Badertscher, Sie haben in Ihrem Votum mehrfach die Bedeutung des internationalen Genf, auch für Friedensverhandlungen, betont. Sie waren in der Kommission mit dabei und initiierten auch nochmals eine Vernehmlassung mit. Haben Sie gelesen, dass der Kanton Genf in dieser Vernehmlassung mehrfach darauf hingewiesen hat, wie wichtig die Schweizer Neutralität für Genf, für den Frieden und für Friedensverhandlungen sei?" },
+      { t:"Und übrigens, das wissen Sie auch, das Internationale Komitee vom Roten Kreuz, das auch schon bei uns war, hat immer wieder darauf hingewiesen, wie wichtig die Schweizer Neutralität für die Ausübung ihrer Tätigkeit sei. Was sagen Sie dazu?" },
+      { h:"Antwort Badertscher Christine (G, BE)", t:"Danke für diese Frage, Kollege Grüter. Es ist so, die Neutralität ist wichtig. Ich habe ja gesagt: Es bestreitet niemand, dass die Neutralität wichtig ist, und niemand bestreitet, dass die Schweiz neutral sein soll; das ist für uns völlig klar. Die Neutralität ist sehr wichtig, gerade für Genf, gerade für das Internationale Komitee vom Roten Kreuz. Aber es ist eben nicht nötig, dass wir sie zusätzlich noch in die Verfassung schreiben, da sie ja bereits mit zwei Artikeln in der Bundesverfassung verankert ist." }
+    ],
+    D:[
+      { h:"Zwischenfrage an Badertscher Christine (G, BE)", t:"Frau Kollegin Badertscher, Sie haben in Ihrem Votum mehrfach die Bedeutung des internationalen Genf, auch für Friedensverhandlungen, betont. Sie waren in der Kommission mit dabei und initiierten auch nochmals eine Vernehmlassung mit. Haben Sie gelesen, dass der Kanton Genf in dieser Vernehmlassung mehrfach darauf hingewiesen hat, wie wichtig die Schweizer Neutralität für Genf, für den Frieden und für Friedensverhandlungen sei?" },
+      { t:"Und übrigens, das wissen Sie auch, das Internationale Komitee vom Roten Kreuz, das auch schon bei uns war, hat immer wieder darauf hingewiesen, wie wichtig die Schweizer Neutralität für die Ausübung ihrer Tätigkeit sei. Was sagen Sie dazu?" }
+    ],
+    E:[
+      { t:"Die Schweiz hat nie andere Länder erobert oder besessen. Das verschafft uns insbesondere in den Ländern des globalen Südens eine besondere Glaubwürdigkeit als ehrliche Vermittlerin für Frieden und für Gerechtigkeit. Diese Stärke wollen wir behalten, dieses Kapital wollen wir in geopolitisch schwierigen Zeiten für gute Beziehungen zwischen den Völkern der Welt in die Waagschale werfen. In diesem Sinne kann die Neutralität, wenn wir sie richtig nutzen, ein wichtiges und nützliches Instrument für die Schweizer Aussen- und Sicherheitspolitik sein." },
+      { t:"Was diesem Engagement der Schweiz aber schadet, sind die Machenschaften der Schweizer Finanzindustrie, des Rohstoffsektors oder der Rüstungsindustrie, die unter dem Deckmantel der Neutralität ihren Profit vergrössern und immer wieder schmutzige Geschäfte zugunsten von Autokraten und Despoten betreiben. Das ähnelt zum Teil einem regelrechten Neokolonialismus. Dagegen haben wir als Sozialdemokraten immer gekämpft." },
+      { t:"Wer die Neutralität als eigentliches Staatsziel in die Verfassung schreiben und gleichzeitig Waffenexporte in Bürgerkriegsländer und Diktaturen ermöglichen will, macht nicht nur sich, sondern auch unser Land komplett unglaubwürdig. Und wer alles tut, um griffige Regeln für die Konzernverantwortung zu verhindern, aber gleichzeitig vorgibt, durch die Neutralitäts-Initiative für Frieden und gute Dienste einzustehen, verschleiert seine wahren Interessen, nämlich den Schutz der mächtigen Globalisierungsprofiteure und ihrer schrankenlosen Geschäfte. Der Schutz dieser Machenschaften hat nichts mit einer aktiven Neutralitätspolitik für Frieden, Völkerrecht und Menschenrechte zu tun. Im Gegenteil, er schadet ihr." },
+      { t:"Mit der Neutralitäts-Initiative der SVP würde dieses Geschäftsmodell der Schweizer Oligarchie noch gestärkt. Das Sanktionsverbot würde es der Schweiz verunmöglichen, eine aktive Politik zugunsten des Völkerrechts und damit der Gerechtigkeit zu betreiben. Banken und Rohstoffhändler könnten ungestört Geschäfte mit Unrechtsregimen betreiben, welche die Menschenrechte und die Demokratie aushöhlen und Krieg und Elend verbreiten. Die SVP-Neutralitäts-Initiative ist deshalb in Wahrheit eine Autokraten-Initiative, und deshalb müssen wir sie bekämpfen." },
+      { t:"Aus Sicht der SP-Fraktion gibt es auch keinen Grund für einen Gegenvorschlag. Die Initianten werden in jedem Fall an der Initiative festhalten, und es besteht keinerlei Handlungsbedarf für eine Anpassung der Neutralitätsdefinition auf Verfassungsstufe. Die SP-Fraktion wird deshalb nicht auf einen direkten Gegenvorschlag eintreten." },
+      { t:"Wir wollen eine aktive Neutralität für Völkerrecht, Menschenrechte, Demokratie und Gerechtigkeit, für eine Schweiz, die sich gegen Hunger und Armut auf der Welt engagiert, so wie es unsere Bundesverfassung richtigerweise vorsieht. Wir wollen nicht in einem Land leben, das in jeder Krise erst einmal eine Chance sieht, den Profit zu vergrössern. Deshalb versenken wir die sogenannte Neutralitäts-Initiative an der Urne und kämpfen stattdessen für eine soziale Schweiz, die Verantwortung übernimmt für eine gerechte Welt." }
+    ],
+    F:[
+      { t:"Die Frage, über die wir heute eigentlich sprechen, lautet im Kern: Wozu dient Neutralität? Dient sie sich selbst als Symbol, als Tradition, als politisches Identitätsmerkmal, oder dient sie der Sicherheit, der Freiheit und der Handlungsfähigkeit unseres Landes? Für die Grünliberale Fraktion ist klar: Neutralität ist kein Selbstzweck. Sie ist ein Instrument der Aussen- und der Sicherheitspolitik. Der Wert eines Instruments zeigt sich daran, ob es den Herausforderungen dieser Zeit gerecht wird. Genau darum geht es in dieser Debatte." },
+      { t:"Die Regeln der klassischen Neutralität stammen im Kern aus der Haager Konvention, und diese stammt aus dem Jahr 1907. Sie entstand in einer Welt, in der Krieg noch als legitimes Mittel der Politik galt. Man regelte damals, wie sich neutrale Staaten zu verhalten haben, wenn andere Staaten Krieg führen. Doch die Welt und das internationale Recht haben sich seither zum Glück weiterentwickelt. Mit der UNO-Charta wurde der Angriffskrieg geächtet. Krieg ist heute kein legitimes politisches Mittel mehr, es ist ein klarer Bruch des Völkerrechts." },
+      { t:"Unsere Neutralitätspolitik kann deshalb nicht so tun, als lebten wir noch im Jahre 1907. Sie muss mit dem modernen Völkerrecht vereinbar sein und mit den Verpflichtungen, die wir als Teil der internationalen Gemeinschaft eingegangen sind. Für die Grünliberale Fraktion ist aus einer zutiefst liberalen Haltung heraus klar, dass Neutralität nicht moralische Gleichgültigkeit bedeutet. Liberalismus bedeutet Verantwortung. Er bedeutet, dass Freiheit, Recht und Selbstbestimmung verteidigt werden müssen." },
+      { t:"Neutralität darf deshalb niemals heissen, Täter und Opfer gleich zu behandeln. Wenn internationales Recht gebrochen wird, wenn ein souveränes Land angegriffen wird, dann kann Neutralität nicht bedeuten, beide Seiten gleich zu gewichten. [...] Für die GLP-Fraktion ist deshalb klar: Neutralität kann militärische Nichtbeteiligung bedeuten, aber sie darf niemals auch politische Isolation bedeuten." }
+    ],
+    G:[
+      { t:"Die seit 175 Jahren bewährte Praxis der Neutralität gilt als flexibles und anpassungsfähiges aussen- und sicherheitspolitisches Werkzeug. Eine starre Verankerung in der Verfassung beraubt den Bundesrat seines notwendigen Spielraums, um auf globale Krisen reagieren zu können." },
+      { t:"Die FDP-Fraktion lehnt sowohl die Initiative wie auch den Gegenentwurf im Beschluss 2 entschieden ab. Beide Beschlüsse führen zu einer schädlichen Versteinerung der Neutralität und gefährden die Handlungsfreiheit der Schweiz. Dabei ist die Initiantin Wiederholungstäterin und tut dies zum Schaden unseres Landes." },
+      { t:"[...] Mit der Neutralitäts-Initiative will uns die SVP politisch isolieren – und dies nicht, weil wir einen Verfassungsartikel entwickeln sollen, Herr Reimann, sondern weil Sie in Ihrem Verfassungsartikel verlangen, dass wir nicht mehr sanktionieren dürfen. Sie müssen sich das einmal vorstellen: In Europa herrscht Krieg, und die Schweiz hätte Russland nach dem Angriff auf die Ukraine nicht sanktionieren dürfen. Das ist der Punkt." }
+    ],
+    H:[
+      { t:"Selber schätze ich Niklaus von der Flüe sehr. Die Kirche in meinem Dorf Oberwil bei Zug heisst so. Mein Schwiegervater hiess so. Nicht selten wird Niklaus von der Flüe auch im Zusammenhang mit der Neutralität zitiert. 'Macht den zun nit ze wiit', soll er gesagt haben. Ob es genau stimmt, wissen wir nicht. Aber auf jeden Fall hat er in einer anderen Zeit gelebt. Wir kommen zur heutigen Zeit." },
+      { t:"Im letzten Juni hat der Ständerat einerseits die Neutralitäts-Initiative klar abgelehnt. Andererseits hat er dieser einen Gegenentwurf gegenübergestellt und mit 27 zu 15 Stimmen angenommen. Der Nationalrat hat den im Ständerat formulierten Entwurf Anfang dieser Session mit 109 zu 77 Stimmen bei 2 Enthaltungen abgelehnt. Nach Fraktionen ist der Gegenvorschlag von der SVP-Fraktion und von etwa knapp der Hälfte der Mitte-Fraktion abgelehnt worden." },
+      { t:"[...] Anderes hat sich aber seither verändert, meine ich, und das spricht für eine Ablehnung des Gegenentwurfes. Die nationalrätliche Kommission hat sich nämlich die Mühe und die Zeit genommen, unseren Gegenentwurf quasi einem Härtetest zu unterziehen, nämlich einer Vernehmlassung. Lassen Sie mich kurz das Resultat dieser Vernehmlassung zusammenfassen: 23 Kantone haben sich explizit zum Gegenentwurf geäussert, 14 haben ihn abgelehnt, 9 haben zugestimmt. Von sieben Parteien haben sechs den Gegenvorschlag abgelehnt. Von 14 interessierten Organisationen haben 13 den Gegenvorschlag abgelehnt. [...] Unter dem Strich: Das Vernehmlassungsergebnis stützt die Haltung des Nationalrates und unserer Mehrheit für einen Verzicht auf einen Gegenentwurf." },
+      { t:"Geändert zum Schlechten hat sich leider die Weltlage. Wir wissen es, seit wenigen Wochen erleben wir einen neuen Krieg im Nahen Osten, der sich zu einem Flächenbrand auszudehnen droht, wobei oft unklar ist, wie viele Nationen sich nun ab wann und mit wem im Krieg befinden. Entsprechend ist die Anwendung unserer Neutralität wieder einmal einem Wirklichkeitstest unterworfen." },
+      { t:"Was heisst das nun, wenn wir vor der Frage stehen, ob wir die Neutralität in der Verfassung definieren sollen oder nicht? Gibt das in solchen schwierigen Situationen zusätzliche Orientierung, oder stellt eine Fixierung der Neutralität in der Verfassung nicht mehr Fragen, als sie Antworten gibt?" }
+    ],
+    I:[
+      { t:"Eines vorweg: Unbestrittenermassen ist die immerwährende, bewaffnete Neutralität ein zentraler Faktor des Erfolgsmodells Schweiz. Diesem Erfolgsmodell gilt es Sorge zu tragen und damit implizit auch unserer Neutralität, die uns und viele Generationen vor uns vor Kriegen verschont und uns die längste Friedenszeit der Geschichte beschert hat." },
+      { t:"Es ist nicht so, dass wir Diskussionen dieser Art, wie wir sie heute führen, zum ersten Mal führen würden. Bereits bei der Überarbeitung der Bundesverfassung 1999 stand die Neutralität zur Debatte. Man verzichtete damals auf die explizite Aufnahme der Neutralität in die neue Bundesverfassung, dies, weil namhafte Kreise die bewährte Schweizer Neutralität am liebsten in der Mottenkiste der Geschichte entsorgt hätten. Mit dem Fall der Mauer Ende der Achtzigerjahre schien damals der ewige Friede ausgebrochen zu sein." },
+      { t:"Im Zusammenhang mit den jüngsten Konflikten, namentlich dem Angriffskrieg Russlands gegen die Ukraine, waren und sind Bundesrat und Parlament mit der Auslegung unserer Neutralität besonders stark gefordert. Es ist dies nicht zum ersten und wohl auch nicht zum letzten Mal. Inzwischen haben sich die Kriegs- und Krisenherde ausgeweitet, zuletzt auf den Iran. Selbst die Ausweitung zu einem Weltkrieg scheint mir persönlich aufgrund der geopolitischen Lage nicht mehr gänzlich auszuschliessen zu sein." },
+      { t:"Gerade in diesen unsicheren Zeiten haben wir die Chance, unsere Neutralität zu klären. Denn die Verunsicherung in der Bevölkerung ist gross, und die Auslegung der Neutralität ist auch komplett divers. Wir können also unsere Neutralität klären und stärken, indem wir sie in der Bundesverfassung verankern. Mit dem Gegenentwurf können wir das in der revidierten Bundesverfassung gemachte Versäumnis nachholen – besser spät als nie. Gerade mit Blick auf die Kriege und die globalen Krisenherde müssen wir jetzt handeln und ein klares Bekenntnis zur bewährten Neutralität abgeben." }
+    ],
+    J:[
+      { t:"J'avais prévu, comme première phrase d'introduction, de dire que je voulais revenir à l'essentiel de nos débats et ne pas recommencer une grande discussion sur ce qu'est la neutralité ou pas. Deux questions doivent être posées aujourd'hui concernant le contre-projet direct : quelle est la teneur de ce contre-projet direct et, avec cette teneur, est-il opportun de le soumettre au vote ?" },
+      { t:"En ce qui concerne la teneur, notre collègue Germann a parfaitement raison. C'est moi qui, en commission, ai rédigé ce texte. Pourquoi ai-je rédigé ce texte ? Parce que je voulais que, dans l'hypothèse où il y aurait une majorité en faveur d'un contre-projet direct, on ait un texte conforme à la neutralité telle qu'elle est aujourd'hui, dans ses principes, pratiquée par le Conseil fédéral." },
+      { t:"Le risque était de disposer d'un texte de contre-projet direct qui remette en question, même avec de la bonne volonté lors de la rédaction, ce qui est pratiqué aujourd'hui par la Suisse au travers de la politique de neutralité mise en oeuvre par le Conseil fédéral. Ce texte, aujourd'hui, c'est exactement cela. Il a été confirmé plusieurs fois en commission, par l'administration et par le conseiller fédéral Cassis, que le texte ne fait que reprendre les principes de la neutralité telle qu'elle existe aujourd'hui." },
+      { t:"Il n'y a donc aucun élément nouveau amené par cet article 154a sur la neutralité suisse. En d'autres termes, on peut vivre sans cet article et on continuerait à pratiquer la neutralité telle qu'elle existe aujourd'hui." }
+    ],
+    K:[
+      { t:"Ich muss sagen: Wir diskutieren ja nicht zum ersten Mal über die Neutralität, aber die Diskussion nimmt aus meiner Sicht immer absurdere Züge an. Worüber diskutieren wir eigentlich? Wenn ich dem Kommissionsberichterstatter zuhöre, komme ich zum Schluss, dass er eigentlich nichts anderes aussagt, als dass man keine Ahnung hat, was Neutralität ist. Gleichzeitig ist aber die Meinung, wir alle seien von der Neutralität überzeugt. Ich kann aber nicht von etwas überzeugt sein, von dem ich nicht weiss, was es eigentlich ist." },
+      { t:"Das Resultat dieser Unsicherheit ist offenbar, dass man am besten gar nichts sagt, gar nichts schreibt und alles offenlässt, um dann in der Krisensituation situativ entscheiden zu können, was es bedeutet, neutral zu sein. Dass das nicht funktioniert, haben wir an verschiedenen Beispielen gesehen. Wir laufen durch die Welt und sind stolz auf unsere Neutralität, doch in dem Moment, in dem wir neutral sein müssen, merken wir plötzlich: Eigentlich wollen wir gar nicht." },
+      { t:"Zusammengefasst sind Fazit und Haltung des Kommissionsberichterstatters und offenbar der Mehrheit: \"Wir wollen neutral sein, ausser im Krieg.\" Das ist ungefähr genauso sinnvoll, wie wenn Sie jemandem immer dann einen Schirm ausleihen, wenn es nicht regnet. Von dem her bin ich der Meinung: Wir müssen etwas sagen, nämlich sagen, was Neutralität ist." },
+      { t:"Der Kommissionsberichterstatter sagt, das Problem sei, dass es Juristen und Juristinnen gibt, die das Gesetz dann auslegen, wenn man es aufschreibt. Herr Würth hat zu Recht gesagt, das sei normal. In diesem Haus haben wir schon des Öfteren ein Gesetz gemacht, das dann vielleicht etwas ausgedehnter interpretiert wurde, als wir uns das vorgestellt hatten. Das ist nichts Neues." },
+      { t:"Es sagt ja niemand, dass wir und der Bundesrat keinen Zentimeter Bewegungsspielraum mehr haben, wenn wir die Neutralität in die Verfassung schreiben. Aber das, was wir machen, ist, dass wir uns mit der Frage beschäftigen, was Neutralität eigentlich heisst, um dann in der Situation, in der wir neutral sein müssen – das ist nicht im Frieden, sondern im Krieg –, eine gewisse Leitlinie zu haben. Warum will die Mehrheit das offenbar nicht machen? Weil es unangenehm ist, neutral zu sein in der Situation, in der man neutral sein muss." }
+    ],
+    L:[
+      { t:"Ich danke Herrn Jositsch für diesen letzten Satz; das ist auch das, was ich letztes Mal gesagt habe. Wir halten eigentlich am Begriff der Neutralität als Wert in der Bundesverfassung fest." },
+      { t:"Sie können selbstverständlich ohne Gegenvorschlag in diese Debatte reingehen und eine Rechtsdebatte führen, das können Sie schon tun; Herr Kollege Michel ist jetzt, glaube ich, nicht da – ah, er ist da, ohne Brille sehe ich Sie nicht." },
+      { t:"Aber ich glaube, es ist keine Rechtsdebatte, die wir im Abstimmungskampf führen werden. Das wird eine Wertedebatte sein, eine Debatte darüber, welche Werte der Schweiz noch wichtig sind und welche nicht." },
+      { t:"Ich war letztes Wochenende sehr erstaunt über die Abstimmungsverhältnisse bei der Bargeld-Initiative. Bargeld ist auch so ein Wert, und dort hatten wir auch eine Initiative und einen Gegenvorschlag – das Resultat kennen Sie." },
+      { t:"Es wird eine Wertedebatte sein, die Sie führen müssen, und in einer Wertedebatte möchte ich gerne am Wert festhalten." }
+    ],
+    M:[
+      { t:"En paraphrasant Shakespeare, on pourrait dire \"avoir ou ne pas avoir, telle est la question\". On parle évidemment du contre-projet. Il n'est pas question de revenir sur les notions mêmes de neutralité, mais elles doivent évidemment éclairer la position que nous allons exprimer. Je vais prendre le contre-pied du seul orateur francophone qui s'est exprimé, notre collègue Carlo Sommaruga, qui vous dit qu'il est inutile d'inscrire dans la Constitution quelque chose qui ne change rien à la situation actuelle. Je suis pour ma part favorable à l'initiative. Je pense qu'elle exprime ce que doit être la neutralité pour notre pays, mais je considère également qu'un contre-projet doit être présenté à la population. Ce qui va sans dire va souvent mieux en le disant, parce que, la neutralité, c'est l'ADN de notre pays et c'est également l'image que donne notre pays à l'extérieur." },
+      { t:"Lorsqu'on parle de la Suisse et lorsqu'on pense à la Suisse, on pense évidemment à la neutralité. Or, aujourd'hui, dans notre Constitution fédérale, la neutralité n'est mentionnée que dans deux articles, celui qui traite des missions du Conseil fédéral et celui qui traite des missions de l'Assemblée fédérale, qui, l'un comme l'autre, doivent préserver la neutralité sans aucune définition. Or, la neutralité n'est pas une cire molle que l'on peut adapter dans les mains du Conseil fédéral, voire pire, d'un conseiller fédéral, selon les opportunités du moment. C'est véritablement notre image à l'extérieur." },
+      { t:"Imaginez une seconde que l'initiative soit rejetée – vous n'aurez pas de peine à l'imaginer, si vous êtes contre l'initiative, puisque vous le souhaitez. Le rejet de cette initiative permettra à l'ensemble du monde de se dire que le peuple suisse, consulté dans sa démocratie directe, a refusé la définition de la neutralité dans sa Constitution. Imaginez le dégât d'image pour la Suisse si un vote comme celui-ci était exprimé de cette façon ; il le sera sur le plan des médias internationaux. Il est donc important, dans la pire des situations, pour moi, qui suis favorable à l'initiative, qu'il y ait cette position de repli pour celles et ceux qui considèrent que tout va très bien dans le meilleur des mondes avec la définition actuelle de la neutralité et la manière dont elle est appliquée, qu'il y ait la formalisation dans notre Constitution de l'état de fait actuel." },
+      { t:"C'est la raison pour laquelle je vous demanderai, pas simplement par stratégie partisane, mais par stratégie politique nationale, de faire en sorte que ce contre-projet soit proposé à la population." }
+    ],
+    N:[
+      { t:"Am 27. November 2024 hat der Bundesrat mit seiner Botschaft empfohlen, die Neutralitäts-Initiative ohne Gegenvorschlag und ohne Gegenentwurf abzulehnen. Das hat er, wie er es immer tut, nach einer vertieften Auslegeordnung des Initiativtextes, eines allfälligen Gegenentwurfes oder eines indirekten Gegenvorschlags getan. Ihr Rat hat am 19. Juni letzten Jahres beschlossen, der Neutralitäts-Initiative einen direkten Gegenentwurf gegenüberzustellen. Der Nationalrat ist nun letzten Donnerstag der Empfehlung des Bundesrates gefolgt und hat sich gegen einen Gegenentwurf ausgesprochen. Gestern hat sich Ihre APK ebenfalls gegen einen Gegenentwurf ausgesprochen." },
+      { t:"Le Conseil fédéral estime qu'un tel projet n'est ni judicieux ni nécessaire. Permettez-moi de vous en rappeler brièvement les cinq raisons principales. La première : un contre-projet implique une nécessité d'agir qui n'existe justement pas. La situation actuelle laisse la marge de manoeuvre nécessaire pour mettre à profit la neutralité dans les meilleurs intérêts de la Suisse." },
+      { t:"[...] En matière de neutralité, il n'existe pas de recette universelle qui permettrait de régler définitivement toutes les questions. C'est, aux yeux du Conseil fédéral, la raison pour laquelle 90 pour cent de la population est pour la neutralité, parce que la neutralité est une projection de ce qu'on pense d'elle. Et c'est important qu'elle reste ainsi." },
+      { t:"Sie haben absolut recht, Herr Ständerat Germann, die Neutralität ist ein Identitätsmerkmal unseres Landes. Ich komme kurz zu den Voten der Ständeräte Germann und Poggia." },
+      { t:"Herr Ständerat Germann, Sie haben erstens gesagt, die Schweiz lasse sich nicht in den Krieg hineinziehen. Dann haben Sie zweitens gesagt, die Neutralität sei das Merkmal Nummer eins und identitätsstiftend. Drittens haben Sie gesagt, die Neutralität sei auch international ein Identitätsmerkmal der Schweiz. Herr Ständerat, Sie haben recht, zu hundert Prozent recht. Der Bundesrat geht mit Ihnen einig, genau so ist die Lage. Es ist das Resultat der heutigen Lage, rechtlich und politisch. Sind Sie sicher, dass eine Änderung ohne Not, egal welche, der Verfassung die heutige Akzeptanz weiterhin garantiert? Wenn ein Gesetz unnötig ist, dann ist es nötig, kein Gesetz zu machen. Den Spruch kennen Sie, die Amerikaner sagen: \"If it ain't broke, don't fix it.\" Bewährtes soll man nicht ändern." },
+      { t:"Sie haben es gehört, ein neuer Neutralitätsartikel würde eine Reihe von Interpretationen durch Universitätsprofessoren, Doktorarbeiten und so weiter und so fort zur Folge haben. Wir würden mit der Suche nach der Definition, was Neutralität für jeden Normalbürger heisst, in Teufels Küche kommen. Das würde der Schweiz sicherheitspolitisch und aussenpolitisch nicht helfen." },
+      { t:"Monsieur le conseiller aux États Poggia, vous avez dit que ce qui va sans dire, il vaut peut-être mieux qu'on le dise. Je suis d'accord avec le \"peut-être\". Dans ce cas, je pense qu'il vaut mieux ne pas le dire. Si vous posez la question de savoir ce que le monde comprendra de la décision suisse, le Conseil fédéral est convaincu que le monde comprendra qu'un refus de changer quoi que ce soit par le peuple suisse signifie que la Suisse ne change rien à sa neutralité. Avec n'importe quelle autre décision, il comprendra que la Suisse change sa neutralité." },
+      { t:"Le simple fait de dire que la Suisse change sa neutralité aura un effet sur les marchés financiers et sur les marchés économiques, au-delà de la guerre et de la paix. Réfléchissez à la portée de cela. La Suisse ne serait plus la même, alors qu'elle est la même depuis 180 ans. Si on change quelque chose, il y aura une différence. La Suisse ne sera plus la même et tout le monde cherchera à comprendre quelle est cette différence." }
+    ] },
+  data:{ labelA:"Ja — Reimann, Grüter, Germann, Poggia", labelB:"Nein — Pfister, Badertscher, Molina, Gredig, S. Michel, M. Michel, Sommaruga, Jositsch, Rieder, Cassis",
+    a:{ 
+      units:[
+        { id:"a0", type:"position", pid:"B", label:"Ja: die Initiative zur Annahme empfehlen — Neutralität ohne Ausnahme", passage:"Das sind passende Worte zur Neutralitäts-Initiative, die mit der Unterstützung von 130 000 Schweizerinnen und Schweizern zustande gekommen ist. §Ich bitte Sie, unserer Minderheit zuzustimmen und die Initiative zur Annahme zu empfehlen.§" },
+        { id:"a1", type:"value", pid:"B", label:"Ausnahmslos, nicht flexibel von Fall zu Fall", passage:"§Die Initiative stellt sicher, dass die Schweiz ihre bewährte Neutralität konsequent beibehält, ohne Ausnahme und nicht flexibel von Fall zu Fall.§" },
+        { id:"a2", type:"fact", pid:"B", label:"Eine klare Neutralität schützt vor fremden Konflikten und stärkt die Vermittlerrolle", passage:"§Eine klare und glaubwürdige Neutralität schützt unser Land vor fremden Konflikten, und sie stärkt unsere Rolle als verlässlicher Vermittler.§ Mit der Annahme der Neutralitäts-Initiative sichern wir langfristig Frieden, Stabilität und Unabhängigkeit in der Schweiz." },
+        { id:"a3", type:"fact", pid:"I", label:"Die Neutralität hat die längste Friedenszeit der Geschichte beschert", passage:"Diesem Erfolgsmodell gilt es Sorge zu tragen und damit implizit auch unserer Neutralität, §die uns und viele Generationen vor uns vor Kriegen verschont und uns die längste Friedenszeit der Geschichte beschert hat.§" },
+        { id:"a4", type:"fact", pid:"B", label:"Kaum kodifiziert, in der Auslegung umstritten — es braucht die Klärung", passage:"§Trotzdem ist die Neutralität im nationalen Recht kaum kodifiziert,§ und im internationalen Recht ist nun umstritten, inwiefern das Neutralitätsrecht noch Teil des universellen Völkerrechts ist." },
+        { id:"a5", type:"fact", pid:"I", label:"Die Auslegung ist komplett divers — die Verfassung kann klären und stärken", passage:"§Denn die Verunsicherung in der Bevölkerung ist gross, und die Auslegung der Neutralität ist auch komplett divers.§ Wir können also unsere Neutralität klären und stärken, indem wir sie in der Bundesverfassung verankern." },
+        { id:"a6", type:"value", pid:"M", label:"Die Neutralität ist keine «cire molle» in den Händen des Bundesrats", passage:"§Or, la neutralité n'est pas une cire molle que l'on peut adapter dans les mains du Conseil fédéral, voire pire, d'un conseiller fédéral, selon les opportunités du moment.§ C'est véritablement notre image à l'extérieur." },
+        { id:"a7", type:"fact", pid:"M", label:"Ein Nein würde im Ausland als Verzicht auf die Definition der Neutralität gelesen", passage:"§Le rejet de cette initiative permettra à l'ensemble du monde de se dire que le peuple suisse, consulté dans sa démocratie directe, a refusé la définition de la neutralité dans sa Constitution.§" },
+        { id:"a8", type:"fact", pid:"D", label:"Genf und das IKRK betonen die Bedeutung der Neutralität für ihre Tätigkeit", passage:"Und übrigens, das wissen Sie auch, §das Internationale Komitee vom Roten Kreuz, das auch schon bei uns war, hat immer wieder darauf hingewiesen, wie wichtig die Schweizer Neutralität für die Ausübung ihrer Tätigkeit sei.§" },
+        { id:"a9", type:"fact", pid:"B", label:"Über 50 Prozent Zustimmung (ETH-Studie «Sicherheit 2025»)", passage:"Die Neutralität der Schweiz geniesst hohe Zustimmung. §Gemäss der ETH-Studie \"Sicherheit 2025\" befürworteten über 50 Prozent der Stimmberechtigten die Neutralität.§" }
+      ],
+      links:[
+        { from:"a3", to:"a2", kind:"support", warrant:"Die Friedensgeschichte dient als Beleg der Schutzwirkung." },
+        { from:"a2", to:"a0", kind:"support", warrant:"Wer der Neutralität Schutzwirkung zuschreibt, will sie dauerhaft sichern." },
+        { from:"a8", to:"a2", kind:"support", warrant:"Die Vermittlerrolle steht und fällt mit der Neutralität — sagen Genf und das IKRK selbst." },
+        { from:"a6", to:"a1", kind:"support", warrant:"Was nicht nach Opportunität formbar sein darf, muss ohne Ausnahme gelten." },
+        { from:"a1", to:"a0", kind:"support", warrant:"Die Initiative schreibt die Ausnahmslosigkeit fest." },
+        { from:"a4", to:"a5", kind:"support", warrant:"Was kaum kodifiziert ist, wird divers ausgelegt — beides ruft nach Klärung." },
+        { from:"a9", to:"a5", kind:"support", warrant:"Der breite Rückhalt legitimiert die Klärung durch den Souverän." },
+        { from:"a5", to:"a0", kind:"support", warrant:"Die Verankerung in der Verfassung ist genau das, was Initiative und Gegenentwurf leisten." },
+        { from:"a7", to:"a0", kind:"support", warrant:"Wer den Imageschaden eines Neins fürchtet, will die Definition — als Initiative oder als Rückfallposition." }
+      ] },
+    b:{ 
+      units:[
+        { id:"b0", type:"position", pid:"A", label:"Nein: die Initiative ist eine Abkehr von der instrumentellen Handhabung der Neutralität", passage:"§Die wichtigsten Argumente der Kommissionsmehrheit gegen diese Initiative sind die des Bundesrates: Erstens ist die Initiative eine Abkehr von der bisherigen instrumentellen Handhabung der Neutralität.§ Die Schweiz hat die Neutralität immer als Instrument der Vertretung ihrer aussen- und sicherheitspolitischen Interessen angewandt und nicht als eigenes Ziel, als Selbstzweck." },
+        { id:"b1", type:"value", pid:"F", label:"Neutralität ist kein Selbstzweck, sondern ein Instrument", passage:"§Für die Grünliberale Fraktion ist klar: Neutralität ist kein Selbstzweck. Sie ist ein Instrument der Aussen- und der Sicherheitspolitik.§ Der Wert eines Instruments zeigt sich daran, ob es den Herausforderungen dieser Zeit gerecht wird." },
+        { id:"b2", type:"fact", pid:"A", label:"Zusammenarbeit erst im Angriffsfall: zu wenig und vor allem zu spät", passage:"Zweitens verlangt die Initiative, dass die sicherheits- und verteidigungspolitische Zusammenarbeit nur noch im Fall eines direkten militärischen Angriffs auf die Schweiz zulässig sein soll. §Das wäre aber für eine wirklich glaubhafte Verteidigungskapazität der Schweiz zu wenig und vor allem zu spät.§" },
+        { id:"b3", type:"fact", pid:"A", label:"Sanktionen auch ohne UNO sind ein wichtiges Instrument — die UNO ist blockiert", passage:"§Abgesehen davon, dass die UNO seit Längerem in solchen Fragen sehr blockiert ist, sind Sanktionen unabhängig von der UNO für die internationale Staatengemeinschaft und auch für die Schweiz ein wichtiges Instrument, um Völkerrechtsverletzungen zu sanktionieren.§" },
+        { id:"b4", type:"fact", pid:"G", label:"Die Schweiz hätte Russland nach dem Angriff auf die Ukraine nicht sanktionieren dürfen", passage:"§Sie müssen sich das einmal vorstellen: In Europa herrscht Krieg, und die Schweiz hätte Russland nach dem Angriff auf die Ukraine nicht sanktionieren dürfen. Das ist der Punkt.§" },
+        { id:"b5", type:"value", pid:"C", label:"Ein Sanktionsverbot käme einer moralischen Bankrotterklärung gleich", passage:"§Das käme nicht nur einer moralischen Bankrotterklärung der Schweiz gleich, sondern würde auch ihren aussenpolitischen Interessen und ihrer Sicherheit erheblich schaden.§" },
+        { id:"b6", type:"fact", pid:"C", label:"Wichtig für Genf und das IKRK — aber bereits mit zwei Artikeln in der Verfassung verankert", passage:"Die Neutralität ist sehr wichtig, gerade für Genf, gerade für das Internationale Komitee vom Roten Kreuz. §Aber es ist eben nicht nötig, dass wir sie zusätzlich noch in die Verfassung schreiben, da sie ja bereits mit zwei Artikeln in der Bundesverfassung verankert ist.§" },
+        { id:"b7", type:"fact", pid:"N", label:"Ein neuer Artikel löste eine Interpretationswelle aus", passage:"§Sie haben es gehört, ein neuer Neutralitätsartikel würde eine Reihe von Interpretationen durch Universitätsprofessoren, Doktorarbeiten und so weiter und so fort zur Folge haben.§ Wir würden mit der Suche nach der Definition, was Neutralität für jeden Normalbürger heisst, in Teufels Küche kommen." },
+        { id:"b8", type:"fact", pid:"H", label:"Die Vernehmlassung hat den Gegenentwurf mehrheitlich abgelehnt", passage:"§23 Kantone haben sich explizit zum Gegenentwurf geäussert, 14 haben ihn abgelehnt, 9 haben zugestimmt. Von sieben Parteien haben sechs den Gegenvorschlag abgelehnt.§ Von 14 interessierten Organisationen haben 13 den Gegenvorschlag abgelehnt." },
+        { id:"b9", type:"fact", pid:"N", label:"Die Welt versteht ein Nein als: Die Schweiz ändert nichts an ihrer Neutralität", passage:"§le Conseil fédéral est convaincu que le monde comprendra qu'un refus de changer quoi que ce soit par le peuple suisse signifie que la Suisse ne change rien à sa neutralité.§ Avec n'importe quelle autre décision, il comprendra que la Suisse change sa neutralité." }
+      ],
+      links:[
+        { from:"b1", to:"b0", kind:"support", warrant:"Ein Instrument braucht Spielraum — die Initiative nähme ihn." },
+        { from:"b2", to:"b0", kind:"support", warrant:"Ein Sicherheitsverlust ist ein zentraler Ablehnungsgrund." },
+        { from:"b4", to:"b3", kind:"support", warrant:"Der Russland-Fall zeigt, was ohne Sanktionen ausserhalb der UNO verloren ginge." },
+        { from:"b5", to:"b3", kind:"support", warrant:"Wer das Instrument aufgibt, erklärt moralisch Bankrott — das Verbot ist der Kern des Schadens." },
+        { from:"b3", to:"b0", kind:"support", warrant:"Die Initiative nähme der Schweiz dieses Instrument." },
+        { from:"b6", to:"b0", kind:"support", warrant:"Was schon verankert ist, braucht keine zweite Verankerung." },
+        { from:"b7", to:"b6", kind:"support", warrant:"Eine Definition ohne Not brächte Auslegungsstreit statt der heutigen Klarheit." },
+        { from:"b8", to:"b0", kind:"support", warrant:"Auch der Gegenentwurf findet keine Mehrheit — kein Ausweg neben dem Nein." },
+        { from:"b9", to:"b7", kind:"support", warrant:"Wer nichts ändert, sendet das klarste Signal — jede Änderung wirft Fragen auf." }
+      ] },
+    mappings:[
+      { a:"a1", b:"b1", kind:"value", note:"Ausnahmslosigkeit als Wert — oder Instrument mit Spielraum: die Rangfolge-Frage der Vorlage; kein Faktum entscheidet sie." },
+      { a:"a2", b:"b2", kind:"factual", note:"Schützt Fernhalten — oder braucht Schutz geübte Zusammenarbeit? Kausalbehauptungen in Gegenrichtung, ohne Belege." },
+      { a:"a4", b:"b6", kind:"factual", note:"Dieselbe Verfassung: «kaum kodifiziert» (Reimann) — «mit zwei Artikeln verankert» (Badertscher). Juristisch prüfbar." },
+      { a:"a5", b:"b7", kind:"factual", note:"Klärt eine Verankerung die Auslegung (Germann) — oder öffnet sie eine Interpretationswelle (Cassis)? Zwei Prognosen." },
+      { a:"a7", b:"b9", kind:"factual", note:"Wie liest das Ausland ein Nein? Poggia: Imageschaden — Cassis: Kontinuität. Direkte Gegenprognosen aus derselben Sitzung." },
+      { a:"a8", b:"b6", kind:"agreement", note:"Beide: Die Neutralität ist wichtig für Genf und das IKRK. Grüter folgert die Verankerung, Badertscher «nicht nötig» — gleiche Prämisse, entgegengesetzter Schluss." }
+    ] } };
+
+
+function wrapText(text, maxChars) {
+  const words = String(text).split(/\s+/);
+  const lines = [];
+  let line = '';
+  for (let w of words) {
+    while (w.length > maxChars) { lines.push(w.slice(0, maxChars - 1) + '-'); w = w.slice(maxChars - 1); }
+    if (!line) line = w;
+    else if ((line + ' ' + w).length <= maxChars) line += ' ' + w;
+    else { lines.push(line); line = w; }
+  }
+  if (line) lines.push(line);
+  return lines;
+}
+
+function computeLevels(units, links) {
+  const out = {};
+  const touched = new Set();
+  units.forEach(u => { out[u.id] = []; });
+  links.forEach(l => { out[l.from].push(l.to); touched.add(l.from); touched.add(l.to); });
+
+  const level = {};
+  const visiting = new Set();
+  function lv(id) {
+    if (id in level) return level[id];
+    if (visiting.has(id)) return 0;
+    visiting.add(id);
+    const targets = out[id];
+    level[id] = targets.length ? 1 + Math.max(...targets.map(lv)) : 0;
+    visiting.delete(id);
+    return level[id];
+  }
+  units.forEach(u => lv(u.id));
+  const maxConnected = Math.max(0, ...units.filter(u => touched.has(u.id)).map(u => level[u.id]));
+  units.forEach(u => { if (!touched.has(u.id)) level[u.id] = maxConnected + 1; });
+  return level;
+}
+
+const ROLE_LABEL = { major: 'HAUPTTHESE', claim: 'THESE', premise: 'PRÄMISSE' };
+const TYPE_LABEL = { position: 'POSITION', fact: 'FAKT', value: 'WERT' };
+
+function computeRoles(units, links) {
+  if (!units.length) return {};
+  const incoming = {}, outgoing = {}, incomingSupport = {};
+  units.forEach(u => { incoming[u.id] = 0; outgoing[u.id] = 0; incomingSupport[u.id] = 0; });
+  links.forEach(l => {
+    outgoing[l.from]++;
+    incoming[l.to]++;
+    if (l.kind !== 'attack') incomingSupport[l.to]++;
+  });
+  const positions = units.filter(u => u.type === 'position');
+  let majorId;
+  if (positions.length === 1) {
+    majorId = positions[0].id;
+  } else {
+    const sinks = units.filter(u => !outgoing[u.id]);
+    const pool = sinks.length ? sinks : units;
+    majorId = pool.reduce((best, u) => incomingSupport[u.id] > incomingSupport[best.id] ? u : best, pool[0]).id;
+  }
+  const roles = {};
+  units.forEach(u => {
+    roles[u.id] = u.id === majorId ? 'major' : (incoming[u.id] > 0 ? 'claim' : 'premise');
+  });
+  return roles;
+}
+
+const NODE_W = 200, GAP_X = 22, GAP_Y = 64, PAD = 10, LINE_H = 15.5, MAX_CHARS = 27;
+
+function layoutGraph(units, links, availW) {
+  const level = computeLevels(units, links);
+  const maxLevel = Math.max(...Object.values(level));
+
+  const layers = Array.from({ length: maxLevel + 1 }, () => []);
+  units.forEach(u => layers[level[u.id]].push(u));
+
+  for (let li = 1; li <= maxLevel; li++) {
+    const prevIndex = Object.fromEntries(layers[li - 1].map((u, i) => [u.id, i]));
+    layers[li].sort((a, b) => {
+      const key = u => {
+        const ts = links.filter(l => l.from === u.id && l.to in prevIndex).map(l => prevIndex[l.to]);
+        return ts.length ? ts.reduce((s, x) => s + x, 0) / ts.length : units.indexOf(u);
+      };
+      return key(a) - key(b);
+    });
+  }
+
+  const geo = {};
+  units.forEach(u => {
+    const short = u.label || u.text;
+    const display = short.length > 110 ? short.slice(0, 107) + '…' : short;
+    const lines = wrapText(display, MAX_CHARS);
+    geo[u.id] = { lines, h: PAD + 14 + lines.length * LINE_H + PAD };
+  });
+
+  const perRow = Math.max(2, Math.floor((availW - 20 + GAP_X) / (NODE_W + GAP_X)));
+  const rows = [];
+  layers.forEach((ly, li) => {
+    for (let i = 0; i < ly.length; i += perRow) rows.push({ units: ly.slice(i, i + perRow), layer: li });
+  });
+
+  const rowW = rows.map(r => r.units.length * NODE_W + (r.units.length - 1) * GAP_X);
+  const w = Math.max(440, ...rowW) + 20;
+  let y = 12;
+  rows.forEach((row, ri) => {
+    const x0 = (w - (row.units.length * NODE_W + (row.units.length - 1) * GAP_X)) / 2;
+    row.units.forEach((u, i) => { geo[u.id].x = x0 + i * (NODE_W + GAP_X); geo[u.id].y = y; });
+    const rowH = Math.max(0, ...row.units.map(u => geo[u.id].h));
+    const next = rows[ri + 1];
+    y += rowH + (next ? (next.layer === row.layer ? 18 : GAP_Y) : 14);
+  });
+  return { geo, w, h: y };
+}
+
+function shiftGeo(geo, dx, dy) {
+  Object.values(geo).forEach(g => { g.x += dx; g.y += dy; });
+}
+
+function addMarkers(svg, markerId) {
+  const defs = document.createElementNS(SVGNS, 'defs');
+  const m = (id, fill) => `<marker id="${id}" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+    <path d="M 0 1 L 9 5 L 0 9 z" fill="${fill}"/></marker>`;
+  defs.innerHTML = m(markerId, '#94a3b8') + m(markerId + '-attack', '#dc2626') + m(markerId + '-valdis', '#9333ea');
+  svg.appendChild(defs);
+}
+
+function drawGraph(svg, units, links, geo, opts) {
+  const { roles = null, typed = true, markerId, registry = [], onNode = null } = opts;
+
+  const inSlots = {};
+  links.forEach((l, li) => { if (geo[l.from] && geo[l.to]) (inSlots[l.to] = inSlots[l.to] || []).push(li); });
+  const attachX = {};
+  Object.keys(inSlots).forEach(to => {
+    const list = inSlots[to].sort((a, b) => geo[links[a].from].x - geo[links[b].from].x);
+    list.forEach((li, i) => { attachX[li] = geo[to].x + NODE_W * (i + 1) / (list.length + 1); });
+  });
+
+  links.forEach((l, li) => {
+    const f = geo[l.from], t = geo[l.to];
+    if (!f || !t) return;
+    const attack = l.kind === 'attack';
+    const x1 = f.x + NODE_W / 2, y1 = f.y;
+    const x2 = attachX[li] !== undefined ? attachX[li] : t.x + NODE_W / 2;
+    const y2 = t.y + t.h + 3;
+    const bend = Math.max(28, (y1 - y2) / 2);
+    const d = `M ${x1} ${y1} C ${x1} ${y1 - bend}, ${x2} ${y2 + bend}, ${x2} ${y2}`;
+    const g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('class', 'edge-group' + (attack ? ' attack' : ''));
+    const vis = document.createElementNS(SVGNS, 'path');
+    vis.setAttribute('d', d);
+    vis.setAttribute('class', 'edge-visible');
+    vis.setAttribute('marker-end', `url(#${attack ? markerId + '-attack' : markerId})`);
+    const hit = document.createElementNS(SVGNS, 'path');
+    hit.setAttribute('d', d);
+    hit.setAttribute('class', 'edge-hit');
+    g.append(vis, hit);
+    g.addEventListener('mousemove', e => {
+      g.classList.add('hovered');
+      const label = attack ? 'Greift an — warum es dagegen spricht' : 'Stützt — Begründung';
+      showTooltip(`<span class="tt-label">${esc(label)}</span>${esc(l.warrant || '(keine angegeben)')}`, e.clientX, e.clientY);
+    });
+    g.addEventListener('mouseleave', () => { g.classList.remove('hovered'); hideTooltip(); });
+    svg.appendChild(g);
+    registry.push({ el: g, from: l.from, to: l.to });
+  });
+
+  units.forEach(u => {
+    const gnode = geo[u.id];
+    const role = roles ? roles[u.id] : null;
+    const g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('class', 'node ' + u.type
+      + (role ? ' role-' + role : '')
+      + (typed ? '' : ' untyped'));
+    g.dataset.unit = u.id;
+    g.setAttribute('transform', `translate(${gnode.x}, ${gnode.y})`);
+
+    const rect = document.createElementNS(SVGNS, 'rect');
+    rect.setAttribute('class', 'node-box');
+    rect.setAttribute('width', NODE_W);
+    rect.setAttribute('height', gnode.h);
+    rect.setAttribute('rx', 8);
+    g.appendChild(rect);
+
+    const tl = document.createElementNS(SVGNS, 'text');
+    tl.setAttribute('class', 'node-type');
+    tl.setAttribute('x', PAD);
+    tl.setAttribute('y', PAD + 8);
+    const who = u.pid && CURPIX[u.pid] ? ' · ' + CURPIX[u.pid].short.toUpperCase() : '';
+    tl.textContent = (role
+      ? ROLE_LABEL[role] + (typed ? ' · ' + (TYPE_LABEL[u.type] || u.type.toUpperCase()) : '')
+      : (TYPE_LABEL[u.type] || u.type.toUpperCase())) + who;
+    g.appendChild(tl);
+
+    const txt = document.createElementNS(SVGNS, 'text');
+    txt.setAttribute('class', 'node-text');
+    gnode.lines.forEach((line, i) => {
+      const ts = document.createElementNS(SVGNS, 'tspan');
+      ts.setAttribute('x', PAD);
+      ts.setAttribute('y', PAD + 14 + (i + 0.8) * LINE_H);
+      ts.textContent = line;
+      txt.appendChild(ts);
+    });
+    g.appendChild(txt);
+
+    g.addEventListener('mousemove', e => {
+      g.classList.add('hovered');
+      registry.forEach(r => {
+        const incident = r.from === u.id || r.to === u.id;
+        r.el.classList.toggle('hovered', incident);
+        r.el.classList.toggle('dimmed', !incident);
+      });
+      const label = (role ? ROLE_LABEL[role].toLowerCase() + ' · ' : '') + (TYPE_LABEL[u.type] || u.type)
+        + (u.pid && CURPIX[u.pid] ? ' · ' + CURPIX[u.pid].short : '');
+      showTooltip(`<span class="tt-label">${esc(label)}</span>${esc((u.passage || u.text || '').replace(/§/g, ''))}<br><span class="tt-label" style="margin-top:4px">Klick zeigt die Textstelle unten</span>`, e.clientX, e.clientY);
+    });
+    g.addEventListener('mouseleave', () => {
+      g.classList.remove('hovered');
+      registry.forEach(r => r.el.classList.remove('hovered', 'dimmed'));
+      hideTooltip();
+    });
+    if (onNode) g.addEventListener('click', () => onNode(u));
+    svg.appendChild(g);
+  });
+}
+
+function renderArgMap(holder, data, opts = {}) {
+  holder.innerHTML = '';
+  const { units, links } = data;
+  const availW = Math.max(660, holder.clientWidth || 900);
+  const layout = layoutGraph(units, links, availW);
+  const svgW = Math.max(660, layout.w);
+  shiftGeo(layout.geo, (svgW - layout.w) / 2, 0);
+
+  const svg = document.createElementNS(SVGNS, 'svg');
+  svg.setAttribute('width', svgW);
+  svg.setAttribute('height', layout.h);
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${layout.h}`);
+  const markerId = 'arrow-' + holder.id;
+  addMarkers(svg, markerId);
+  drawGraph(svg, units, links, layout.geo, {
+    roles: computeRoles(units, links), typed: opts.typed !== false, markerId, registry: [], onNode: opts.onNode || null,
+  });
+  holder.appendChild(svg);
+  holder.scrollLeft = (svgW - holder.clientWidth) / 2;
+}
+
+function renderDebateMap(holder, data, opts = {}) {
+  holder.innerHTML = '';
+  const availW = Math.max(660, holder.clientWidth || 1000);
+  const typed = opts.typed !== false;
+  const rolesA = computeRoles(data.a.units, data.a.links);
+  const rolesB = computeRoles(data.b.units, data.b.links);
+
+  const svg = document.createElementNS(SVGNS, 'svg');
+  const markerId = 'arrow-' + holder.id;
+  const registry = [];
+
+  const GUTTER = 100, TITLE_H = 30;
+  const half = Math.max(460, (availW - GUTTER) / 2);
+  const la = layoutGraph(data.a.units, data.a.links, half);
+  const lb = layoutGraph(data.b.units, data.b.links, half);
+  shiftGeo(la.geo, 0, TITLE_H);
+  shiftGeo(lb.geo, la.w + GUTTER, TITLE_H);
+  const svgW = la.w + GUTTER + lb.w;
+  const svgH = TITLE_H + Math.max(la.h, lb.h);
+  svg.setAttribute('width', svgW);
+  svg.setAttribute('height', svgH);
+  svg.setAttribute('viewBox', `0 0 ${svgW} ${svgH}`);
+  addMarkers(svg, markerId);
+
+  const mkTitle = (text, x, cls) => {
+    const t = document.createElementNS(SVGNS, 'text');
+    t.setAttribute('class', 'map-col-title ' + cls);
+    t.setAttribute('x', x);
+    t.setAttribute('y', 18);
+    t.setAttribute('text-anchor', 'middle');
+    t.textContent = text;
+    svg.appendChild(t);
+  };
+  mkTitle(data.labelA || 'Position A', la.w / 2, 'a');
+  mkTitle(data.labelB || 'Position B', la.w + GUTTER + lb.w / 2, 'b');
+
+  drawGraph(svg, data.a.units, data.a.links, la.geo, { roles: rolesA, typed, markerId, registry, onNode: opts.onNode || null });
+  drawGraph(svg, data.b.units, data.b.links, lb.geo, { roles: rolesB, typed, markerId, registry, onNode: opts.onNode || null });
+
+  const firstNode = svg.querySelector('.node');
+  data.mappings.forEach(m => {
+    const ga = la.geo[m.a], gb = lb.geo[m.b];
+    if (!ga || !gb) return;
+    const x1 = ga.x + NODE_W, y1 = ga.y + ga.h / 2;
+    const x2 = gb.x, y2 = gb.y + gb.h / 2;
+    const mx = (x1 + x2) / 2;
+    const d = `M ${x1} ${y1} C ${mx} ${y1}, ${mx} ${y2}, ${x2} ${y2}`;
+    const g = document.createElementNS(SVGNS, 'g');
+    g.setAttribute('class', 'cross-group ' + m.kind);
+    const vis = document.createElementNS(SVGNS, 'path');
+    vis.setAttribute('d', d);
+    vis.setAttribute('class', 'cross-link');
+    const hit = document.createElementNS(SVGNS, 'path');
+    hit.setAttribute('d', d);
+    hit.setAttribute('class', 'edge-hit');
+    g.append(vis, hit);
+    const partners = on => [m.a, m.b].forEach(id => {
+      const n = svg.querySelector(`.node[data-unit="${CSS.escape(id)}"]`);
+      if (n) n.classList.toggle('hovered', on);
+    });
+    g.addEventListener('mousemove', e => {
+      g.classList.add('hovered');
+      partners(true);
+      showTooltip(`<span class="tt-label">${esc(KIND_LABEL[m.kind])}</span>${esc(m.note || '')}`, e.clientX, e.clientY);
+    });
+    g.addEventListener('mouseleave', () => { g.classList.remove('hovered'); partners(false); hideTooltip(); });
+    svg.insertBefore(g, firstNode);
+    registry.push({ el: g, from: m.a, to: m.b });
+  });
+
+  holder.appendChild(svg);
+  holder.scrollLeft = (svgW - holder.clientWidth) / 2;
+}
+
+/* ---------- Klick auf einen Knoten → zugrunde liegender Text ---------- */
+
+function showNode(panelId, u, meta) {
+  const p = document.getElementById(panelId);
+  p.classList.remove('idle');
+  p.innerHTML = '';
+  const lab = document.createElement('div'); lab.className = 'tp-label'; lab.textContent = 'Zugrunde liegender Text';
+  p.appendChild(lab);
+  const head = document.createElement('div'); head.className = 'tp-head';
+  if (meta.color) { const dt = document.createElement('span'); dt.className = 'sdot'; dt.style.background = meta.color; head.appendChild(dt); }
+  const b = document.createElement('b'); b.textContent = meta.who; head.appendChild(b);
+  if (meta.src) { const s = document.createElement('span'); s.className = 'smeta'; s.textContent = meta.src; head.appendChild(s); }
+  p.appendChild(head);
+  const q = document.createElement('div'); q.className = 'tp-quote';
+  String(u.passage || u.text || '').split('§').forEach((chunk, i) => {
+    if (i % 2 === 1) { const m = document.createElement('mark'); m.textContent = chunk; q.appendChild(m); }
+    else q.appendChild(document.createTextNode(chunk));
+  });
+  p.appendChild(q);
+  ((meta.urls && meta.urls.length) ? meta.urls : (meta.url ? [{ l:'Quelle öffnen', u:meta.url }] : [])).forEach((s, i) => { if (i) p.appendChild(document.createTextNode(' · ')); const a = document.createElement('a'); a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; a.className = 'dsrc'; a.textContent = s.l + ' →'; p.appendChild(a); });
+  if (meta.note) { const n = document.createElement('div'); n.className = 'tp-note'; n.textContent = meta.note; p.appendChild(n); }
+}
+
+
+
+function buildDetails(holderId, groups) {
+  const holder = document.getElementById(holderId);
+  groups.forEach(g => {
+    const d = document.createElement('details');
+    const s = document.createElement('summary');
+    if (g.color) { const dt = document.createElement('span'); dt.className = 'sdot'; dt.style.background = g.color; s.appendChild(dt); }
+    s.appendChild(document.createTextNode(g.title));
+    if (g.meta) { const m = document.createElement('span'); m.className = 'smeta'; m.textContent = g.meta; s.appendChild(m); }
+    d.appendChild(s);
+    const body = document.createElement('div'); body.className = 'dbody';
+    g.paras.forEach(p => {
+      if (p.h) { const b = document.createElement('b'); b.className = 'dph'; b.textContent = p.h; body.appendChild(b); }
+      const el2 = document.createElement('p'); el2.textContent = p.t; body.appendChild(el2);
+    });
+    ((g.urls && g.urls.length) ? g.urls : (g.url ? [{ l:'Quelle öffnen', u:g.url }] : [])).forEach((s, i) => { if (i) body.appendChild(document.createTextNode(' · ')); const a = document.createElement('a'); a.href = s.u; a.target = '_blank'; a.rel = 'noopener'; a.textContent = s.l + ' →'; a.className = 'dsrc'; a.style.margin = '0 0 12px'; body.appendChild(a); });
+    d.appendChild(body);
+    holder.appendChild(d);
+  });
+}
+
+let CURPIX = {};
+function pidxOf(a){ const m = {}; (a.positions || []).forEach(p => { m[p.id] = p; }); return m; }
+function showFor(key){
+  const a = AM[key], P = pidxOf(a);
+  return u => {
+    const p = P[u.pid];
+    showNode('tp-' + key, u, { who: p ? p.name : (a.title || ''), color: p ? p.c : null, src: p ? p.src : '', url: p ? p.url : null, urls: p ? p.urls : null,
+      note: a.note || 'Markiert: die Textstelle, die der Knoten zusammenfasst — wörtlich. Knoten-Formulierung und Kartierung: vom Tool.' });
+  };
+}
+Object.keys(AM).forEach(key => {
+  const a = AM[key];
+  buildDetails('texts-' + key, (a.positions || []).map(p => ({
+    title: p.name, meta: (p.src || '') + ' — verbatim; [...] = Auslassung der Erhebung', color: p.c, paras: (a.full && a.full[p.id]) || [], url: p.url, urls: p.urls
+  })));
+});
+
+function redraw() {
+  const act = document.querySelector('.tab.active').dataset.tab;
+  const a = AM[act];
+  CURPIX = pidxOf(a);
+  const holder = $('#map-' + act);
+  const typed = $('#typed-' + act).checked;
+  if (a.kind === 'debate') renderDebateMap(holder, a.data, { typed, onNode: showFor(act) });
+  else renderArgMap(holder, a.data, { typed, onNode: showFor(act) });
+}
+document.querySelectorAll('.tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(b => b.classList.toggle('active', b === btn));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
+    redraw();
+  });
+});
+Object.keys(AM).forEach(key => { $('#typed-' + key).addEventListener('change', redraw); });
+let resizeTimer;
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = setTimeout(redraw, 150); });
+document.querySelector('.panel').classList.add('active');
+redraw();
+</script>
+</body>
+</html>

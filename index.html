@@ -1,0 +1,133 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Argument Workbench</title>
+<style>body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style>
+</head>
+<body>
+<style>
+:root{--bg:#eceae6;--card:#ffffff;--ink:#23252c;--muted:#6b6862;--dim:#8a8781;--line:#d2cec6;--accent:#4f46e5;--accent-soft:#e7e5ff;--warn:#b45309;--warn-soft:#fdf1e3;--hatch:#f5f3ef;--hatch2:#e6e2da;--mono:ui-monospace,Menlo,Consolas,monospace;--serif:ui-serif,"Iowan Old Style",Palatino,Georgia,serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1c1b19;--card:#26241f;--ink:#ece9e2;--muted:#b0aca3;--dim:#8a8781;--line:#3a3833;--accent:#8b85ff;--accent-soft:#2b2a4a;--warn:#f0a35a;--warn-soft:#3a2a18;--hatch:#2a2823;--hatch2:#34312b}}
+:root[data-theme="dark"]{--bg:#1c1b19;--card:#26241f;--ink:#ece9e2;--muted:#b0aca3;--dim:#8a8781;--line:#3a3833;--accent:#8b85ff;--accent-soft:#2b2a4a;--warn:#f0a35a;--warn-soft:#3a2a18;--hatch:#2a2823;--hatch2:#34312b}
+body{margin:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
+.ix{max-width:760px;margin:0 auto;padding:56px 24px 90px}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:0 0 16px}
+h1{font-family:var(--serif);font-size:clamp(30px,5vw,42px);margin:0 0 14px;letter-spacing:-.02em;font-weight:600;text-wrap:balance}
+p.sub{color:var(--muted);font-size:16px;line-height:1.65;margin:0 0 30px;max-width:62ch}
+p.sub strong{color:var(--ink)}
+h2.user{font-family:var(--serif);font-size:24px;margin:44px 0 4px;letter-spacing:-.01em;font-weight:600}
+p.userdesc{color:var(--muted);margin:0 0 14px;max-width:62ch}
+.sec{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:22px 0 8px;display:flex;align-items:center;gap:10px}
+.sec:after{content:"";flex:1;height:1px;background:var(--line)}
+p.data{font-size:13px;color:var(--muted);margin:0 0 10px;max-width:66ch}
+p.data b{color:var(--ink);font-weight:600}
+.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:0 0 6px}
+.topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:0 0 12px}
+.topic{border-left:2px solid var(--line);padding:2px 0 2px 12px;font-size:13px;color:var(--muted);line-height:1.5}
+.topic b{display:block;color:var(--ink);font-weight:600;margin-bottom:2px}
+.topic .k{font-family:var(--mono);font-style:normal;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:4px}
+a.card{display:block;border:1px solid var(--line);border-radius:9px;background:var(--card);padding:13px 15px;text-decoration:none;color:var(--ink)}
+a.card:hover,a.card:focus-visible{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);outline:none}
+a.card b{display:block;font-size:15.5px;margin-bottom:3px}
+a.card span{font-size:13px;color:var(--muted);line-height:1.5;display:block}
+a.card.soon{border-style:dashed;background:repeating-linear-gradient(135deg,var(--hatch),var(--hatch) 8px,var(--hatch2) 8px,var(--hatch2) 9px)}
+a.card em{font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);display:block;margin-bottom:5px}
+p.none{font-size:13px;color:var(--dim);border-left:2px solid var(--line);padding:2px 0 2px 12px;margin:10px 0 0;max-width:62ch}
+.backlog{border:1px solid var(--line);border-radius:9px;background:var(--card);padding:6px 16px 4px;margin-top:8px}
+.bl{padding:12px 0;border-bottom:1px solid var(--line)}
+.bl:last-child{border-bottom:0}
+.bl b{display:block;font-size:14.5px;margin-bottom:3px}
+.bl b i{font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);background:var(--warn-soft);padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle}
+.bl p{margin:0 0 4px;color:var(--muted);font-size:13px;max-width:66ch}
+.bl .ex{font-size:13px;color:var(--ink);background:var(--bg);border-radius:6px;padding:8px 11px;margin-top:6px}
+.bl .ex .u{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:3px}
+p.foot{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:34px;line-height:1.7}
+p.foot a{color:var(--dim)}
+@media (max-width:480px){.ix{padding:36px 16px 60px}}
+</style>
+
+<div class="ix">
+  <p class="eyebrow">argument workbench · prototyp · nach anwender geordnet</p>
+  <h1>Argument Workbench</h1>
+  <p class="sub">Ein Werkzeug, das politische Texte lesbar macht: Es zerlegt sie in einzelne Aussagen, zeigt
+  <strong>Einigkeit, Streit und Schweigen</strong> — und führt jede Darstellung auf die wörtliche Textstelle samt Quelle
+  zurück. Geordnet nach dem, was jemand in der Hand hat: <strong>Bürger*innen</strong> stehen vor einer Abstimmung mit
+  Büchlein und Parolen; <strong>Expert*innen</strong> in Fraktionssekretariat, Verband, Verwaltung und Journalismus lesen Rohtexte,
+  die noch niemand zusammengefasst hat — Stellungnahmen, Debatten, Berichte. Innerhalb jeder Gruppe zählt, ob
+  <strong>mehrere Positionen</strong> gegeneinanderstehen oder <strong>eine Position</strong> für sich zu prüfen ist.</p>
+
+  <h2 class="user">Für Bürger*innen &amp; Schulen</h2>
+  <p class="userdesc">Vor einer Abstimmung. Die Daten sind das Abstimmungsbüchlein und die Parolen-Begründungen der fünf grössten Parteien.</p>
+
+  <p class="sec">Mehrere Positionen</p>
+  <p class="data"><b>Zwei Themen:</b></p>
+  <div class="topics">
+    <div class="topic"><i class="k">Volksinitiative · Abstimmung 14. Juni 2026</i><b>«Keine 10-Millionen-Schweiz!» (Nachhaltigkeitsinitiative)</b><span>Abstimmungsbüchlein (Erläuterungen des Bundesrates, admin.ch) · Parolen mit Begründung: SVP, SP, FDP, Die Mitte, GRÜNE</span></div>
+    <div class="topic"><i class="k">Gesetzesänderung, Referendum · Abstimmung 14. Juni 2026</i><b>Zivildienstgesetz</b><span>Abstimmungsbüchlein (Erläuterungen des Bundesrates, admin.ch) · Parolen mit Begründung: SVP, SP, FDP, Die Mitte, GRÜNE</span></div>
+  </div>
+  <div class="cards">
+    <a class="card" href="b2-positionen.html"><b>Argumentbaum</b><span>Die Argumente als Baum, bis zur Quelle: nach Themen und Fragen oder als Ja/Nein. Jeder Pfad endet am Zitat.</span></a>
+    <a class="card" href="b2-argumentmap.html"><b>Argument map</b><span>Hauptthese, Thesen, Prämissen — mit Stütz- und Angriffspfeilen. Zwei Seiten, Querverbindungen zwischen ihnen.</span></a>
+    <a class="card" href="b2-gap.html"><b>Gap</b><span>Jede Aussage eine Achse (0 = lehnt ab, 10 = stimmt zu), jede Position ein Punkt.</span></a>
+    <a class="card" href="b2-crux.html"><b>Crux</b><span>Pro Streitfrage: was sie entscheiden würde. Zuunterst die Crux(es) der ganzen Vorlage — eine Frage statt zwanzig Argumente.</span></a>
+    <a class="card soon" href="b-aufkommend.html"><em>Aufkommend · Mock-up</em><b>Abstimmung vom 29. November 2026</b><span>AHV-Zusatzfinanzierung (Mehrwertsteuer) · Feuerwerk-Initiative · Ehepaar-Initiative (faire Bundessteuern) · Kriegsmaterialgesetz (Referendum)</span></a>
+  </div>
+  <p class="none"><b>Eine Position:</b> kein Anwendungsfall.</p>
+
+  <h2 class="user">Für Expert*innen</h2>
+  <p class="userdesc">Fraktionssekretariat, Verband, Verwaltung, Journalismus. Die Daten sind Rohtexte: Stellungnahmen einer Vernehmlassung, Voten einer Parlamentsdebatte, ein Bericht, ein einzelnes Votum.</p>
+
+  <p class="sec">Mehrere Positionen</p>
+  <p class="data"><b>Zwei Themen:</b></p>
+  <div class="topics">
+    <div class="topic"><i class="k">Vernehmlassung · Herbst 2025</i><b>Paket Schweiz–EU (Bilaterale III)</b><span>Acht Stellungnahmen: economiesuisse, SP, Die Mitte, SVP, sgv, SGB, FDP, GRÜNE · Quellen: Vernehmlassungsantworten der Organisationen (PDF/Website)</span></div>
+    <div class="topic"><i class="k">Parlamentsdebatte · Nationalrat 4. März 2026, Ständerat 12. März 2026</i><b>Neutralitätsinitiative</b><span>Vierzehn Voten · Quelle: Amtliches Bulletin (parlament.ch)</span></div>
+  </div>
+  <div class="cards">
+    <a class="card" href="e2-positionen.html"><b>Argumentbaum</b><span>Die Argumente als Baum, bis zur Quelle: Stellungnahmen ohne Lager, die Debatte als Ja/Nein. Jeder Pfad endet am Zitat.</span></a>
+    <a class="card" href="e2-argumentmap.html"><b>Argument map</b><span>Hauptthese, Thesen, Prämissen — mit Stütz- und Angriffspfeilen. Zwei Seiten, Querverbindungen zwischen ihnen; bei der Vernehmlassung folgen die Seiten der Haltung, nicht einer Abstimmung.</span></a>
+    <a class="card" href="e2-gap.html"><b>Gap</b><span>Jede Aussage eine Achse (0 = lehnt ab, 10 = stimmt zu), jede Organisation oder Redner*in ein Punkt.</span></a>
+    <a class="card" href="e2-crux.html"><b>Crux</b><span>Woran hängt der Streit — an einer Zahl, einem fehlenden Beleg, einer Rangfolge von Gütern? Pro Streitfrage und für die ganze Vorlage.</span></a>
+    <a class="card soon" href="e-aufkommend.html"><em>Aufkommend · Mock-up</em><b>Paket Schweiz–EU: Ständerat 28.–30. September 2026 → Nationalrat</b><span>Sobald die Debatte im Amtlichen Bulletin steht, füllt sich diese Ansicht — für alle, die im Zweitrat antworten müssen.</span></a>
+  </div>
+
+  <p class="sec">Eine Position</p>
+  <p class="data"><b>Zwei Themen:</b></p>
+  <div class="topics">
+    <div class="topic"><i class="k">Erläuternder Bericht · Bundesrat, 13. Juni 2025</i><b>Paket Schweiz–EU (Bilaterale III)</b><span>Abschnitt «Übersicht» · Quelle: EDA (PDF)</span></div>
+    <div class="topic"><i class="k">Votum · Ständerat, 12. März 2026</i><b>Neutralitätsinitiative — Bundesrat Cassis</b><span>Quelle: Amtliches Bulletin (parlament.ch)</span></div>
+  </div>
+  <div class="cards">
+    <a class="card" href="e1-offene-fragen.html"><b>Offene Fragen</b><span>Der Text im Ganzen, kritische Stellen markiert und klassiert (unbelegte Behauptung, Wertung als Tatsache, Quelle unklar, …).</span></a>
+    <a class="card" href="e1-position.html"><b>Argumentbaum</b><span>Ein einzelner Text als Baum: seine Aussagen, nach Themen gruppiert, ohne Gegenseite — jede endet am Zitat.</span></a>
+    <a class="card" href="e1-argumentmap.html"><b>Argument map</b><span>Ein Text als Karte: welche Prämisse trägt welche These, und wo hängt die Hauptthese.</span></a>
+  </div>
+
+  <h2 class="user">Backlog</h2>
+  <p class="userdesc">Funktionen, die noch nicht gebaut sind.</p>
+  <div class="backlog">
+    <div class="bl">
+      <b>Steelman</b>
+      <p>Die stärkste Fassung einer Position — die Idee: Der Steelman kann helfen, diese Position besser zu verstehen, gerade von der Gegenseite aus.</p>
+    </div>
+    <div class="bl">
+      <b>Meinungsbildung: eigene Werte und Meinungen eingeben → Einsichten</b>
+      <p>Die Nutzerin kann die Extraktion verändern und ihr widersprechen — und daraus Einsichten gewinnen.</p>
+    </div>
+    <div class="bl">
+      <b>Pro/Contra ergänzen: «Contra, aber pro Gegenvorschlag»</b>
+      <p>Eine dritte Haltung neben Ja und Nein bei Initiativen mit Gegenentwurf — als eigener Ast und Stempel.</p>
+    </div>
+    <div class="bl">
+      <b>Andere Anwendungsmöglichkeiten prüfen</b>
+      <p>Nicht nur politische Texte.</p>
+    </div>
+  </div>
+
+  <p class="foot">Quellen: Erläuterungen des Bundesrates (Abstimmungsbüchlein 14.6.2026, admin.ch, PDF v2), Parolen-Begründungen der Parteien (Medienmitteilungen, Parteitags-Unterlagen, Kampagnenseiten — Quellenlink an jeder Position), Vernehmlassungsantworten zum Paket Schweiz–EU (Herbst 2025, Original-PDFs/-Webseiten der Organisationen, Auszüge), Amtliches Bulletin (Nationalrat 4.3.2026, Ständerat 12.3.2026, parlament.ch; Voten als Auszüge), Erläuternder Bericht des Bundesrates (13.6.2025, Abschnitt «Übersicht»). Alle Zitate wurden am 27.9.2026 gegen die Originale geprüft (wörtlich; Quellenlinks pro Dokument an jeder Position). Kurzfassungen, Gruppierungen, Einschätzungen (0–10), Fragen, Klassen, Karten und Crux-Texte sind vom Tool formuliert und im Interface als solche markiert. Prototyp / interner Arbeitsstand, September 2026.</p>
+</div>
+
+</body>
+</html>

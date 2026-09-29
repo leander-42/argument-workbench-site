@@ -1,0 +1,1135 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Offene Fragen · Experten</title>
+<style>body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style>
+</head>
+<body>
+<style>
+:root {
+  --board:#eceae6; --board-sunk:#e0ddd7; --board-line:#d2cec6;
+  --board-ink:#23252c; --board-mute:#6b6862; --board-dim:#8a8781;
+
+  --p-bg:#f6f7f9; --p-card:#ffffff; --p-ink:#1a202c; --p-muted:#64748b;
+  --p-border:#e2e8f0; --p-accent:#4f46e5; --p-sunk:#eef1f5;
+
+  --st-united:#16a34a; --st-united-bg:#f0fdf4;
+  --st-contested:#b91c1c; --st-contested-bg:#fef2f2;
+  --st-one:#64748b; --st-one-bg:#f8fafc;
+
+  --serif: ui-serif, "Iowan Old Style", "Palatino Linotype", Palatino, Georgia, serif;
+  --sans:  -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  --mono:  ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]) { --board:#21232b; --board-sunk:#1a1c23; --board-line:#34373f; --board-ink:#eceae6; --board-mute:#9d9a94; --board-dim:#7b7871; }
+}
+:root[data-theme="dark"]  { --board:#21232b; --board-sunk:#1a1c23; --board-line:#34373f; --board-ink:#eceae6; --board-mute:#9d9a94; --board-dim:#7b7871; }
+:root[data-theme="light"] { --board:#eceae6; --board-sunk:#e0ddd7; --board-line:#d2cec6; --board-ink:#23252c; --board-mute:#6b6862; --board-dim:#8a8781; }
+
+* { box-sizing:border-box; }
+body { margin:0; background:var(--board); color:var(--board-ink); font-family:var(--sans); line-height:1.55; -webkit-font-smoothing:antialiased; }
+.wrap { max-width:1180px; margin:0 auto; padding:0 24px 110px; }
+
+.masthead { padding:60px 0 26px; }
+.eyebrow { font-family:var(--mono); font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--board-dim); margin:0 0 16px; }
+h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px); line-height:1.09; letter-spacing:-.02em; margin:0 0 18px; text-wrap:balance; max-width:22ch; }
+.standfirst { font-size:17px; line-height:1.6; color:var(--board-mute); max-width:66ch; margin:0; }
+.standfirst strong { color:var(--board-ink); font-weight:600; }
+.rule { height:1px; background:var(--board-line); border:0; margin:0; }
+
+/* concept switcher */
+.conceptbar { display:flex; gap:10px; flex-wrap:wrap; padding:26px 0 22px; align-items:stretch; }
+.concept { flex:1 1 200px; text-align:left; border:1px solid var(--board-line); background:var(--board-sunk); color:var(--board-ink);
+  border-radius:9px; padding:12px 14px; font:inherit; cursor:pointer; }
+.concept .cn { font-family:var(--mono); font-size:10px; letter-spacing:.1em; text-transform:uppercase; color:var(--board-dim); display:block; margin-bottom:4px; }
+.concept .ct { font-weight:700; font-size:14.5px; display:block; margin-bottom:3px; }
+.concept .cd { font-size:12px; color:var(--board-mute); line-height:1.4; display:block; }
+.concept.on { border-color:var(--p-accent); box-shadow:0 0 0 1.5px var(--p-accent); background:var(--p-card); color:var(--p-ink); }
+.concept.on .cd { color:var(--p-muted); }
+.concept:focus-visible { outline:2px solid var(--p-accent); outline-offset:2px; }
+
+/* screen */
+.screen { background:var(--p-bg); color:var(--p-ink); border:1px solid var(--board-line); border-radius:11px; overflow:hidden;
+  box-shadow:0 1px 2px rgba(0,0,0,.05),0 16px 40px -14px rgba(0,0,0,.3); font-size:14px; }
+.viewhead { background:var(--p-card); border-bottom:1px solid var(--p-border); padding:11px 18px; display:flex; align-items:baseline; gap:12px; flex-wrap:wrap; }
+.viewhead h2 { font-size:13px; font-weight:700; margin:0; letter-spacing:.02em; }
+.viewhead p { margin:0; font-size:12px; color:var(--p-muted); }
+.stage { padding:20px 18px 26px; min-height:420px; }
+.caption { font-family:var(--mono); font-size:11px; color:var(--board-dim); margin:11px 0 0; line-height:1.5; }
+
+/* shared bits */
+.pdot { width:9px; height:9px; border-radius:50%; display:inline-block; flex:none; }
+.pchip { display:inline-flex; align-items:center; gap:6px; border:1px solid var(--p-border); background:var(--p-card);
+  border-radius:20px; padding:2px 9px; font-size:11.5px; font-weight:600; }
+.pchip .w { color:var(--p-muted); font-weight:600; }
+.stamp { font-family:var(--mono); font-size:9.5px; letter-spacing:.07em; text-transform:uppercase; font-weight:700; border-radius:4px; padding:2px 7px; }
+.stamp.united { color:var(--st-united); background:var(--st-united-bg); }
+.stamp.contested { color:var(--st-contested); background:var(--st-contested-bg); }
+.stamp.one { color:var(--st-one); background:var(--st-one-bg); }
+.qmark { color:var(--p-muted); font-weight:400; }
+
+.quotecard { background:var(--p-card); border:1px solid var(--p-border); border-left:3px solid var(--p-border); border-radius:7px;
+  padding:10px 12px; font-size:13px; line-height:1.6; cursor:pointer; text-align:left; font:inherit; width:100%; }
+.quotecard:hover { background:var(--p-sunk); }
+.quotecard:focus-visible { outline:2px solid var(--p-accent); outline-offset:2px; }
+.quotecard .who { display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; margin-bottom:6px; }
+.quotecard .who .w { margin-left:auto; font-family:var(--mono); font-size:10px; color:var(--p-muted); text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; }
+.quotecard mark { background:#fef08a; color:inherit; padding:1px 2px; border-radius:2px; }
+:root[data-theme="dark"] .quotecard mark { background:#a16207; }
+.quotecard .more { display:block; margin-top:7px; font-size:11px; color:var(--p-accent); font-weight:600; }
+.silentrow { font-size:12px; color:var(--p-muted); font-style:italic; padding:4px 2px; display:flex; gap:7px; align-items:center; flex-wrap:wrap; }
+.tnote { font-size:12px; color:var(--p-muted); background:var(--p-sunk); border-radius:6px; padding:8px 11px; line-height:1.5; }
+.tnote b { color:var(--p-ink); }
+.tlink { border:0; background:none; color:var(--p-accent); font:inherit; font-size:12px; font-weight:600; cursor:pointer; padding:0; }
+.tlink:hover { text-decoration:underline; }
+
+.detailgrid { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; }
+@media (max-width:820px){ .detailgrid { grid-template-columns:1fr; } }
+.detailfoot { grid-column:1 / -1; display:flex; flex-direction:column; gap:8px; }
+
+/* ===== V1 brief ===== */
+.briefsec { margin-bottom:30px; }
+.briefsec > h3 { display:flex; align-items:center; gap:10px; font-size:12px; letter-spacing:.1em; text-transform:uppercase; margin:0 0 4px; }
+.briefsec > h3 .line { flex:1; height:1px; background:var(--p-border); }
+.briefsec > .secsub { font-size:12px; color:var(--p-muted); margin:0 0 12px; }
+.briefrow { border:1px solid var(--p-border); border-radius:8px; background:var(--p-card); margin-bottom:9px; overflow:hidden; }
+.briefrow > button.head { display:flex; width:100%; text-align:left; font:inherit; border:0; background:none; color:inherit;
+  padding:11px 14px; gap:11px; align-items:baseline; cursor:pointer; }
+.briefrow > button.head:hover { background:var(--p-sunk); }
+.briefrow > button.head:focus-visible { outline:2px solid var(--p-accent); outline-offset:-2px; }
+.briefrow .bt { font-size:14px; font-weight:600; line-height:1.45; flex:1; }
+.briefrow .bs { display:block; font-size:12.5px; color:var(--p-muted); line-height:1.5; margin-top:3px; font-weight:400; }
+.briefrow .chev { font-family:var(--mono); color:var(--p-muted); flex:none; }
+.briefrow .dots { display:flex; gap:4px; flex:none; transform:translateY(1px); }
+.briefrow .open { border-top:1px solid var(--p-border); background:var(--p-bg); padding:12px 14px; }
+
+/* ===== V2 side by side ===== */
+.faceoff { margin-bottom:26px; }
+.faceoff > .fq { display:flex; align-items:baseline; gap:10px; margin-bottom:9px; flex-wrap:wrap; }
+.faceoff > .fq h3 { font-size:14.5px; font-weight:700; margin:0; line-height:1.4; }
+.facecols { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+@media (max-width:820px){ .facecols { grid-template-columns:1fr; } }
+.stancebox { border:1px solid var(--p-border); background:var(--p-sunk); border-radius:8px; padding:10px 13px; margin:0 0 14px; }
+.stancerow { display:flex; align-items:baseline; gap:7px; font-size:12.5px; line-height:1.55; padding:2px 0; flex-wrap:wrap; }
+.stancerow b { font-weight:650; }
+.stancerow > span { color:var(--p-muted); }
+.stancerow .pdot { align-self:center; flex:none; }
+.sidesnote { font-size:12.5px; line-height:1.6; color:var(--p-muted); border-left:2px solid var(--p-border); padding-left:10px; margin:9px 0 0; max-width:70ch; }
+.sidesnote b { color:var(--p-ink); }
+.answercols { display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:10px; align-items:start; }
+@media (max-width:560px){ .answercols { grid-template-columns:1fr; } }
+.facecol { display:flex; flex-direction:column; gap:8px; min-width:0; }
+.facecol > .colh { font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--p-muted); font-weight:700; padding:0 2px; }
+.hatch { border:1px dashed var(--p-border); border-radius:7px; min-height:64px; display:grid; place-items:center;
+  color:var(--p-muted); font-size:12px; font-style:italic;
+  background:repeating-linear-gradient(45deg,transparent,transparent 6px,var(--p-sunk) 6px,var(--p-sunk) 12px); }
+.unitedband { border:1px solid var(--p-border); border-left:3px solid var(--st-united); border-radius:8px; background:var(--p-card); padding:12px 14px; margin-bottom:12px; }
+.unitedband .uq { font-size:14px; font-weight:700; margin:0 0 8px; display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; }
+.unitedband .ugrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:8px; }
+
+/* ===== V3 tree ===== */
+.crumbs { display:flex; gap:6px; flex-wrap:wrap; align-items:center; font-size:12px; color:var(--p-muted); margin-bottom:14px; min-height:22px; }
+.crumbs button { border:0; background:none; color:var(--p-accent); font:inherit; font-size:12px; font-weight:600; cursor:pointer; padding:2px 4px; border-radius:4px; }
+.crumbs button:hover { background:var(--p-sunk); }
+.crumbs .sep { color:var(--p-border); }
+.treerow { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+.treerow + .treerow { margin-top:14px; }
+.rootcard { border:1.5px dashed var(--st-one); background:var(--p-bg); border-radius:9px; padding:12px 16px; max-width:520px; text-align:center; }
+.rootcard .rt { font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--p-muted); margin-bottom:5px; }
+.rootcard .rq { font-size:14.5px; font-weight:700; line-height:1.45; }
+.sidecard, .argcard { border:1px solid var(--p-border); background:var(--p-card); border-radius:8px; padding:11px 14px;
+  font:inherit; text-align:left; cursor:pointer; max-width:340px; flex:1 1 240px; }
+.sidecard:hover, .argcard:hover { background:var(--p-sunk); }
+.sidecard:focus-visible, .argcard:focus-visible { outline:2px solid var(--p-accent); outline-offset:2px; }
+.sidecard.dim, .argcard.dim { opacity:.45; }
+.sidecard .sl { font-family:var(--mono); font-size:10px; letter-spacing:.09em; text-transform:uppercase; font-weight:700; display:flex; align-items:center; gap:7px; margin-bottom:5px; }
+.sidecard .sq { font-size:12.5px; line-height:1.55; color:var(--p-muted); }
+.sidecard .sq b { color:var(--p-ink); }
+.argcard .al { font-size:13.5px; font-weight:700; margin-bottom:4px; line-height:1.4; }
+.argcard .am { font-size:11.5px; color:var(--p-muted); display:flex; gap:8px; flex-wrap:wrap; }
+.treedetail { margin-top:16px; border:1px solid var(--p-border); border-radius:9px; background:var(--p-card); padding:14px 16px; }
+.treedetail > .tdh { display:flex; align-items:baseline; gap:10px; flex-wrap:wrap; margin-bottom:8px; }
+.treedetail > .tdh h3 { margin:0; font-size:14.5px; font-weight:700; line-height:1.4; }
+.arrowdown { text-align:center; color:var(--p-muted); font-size:14px; margin:6px 0 2px; }
+
+/* ===== V4 questions ===== */
+.qfilters { display:flex; gap:7px; flex-wrap:wrap; margin-bottom:14px; align-items:center; }
+.qf { border:1px solid var(--p-border); background:var(--p-card); border-radius:20px; padding:3px 11px; font:inherit; font-size:11.5px; font-weight:600; cursor:pointer; color:var(--p-ink); display:inline-flex; align-items:center; gap:6px; }
+.qf.on { border-color:var(--p-accent); box-shadow:0 0 0 1px var(--p-accent); }
+.qf:focus-visible { outline:2px solid var(--p-accent); outline-offset:2px; }
+.qgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:10px; }
+.qcard { border:1px solid var(--p-border); background:var(--p-card); border-radius:8px; padding:12px 14px; font:inherit; text-align:left; cursor:pointer; display:flex; flex-direction:column; gap:9px; }
+.qcard:hover { background:var(--p-sunk); }
+.qcard:focus-visible { outline:2px solid var(--p-accent); outline-offset:2px; }
+.qcard.sel { box-shadow:0 0 0 2px var(--p-accent); }
+.qcard .qq { font-size:13.5px; font-weight:600; line-height:1.45; flex:1; }
+.qcard .qmeta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; }
+.qdetail { margin-top:14px; border:1px solid var(--p-border); border-radius:9px; background:var(--p-card); padding:14px 16px; }
+
+/* ===== modal ===== */
+.overlay { position:fixed; inset:0; background:rgba(20,22,28,.5); display:none; z-index:40; }
+.overlay.show { display:block; }
+.sheet { position:fixed; z-index:41; inset:auto 0 0 0; margin:0 auto; max-width:760px; max-height:86vh; overflow:auto;
+  background:var(--p-card); color:var(--p-ink); border:1px solid var(--p-border); border-radius:14px 14px 0 0;
+  box-shadow:0 -12px 44px rgba(0,0,0,.35); display:none; }
+.sheet.show { display:block; }
+@media (min-width:900px){ .sheet { inset:7vh 0 auto 0; border-radius:14px; } }
+.sheet-h { position:sticky; top:0; background:var(--p-card); border-bottom:1px solid var(--p-border); padding:12px 18px; display:flex; align-items:center; gap:10px; z-index:2; }
+.sheet-h .who { display:flex; align-items:center; gap:8px; font-weight:700; font-size:13.5px; min-width:0; }
+.sheet-x { margin-left:auto; border:0; background:none; color:var(--p-muted); font:inherit; font-size:18px; cursor:pointer; padding:2px 8px; border-radius:6px; line-height:1; }
+.sheet-x:hover { background:var(--p-sunk); }
+.sheet-x:focus-visible { outline:2px solid var(--p-accent); }
+.sheettabs { display:inline-flex; border:1px solid var(--p-border); border-radius:7px; overflow:hidden; }
+.stab { border:0; background:var(--p-card); color:var(--p-muted); font:inherit; font-size:11.5px; font-weight:600; padding:4px 11px; cursor:pointer; }
+.stab + .stab { border-left:1px solid var(--p-border); }
+.stab.on { background:var(--p-accent); color:#fff; }
+.sheet-b { padding:16px 18px 22px; }
+.sheet-src { font-size:11.5px; color:var(--p-muted); margin:0 0 12px; line-height:1.5; }
+.sheet-src a { color:var(--p-accent); }
+.passage { font-size:14.5px; line-height:1.7; background:var(--p-sunk); border-left:3px solid var(--p-accent); border-radius:6px; padding:13px 15px; }
+.passage mark, .fullpara mark { background:#fef08a; color:inherit; padding:1px 2px; border-radius:2px; }
+:root[data-theme="dark"] .passage mark, :root[data-theme="dark"] .fullpara mark { background:#a16207; }
+.fullpara { font-size:14px; line-height:1.7; margin:0 0 13px; max-width:62ch; }
+.fullpara b.ph { display:block; font-size:11px; letter-spacing:.08em; text-transform:uppercase; color:var(--p-muted); margin-bottom:3px; }
+.fullpara.hot { background:var(--p-sunk); border-radius:6px; padding:10px 12px; }
+.sheetnote { font-size:12px; color:var(--p-muted); margin-top:12px; }
+
+/* closing notes */
+.notes { margin-top:56px; border:1px solid var(--board-line); border-radius:10px; background:var(--board-sunk); padding:30px 32px 26px; }
+.notes h2 { font-family:var(--serif); font-size:24px; font-weight:600; margin:0 0 14px; letter-spacing:-.015em; }
+.notes p { margin:0 0 12px; max-width:70ch; font-size:15px; color:var(--board-mute); }
+.notes p strong { color:var(--board-ink); font-weight:600; }
+.cmp { width:100%; border-collapse:collapse; margin:6px 0 18px; font-size:13.5px; }
+.cmp th, .cmp td { text-align:left; padding:9px 12px 9px 0; vertical-align:top; border-bottom:1px solid var(--board-line); }
+.cmp th { font-family:var(--mono); font-size:10px; letter-spacing:.09em; text-transform:uppercase; color:var(--board-dim); font-weight:600; }
+.cmp td b { color:var(--board-ink); }
+.cmp td { color:var(--board-mute); line-height:1.5; }
+.cmpscroll { overflow-x:auto; }
+
+/* mirror + why-chain */
+.mirror { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:14px; }
+@media (max-width:900px){ .mirror { grid-template-columns:1fr; } }
+.mcol { min-width:0; }
+.mcolh { margin-bottom:10px; }
+.mcolh .sl { font-family:var(--mono); font-size:10px; letter-spacing:.09em; text-transform:uppercase; font-weight:700; display:flex; align-items:center; gap:7px; color:var(--p-ink); }
+.argblock { margin-bottom:14px; }
+.argl { font-family:var(--mono); font-size:9.5px; letter-spacing:.1em; text-transform:uppercase; color:var(--p-muted); font-weight:700; margin:0 0 6px; }
+.mrow-w { margin-bottom:6px; }
+.mrow { display:flex; align-items:baseline; gap:9px; width:100%; text-align:left; font:inherit; border:1px solid var(--p-border);
+  background:var(--p-card); color:var(--p-ink); border-radius:7px; padding:8px 11px; cursor:pointer; font-size:12.5px; line-height:1.45; }
+.mrow:hover { background:var(--p-sunk); }
+.mrow:focus-visible { outline:2px solid var(--p-accent); outline-offset:2px; }
+.mrow .mq { flex:1; min-width:0; font-weight:600; }
+.mrow .dots { display:flex; gap:4px; flex:none; transform:translateY(1px); }
+.mrow .chev { font-family:var(--mono); color:var(--p-muted); flex:none; }
+.tie { font-weight:700; flex:none; font-size:12px; width:16px; display:inline-grid; place-items:center; border-radius:4px; font-style:normal; }
+.tie.united { color:var(--st-united); background:var(--st-united-bg); }
+.tie.contested { color:var(--st-contested); background:var(--st-contested-bg); }
+.tie.none { color:var(--st-one); background:var(--st-one-bg); }
+.mopen { display:flex; flex-direction:column; gap:8px; padding:9px 2px 4px 10px; border-left:2px solid var(--p-border); margin:4px 0 2px 8px; }
+.gegen { border:1px dashed var(--p-border); border-radius:7px; padding:9px 10px; display:flex; flex-direction:column; gap:8px; background:var(--p-bg); }
+.gegen .colh { font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--p-muted); font-weight:700; }
+.mlegend { display:flex; gap:16px; flex-wrap:wrap; font-size:11.5px; color:var(--p-muted); margin-top:14px; align-items:center; }
+.mlegend span { display:inline-flex; align-items:center; gap:6px; }
+.wcard-w { margin-bottom:9px; }
+.wcard { border:1px solid var(--p-border); border-left:3px solid var(--p-border); background:var(--p-card); border-radius:8px; padding:10px 12px; }
+.wcard.pro { border-left-color:var(--st-united); }
+.wcard.contra { border-left-color:var(--st-contested); }
+.whead { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin-bottom:5px; }
+.wpol { font-family:var(--mono); font-size:9px; letter-spacing:.08em; text-transform:uppercase; font-weight:700; }
+.wpol.pro { color:var(--st-united); }
+.wpol.contra { color:var(--st-contested); }
+.whead .dots { display:flex; gap:4px; }
+.pairbadge { font-family:var(--mono); font-size:9px; letter-spacing:.05em; text-transform:uppercase; font-weight:700; color:#9333ea; background:#f5f3ff; border-radius:4px; padding:2px 7px; }
+:root[data-theme="dark"] .pairbadge { background:#3b2a52; }
+.wq { font-size:13px; font-weight:600; line-height:1.45; margin-bottom:5px; }
+.ww { font-size:12px; color:var(--p-muted); line-height:1.5; font-style:italic; margin-bottom:8px; }
+.wwtag { font-family:var(--mono); font-size:8.5px; letter-spacing:.07em; text-transform:uppercase; font-style:normal; color:var(--p-muted); display:block; margin-bottom:2px; }
+.wbtns { display:flex; gap:7px; flex-wrap:wrap; }
+.wbtn { border:1px solid var(--p-border); background:var(--p-card); color:var(--p-ink); border-radius:16px; padding:2px 10px; font:inherit; font-size:11px; font-weight:600; cursor:pointer; }
+.wbtn:hover { background:var(--p-sunk); }
+.wbtn.on { border-color:var(--p-accent); box-shadow:0 0 0 1px var(--p-accent); }
+.wbtn:focus-visible { outline:2px solid var(--p-accent); outline-offset:2px; }
+.windent { margin:8px 0 2px 16px; padding-left:12px; border-left:2px dashed var(--p-border); }
+.wcard-w .mopen, .wcard-w .gegen { margin:8px 0 2px 8px; }
+
+/* round 3 */
+.zoombig { border:1px solid var(--p-border); background:var(--p-card); border-radius:10px; padding:16px 18px; max-width:640px; margin:0 auto; }
+.zoombig .sl { font-family:var(--mono); font-size:10px; letter-spacing:.09em; text-transform:uppercase; font-weight:700; display:flex; align-items:center; gap:7px; margin-bottom:7px; }
+.zoombig .al { font-size:15px; font-weight:700; margin-bottom:5px; }
+.zoombig .sq { font-size:12.5px; line-height:1.55; color:var(--p-muted); }
+.zoombig .sq b { color:var(--p-ink); }
+.turnstack { display:flex; flex-direction:column; gap:0; max-width:640px; }
+.turnstack .quotecard { cursor:pointer; }
+.extcard { border-style:dashed; }
+.extcard .who { font-style:italic; }
+.endline { font-family:var(--mono); font-size:10.5px; letter-spacing:.06em; color:var(--p-muted); text-align:center; margin:12px 0 8px; }
+.pfadgrid { display:grid; grid-template-columns:minmax(0,1fr) 250px; gap:16px; }
+@media (max-width:940px){ .pfadgrid { grid-template-columns:1fr; } }
+.pfadside { border:1px solid var(--p-border); border-radius:9px; background:var(--p-card); padding:12px 14px; align-self:start; position:sticky; top:12px; }
+.pfadside h4 { font-family:var(--mono); font-size:9.5px; letter-spacing:.11em; text-transform:uppercase; color:var(--p-muted); margin:0 0 9px; font-weight:700; }
+.traillist { margin:0 0 11px; padding-left:18px; display:flex; flex-direction:column; gap:5px; }
+.traillist li { font-size:12px; line-height:1.4; }
+.traillist button { border:0; background:none; color:var(--p-ink); font:inherit; text-align:left; cursor:pointer; padding:1px 3px; border-radius:4px; }
+.traillist button:hover { background:var(--p-sunk); color:var(--p-accent); }
+.traillist button:focus-visible { outline:2px solid var(--p-accent); }
+
+/* round 4: structured summary + grouped quotes */
+.sumbox { border:1px solid var(--p-border); background:var(--p-sunk); border-radius:8px; padding:11px 13px; margin-bottom:13px; }
+.sumtag { font-family:var(--mono); font-size:9px; letter-spacing:.09em; text-transform:uppercase; color:var(--p-muted); font-weight:700; margin-bottom:8px; }
+.sumrow + .sumrow { margin-top:10px; padding-top:10px; border-top:1px solid var(--p-border); }
+.suml { font-size:11px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; margin-bottom:3px; color:var(--p-ink); }
+.sumt { margin:0; font-size:12.5px; line-height:1.55; color:var(--p-muted); max-width:75ch; }
+.qsec { margin-bottom:13px; }
+.qsech { font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--p-muted); font-weight:700; margin:0 0 7px; display:flex; align-items:center; gap:8px; }
+.qsech::after { content:""; flex:1; height:1px; background:var(--p-border); }
+.sumcols { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+@media (max-width:820px){ .sumcols { grid-template-columns:1fr; } }
+.sumone .sumcell { max-width:80ch; }
+.sumcell + .sumcell { border-left:0; }
+
+/* legend, merged side columns, group sentences */
+.legendrow { display:flex; gap:7px; flex-wrap:wrap; margin:0 0 16px; align-items:center; }
+.legendrow .lgt { font-family:var(--mono); font-size:9.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--p-muted); font-weight:700; margin-right:2px; }
+.colh2 { display:flex; align-items:center; gap:7px; font-family:var(--mono); font-size:10px; letter-spacing:.08em; text-transform:uppercase; color:var(--p-ink); font-weight:700; padding:0 2px; }
+.colh2 .cd2 { display:inline-flex; gap:4px; flex:none; }
+.colh2.mutedh { color:var(--p-muted); }
+.sumside { border:1px solid var(--p-border); background:var(--p-sunk); border-radius:8px; padding:9px 11px; }
+.sumside .sumtag { margin-bottom:4px; }
+.sumside .sumt { font-size:12px; }
+.argcard .ad { font-size:11.5px; color:var(--p-muted); line-height:1.45; margin:2px 0 5px; font-weight:400; }
+.sidecard .sbig { font-size:16px; font-weight:800; letter-spacing:.02em; }
+/* Themen-Tabs (Datensätze) */
+.dstabs { display:flex; gap:8px; flex-wrap:wrap; align-items:center; padding:22px 0 0; }
+.dstabs .dslab { font-family:var(--mono); font-size:10px; letter-spacing:.12em; text-transform:uppercase; color:var(--board-dim); margin-right:4px; }
+.dstab { border:1px solid var(--board-line); background:var(--board-sunk); color:var(--board-ink); border-radius:20px; padding:6px 14px; font:inherit; cursor:pointer; text-align:left; display:inline-flex; flex-direction:column; gap:1px; }
+.dstab .dt { font-weight:700; font-size:13px; }
+.dstab .dsub { font-size:11px; color:var(--board-mute); }
+.dstab.on { background:var(--p-card); border-color:var(--p-accent); box-shadow:0 0 0 1.5px var(--p-accent); color:var(--p-ink); }
+.dstab.on .dsub { color:var(--p-muted); }
+.dstab:focus-visible { outline:2px solid var(--p-accent); outline-offset:2px; }
+.dstabs + .conceptbar { padding-top:16px; }
+
+@media (prefers-reduced-motion:reduce){ * { transition:none !important; animation:none !important; } }
+
+/* review chrome */
+.mini { max-width:1180px; margin:0 auto; padding:26px 24px 10px; }
+.mini .backlink { font-size:12px; color:var(--board-dim); text-decoration:none; font-family:var(--mono); letter-spacing:.06em; }
+.mini .backlink:hover { color:var(--p-accent); }
+.mini h1 { font-family:var(--serif); font-size:clamp(24px,3.4vw,34px); margin:10px 0 8px; letter-spacing:-.02em; max-width:none; }
+.mini p.orient { color:var(--board-mute); font-size:14.5px; line-height:1.6; margin:0 0 18px; max-width:74ch; }
+/* gap */
+.gaprow { background:var(--p-card); border:1px solid var(--p-border); border-radius:8px; padding:11px 14px 7px; margin-bottom:9px; }
+.gaprow.compact { border:0; padding:6px 2px 2px; margin:0; background:none; }
+.gaplab { font-size:13.5px; font-weight:600; line-height:1.45; display:flex; gap:10px; align-items:baseline; flex-wrap:wrap; margin-bottom:6px; }
+.gaptrack { position:relative; height:26px; margin:2px 6px 0; }
+.gaptrack::before { content:""; position:absolute; left:0; right:0; top:12px; height:2px; background:var(--p-border); }
+.gapspan2 { position:absolute; top:9px; height:8px; border-radius:5px; opacity:.35; }
+.gapdot { position:absolute; top:6px; width:14px; height:14px; border-radius:50%; border:2.5px solid var(--p-card); transform:translateX(-7px); box-shadow:0 1px 3px rgba(0,0,0,.25); padding:0; cursor:pointer; }
+.gapdot:focus-visible { outline:2px solid var(--p-accent); outline-offset:2px; }
+.gapax { display:flex; justify-content:space-between; font-family:var(--mono); font-size:9px; color:var(--p-muted); text-transform:uppercase; letter-spacing:.05em; margin:2px 6px 0; }
+/* open questions */
+.oqrow { display:flex; gap:9px; width:100%; text-align:left; border:0; background:none; font:inherit; font-size:12.5px; line-height:1.5; padding:7px 4px; border-bottom:1px solid var(--p-border); cursor:pointer; border-radius:4px; color:var(--p-ink); }
+.oqrow:last-child { border-bottom:0; }
+.oqrow:hover { background:var(--p-sunk); }
+.oqrow:focus-visible { outline:2px solid var(--p-accent); outline-offset:-2px; }
+.oqrow .mk { font-family:var(--mono); font-weight:700; color:#d97706; flex:none; }
+.oqrow .oqctx { display:block; margin-top:3px; font-size:11px; color:var(--p-accent); font-weight:600; }
+/* prüfstein / angelpunkt */
+.pruefbox { background:var(--p-card); border:1px solid var(--p-border); border-left:3px solid #d97706; border-radius:8px; padding:11px 14px; margin-bottom:9px; }
+.pruefhead { display:flex; gap:9px; align-items:baseline; flex-wrap:wrap; margin-bottom:5px; }
+.pruefhead b { font-size:13.5px; line-height:1.45; }
+.prueftag { font-family:var(--mono); font-size:9px; letter-spacing:.09em; text-transform:uppercase; font-weight:700; color:#d97706; background:#fffbeb; border-radius:4px; padding:2px 7px; flex:none; }
+:root[data-theme="dark"] .prueftag { background:#4a3a12; }
+.prueftext { margin:0; font-size:12.5px; line-height:1.55; color:var(--p-muted); max-width:88ch; }
+.angelbox { background:var(--p-card); border:1px solid var(--p-border); border-left:3px solid #9333ea; border-radius:8px; padding:12px 15px; }
+.angelbox .prueftag { color:#9333ea; background:#f5f3ff; }
+:root[data-theme="dark"] .angelbox .prueftag { background:#3b2a52; }
+.angelbox .prueftext { font-size:13px; color:var(--p-ink); }
+/* kombi extras */
+.gapfold { border:0; background:none; font:inherit; font-size:12px; font-weight:700; color:var(--p-accent); cursor:pointer; padding:2px 0; margin-bottom:6px; }
+.gapfold:focus-visible { outline:2px solid var(--p-accent); outline-offset:2px; }
+.gapcaveat { font-family:var(--mono); font-size:9.5px; color:var(--p-muted); margin:0 0 8px; }
+.oqbtn { border:1px solid var(--p-border); background:var(--p-card); color:#b45309; border-radius:50%; width:19px; height:19px; font-size:11px; font-weight:700; line-height:1; cursor:pointer; flex:none; padding:0; }
+.oqbtn:hover, .oqbtn.on { border-color:#d97706; box-shadow:0 0 0 1px #d97706; }
+.oqbtn:focus-visible { outline:2px solid var(--p-accent); }
+.oqbox { background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:8px 11px; font-size:12px; line-height:1.5; margin-top:8px; color:var(--p-ink); }
+:root[data-theme="dark"] .oqbox { background:#3a2f10; border-color:#7c5e10; }
+.oqbox .prueftag { margin-bottom:4px; display:inline-block; }
+.qc { background:var(--p-card); border:1px solid var(--p-border); border-left:3px solid var(--p-border); border-radius:7px; padding:10px 12px; font-size:13px; line-height:1.6; }
+.qc .who { display:flex; align-items:center; gap:7px; font-size:11.5px; font-weight:700; margin-bottom:6px; }
+.qc .who .w { margin-left:auto; font-family:var(--mono); font-size:10px; color:var(--p-muted); text-transform:uppercase; letter-spacing:.05em; white-space:nowrap; }
+.qc mark { background:#fef08a; color:inherit; padding:1px 2px; border-radius:2px; }
+:root[data-theme="dark"] .qc mark { background:#a16207; }
+.qc .qbody { cursor:pointer; }
+.qc .qbody:hover { opacity:.85; }
+.qc .more { display:inline-block; margin-top:7px; font-size:11px; color:var(--p-accent); font-weight:600; cursor:pointer; }
+.steelfold { margin:12px 0 2px; }
+.steelcards { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:10px; margin-top:8px; }
+.steelcard { background:var(--p-card); border:1px solid var(--p-border); border-radius:8px; padding:10px 12px; font-size:12.5px; line-height:1.55; }
+.steelcard .sh { display:flex; align-items:center; gap:7px; font-weight:700; font-size:12px; margin-bottom:4px; }
+.steelcard .st2 { font-family:var(--mono); font-size:8.5px; letter-spacing:.07em; text-transform:uppercase; color:var(--p-muted); font-weight:700; display:block; margin-bottom:5px; }
+/* KI-Kritik: klassen-chips, markierte stellen, positions-boxen */
+.kchip { font-family:var(--mono); font-size:9px; letter-spacing:.07em; text-transform:uppercase; font-weight:700; border-radius:4px; padding:2px 7px; white-space:nowrap; }
+.oqmark { display:inline; border:0; background:none; font:inherit; color:inherit; padding:0 1px; cursor:pointer; border-bottom:2px solid #b45309; text-align:left; }
+.oqmark:hover { background:var(--p-sunk); }
+.oqmark:focus-visible { outline:2px solid var(--p-accent); outline-offset:1px; }
+.posbox { background:var(--p-card); border:1px solid var(--p-border); border-left:3px solid var(--p-border); border-radius:9px; padding:14px 16px; margin-bottom:14px; }
+.poshead { display:flex; align-items:center; gap:8px; flex-wrap:wrap; font-size:13.5px; margin-bottom:10px; }
+.poshead .psrc { font-size:11px; color:var(--p-muted); }
+.psrc { font-size:11px; color:var(--p-muted); }
+.sideb { font-family:var(--mono); font-size:9px; letter-spacing:.07em; text-transform:uppercase; font-weight:700; color:var(--p-muted); border:1px solid var(--p-border); border-radius:4px; padding:2px 7px; }
+.posbox .fullpara { max-width:76ch; }
+.kbtn { border:1px solid #d97706; background:#fffbeb; color:#b45309; border-radius:14px; padding:1px 9px; font:inherit; font-size:10.5px; font-weight:700; cursor:pointer; flex:none; }
+.kbtn:hover, .kbtn.on { box-shadow:0 0 0 1px #d97706; }
+.kbtn:focus-visible { outline:2px solid var(--p-accent); }
+:root[data-theme="dark"] .kbtn { background:#3a2f10; }
+/* crux: die zwei positionen + auflösung */
+.cruxcols { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin:8px 0 2px; }
+@media (max-width:820px){ .cruxcols { grid-template-columns:1fr; } }
+.cruxpos { border:1px solid var(--p-border); background:var(--p-bg); border-radius:7px; padding:8px 10px; }
+.cruxst { margin:4px 0 4px; font-size:12.5px; line-height:1.5; }
+.ptag2 { color:var(--p-muted); background:var(--p-sunk); }
+:root[data-theme="dark"] .ptag2 { background:var(--p-sunk); }
+
+</style>
+<style>.s2crumb{font-family:ui-monospace,Menlo,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#8a8781;margin:14px 0 2px}.s2crumb b{color:#4f46e5;font-weight:600}.concept.off{opacity:.6;cursor:not-allowed;border-style:dashed}.concept.off .ct{color:var(--board-mute)}</style>
+<div class="mini">
+  <a class="backlink" href="index.html">← Übersicht</a>
+  <p class="s2crumb"><b>Experten</b> · Eine Position</p>
+  <h1>Offene Fragen</h1>
+  <p class="orient">Ein Text im Ganzen. Unterstrichen: Stellen, zu denen das Tool eine offene Frage stellt — klassiert nach Art (unbelegte Behauptung, Wertung als Tatsache, Quelle unklar, Lücke im Argument, vage Formulierung). Klick auf die Stelle öffnet die Frage — als Frage, nie als Urteil. Zwei Texte, per Tab: der Erläuternde Bericht des Bundesrates zum Paket Schweiz–EU und das Votum von Bundesrat Cassis im Ständerat.</p>
+</div>
+<div class="wrap" style="padding-top:0">
+<div class="dstabs" id="dstabs" role="tablist" aria-label="Thema"></div>
+<div class="screen"><div class="stage" id="stage"></div></div>
+<p class="caption" id="caption">Text: Erläuternder Bericht des Bundesrates zur Vernehmlassung «Paket Schweiz–EU» (13.6.2025, Abschnitt «Übersicht», S. 2–4, verbatim; geprüft gegen das PDF am 27.9.2026) und das Votum von Bundesrat Cassis im Ständerat (12.3.2026, Amtliches Bulletin S. 225–226, Auszug; geprüft gegen das offizielle Transkript). Fragen, Klassen und Kurzfassungen: vom Tool formuliert und als solche markiert.</p>
+</div>
+<div class="overlay" id="overlay"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true" aria-label="Textstelle"></div>
+<script>
+(function(){
+  "use strict";
+  var POS=[],PIX={},FULL={},TOPICS=[],TREE=null,THEMES=[],QQ={},ST={},SUMS={},G10={},OQ=[],PRUEF={},VCRUX=[],STEEL2=null;
+  function pos(id){ return POS[PIX[id]]; }
+
+  var S = {};
+
+  function el(t,c,x){ var n=document.createElement(t); if(c)n.className=c; if(x!=null)n.textContent=x; return n; }
+  function dot(col,cls){ var d=el("span",cls||"pdot"); d.style.background=col; return d; }
+  function engaged(tp){ return POS.filter(function(p){ return tp.e[p.id]; }); }
+  function silent(tp){ return POS.filter(function(p){ return !tp.e[p.id]; }); }
+  function stStamp(st){
+    var lab = st==="united" ? "einig" : st==="contested" ? "umstritten" : "eine Stimme";
+    return el("span","stamp "+(st==="one"?"one":st), lab);
+  }
+  /* legend: colours → positions, incl. source type */
+  var SRCTYPE = { A:"Abstimmungsbüchlein", B:"Abstimmungsbüchlein", C:"Parlamentsdebatte NR", D:"Parlamentsdebatte NR", E:"Parlamentsdebatte SR" };
+  function legendRow(){
+    var lg = el("div","legendrow");
+    lg.appendChild(el("span","lgt","Positionen"));
+    POS.forEach(function(p){
+      var c = el("span","pchip");
+      c.appendChild(dot(p.c));
+      c.appendChild(document.createTextNode(p.short));
+      var st = p.stype || (DSMETA.key==="neutral" ? SRCTYPE[p.id] : null);
+      if (st) c.appendChild(el("span","w","· "+st));
+      c.title = p.full+" — "+(p.badge || ("empfiehlt "+(p.side==="ja"?"Ja":"Nein")));
+      lg.appendChild(c);
+    });
+    return lg;
+  }
+  /* Haltungs-Block: nur für Datensätze ohne Lager — die Haltung jeder Stellungnahme im Klartext,
+     weil sie sich gerade nicht auf «dafür» oder «dagegen» reduzieren lässt. */
+  function stanceBox(){
+    var bx = el("div","stancebox");
+    bx.appendChild(el("div","sumtag","Haltung zur Vorlage · redaktionell zusammengefasst — belegt in den Zitaten"));
+    POS.forEach(function(p){
+      if (!p.badge) return;
+      var r = el("div","stancerow");
+      r.appendChild(dot(p.c));
+      r.appendChild(el("b",null,p.short));
+      r.appendChild(el("span",null,"— "+p.badge));
+      bx.appendChild(r);
+    });
+    return bx;
+  }
+
+  /* ================= datasets (Themen-Tabs) ================= */
+  var DSMETA = { key:"neutral", title:"Neutralitätsinitiative", sub:"Abstimmung 27.9.2026", rootLabel:"abstimmungsfrage · 27.9.2026", fullLabel:"Ganzer Text",
+    caption:"Zitate verbatim aus dem Abstimmungsbüchlein vom 27.9.2026 (admin.ch) und dem Amtlichen Bulletin (Nationalrat 4.3.2026, Ständerat 12.3.2026). Kurzfassungen, Kurzsätze und Aussage-Formulierungen sind vom Tool formuliert und als solche markiert." };
+  var DS = {}; var DSORDER = [];
+  function registerDS(key, d){ d.meta = d.meta || {}; d.meta.key = key; DS[key] = d; if (DSORDER.indexOf(key)<0) DSORDER.push(key); }
+  function useDS(key){
+    var d = DS[key]; if (!d) return;
+    DSMETA = d.meta;
+    POS = d.POS; PIX = {}; POS.forEach(function(p,i){ PIX[p.id]=i; });
+    FULL = d.FULL || {}; TOPICS = d.TOPICS || []; TREE = d.TREE || null;
+    THEMES = d.THEMES || []; QQ = d.QQ || {}; ST = d.ST || {}; SUMS = d.SUMS || {};
+    if (DSMETA.noSides && S) S.view = "kein";
+    if (typeof onDS === "function") onDS(d);
+  }
+  function resetState(){
+    S.m = { theme:null, topic:null }; S.p = { side:null, arg:null, topic:null };
+    ["gopen","oq","steel","crux"].forEach(function(k){ if (S[k]) S[k] = {}; });
+    if (S.vcrux) S.vcrux = false;
+    if (typeof onTab === "function") onTab();
+  }
+  function drawTabs(){
+    var bar = document.getElementById("dstabs");
+    var cap = document.getElementById("caption");
+    if (cap && DSMETA.caption && DSORDER.length >= 2) cap.textContent = DSMETA.caption;
+    if (!bar) return;
+    bar.innerHTML = "";
+    if (DSORDER.length < 2){ bar.style.display = "none"; return; }
+    bar.style.display = "";
+    bar.appendChild(el("span","dslab","Thema"));
+    DSORDER.forEach(function(k){
+      var d = DS[k];
+      var b = el("button","dstab"+(DSMETA.key===k?" on":""));
+      b.type = "button"; b.setAttribute("role","tab"); b.setAttribute("aria-selected", String(DSMETA.key===k));
+      b.appendChild(el("span","dt", d.meta.title));
+      if (d.meta.sub) b.appendChild(el("span","dsub", d.meta.sub));
+      b.onclick = function(){ useDS(k); resetState(); draw(); };
+      bar.appendChild(b);
+    });
+  }
+  function markify(target, text){
+    text.split("§").forEach(function(chunk,i){
+      if (i%2===1){ target.appendChild(Object.assign(el("mark"),{textContent:chunk})); }
+      else target.appendChild(document.createTextNode(chunk));
+    });
+  }
+  function spanOf(pass){ var m = pass.split("§"); return m.length>=3 ? m[1] : null; }
+
+  /* quote card → opens sheet */
+  function quoteCard(tp, pid, whichPass){
+    var p = pos(pid), e = tp.e[pid];
+    var text = whichPass===2 ? e.pass2 : e.pass;
+    var b = el("button","quotecard");
+    b.type="button"; b.style.borderLeftColor = p.c;
+    var who = el("div","who");
+    who.appendChild(dot(p.c));
+    who.appendChild(document.createTextNode(p.short));
+    if (e.w && !DSMETA.noSides) who.appendChild(el("span","w",e.w));
+    b.appendChild(who);
+    var q = el("div"); markify(q, text); b.appendChild(q);
+    b.appendChild(el("span","more","Textstelle im Zusammenhang →"));
+    b.onclick = function(){ openSheet(pid, text); };
+    return b;
+  }
+
+  /* topic detail — shared L1 component */
+  function topicDetail(tp, opts){
+    opts = opts || {};
+    var box = el("div");
+    if (tp.sum && !opts.noSum){
+      var s = el("p","tnote"); s.appendChild(el("b",null,"Kurzfassung (redaktionell): ")); s.appendChild(document.createTextNode(tp.sum));
+      s.style.marginTop="0"; box.appendChild(s);
+    }
+    var grid = el("div","detailgrid");
+    var groups = {};
+    engaged(tp).forEach(function(p){
+      var e = tp.e[p.id];
+      grid.appendChild(quoteCard(tp, p.id));
+      if (e.pass2) grid.appendChild(quoteCard(tp, p.id, 2));
+    });
+    box.appendChild(grid);
+    var foot = el("div","detailfoot"); foot.style.marginTop="10px";
+    if (tp.note){
+      var n = el("p","tnote"); n.style.margin="0";
+      n.appendChild(el("b",null,"Beobachtung: ")); n.appendChild(document.createTextNode(tp.note));
+      foot.appendChild(n);
+    }
+    if (tp.link){
+      var lk = el("button","tlink","↳ "+tp.link.label);
+      lk.type="button";
+      lk.onclick=function(){ jumpToTopic(tp.link.t); };
+      foot.appendChild(lk);
+    }
+    var sil = silent(tp);
+    if (sil.length){
+      var sr = el("div","silentrow");
+      sr.appendChild(document.createTextNode("Äussern sich nicht:"));
+      sil.forEach(function(p){
+        var c = el("span","pchip"); c.appendChild(dot(p.c)); c.appendChild(document.createTextNode(p.short));
+        sr.appendChild(c);
+      });
+      foot.appendChild(sr);
+    }
+    box.appendChild(foot);
+    return box;
+  }
+
+  function jumpToTopic(id){ scrollToTopic(id); }
+  function scrollToTopic(id){
+    requestAnimationFrame(function(){
+      var n=document.querySelector('[data-topic="'+id+'"]');
+      if(n) n.scrollIntoView({behavior:"smooth",block:"center"});
+    });
+  }
+
+  /* ================= sheet (L2/L3) ================= */
+  var sheetState = null;
+  function openSheet(pid, pass){
+    sheetState = { pid:pid, ext:null, pass:pass, tab:"passage" };
+    showSheet();
+  }
+  function openSheetExt(extKey, pass){
+    sheetState = { pid:null, ext:extKey, pass:pass, tab:"passage" };
+    showSheet();
+  }
+  function showSheet(){
+    drawSheet();
+    document.getElementById("overlay").classList.add("show");
+    document.getElementById("sheet").classList.add("show");
+  }
+  function closeSheet(){
+    sheetState = null;
+    document.getElementById("overlay").classList.remove("show");
+    document.getElementById("sheet").classList.remove("show");
+  }
+  document.getElementById("overlay").onclick = closeSheet;
+  document.addEventListener("keydown", function(ev){ if (ev.key==="Escape") closeSheet(); });
+
+  function allSpans(pid){
+    var out = [];
+    TOPICS.forEach(function(tp){
+      var e = tp.e[pid]; if (!e) return;
+      var s1 = spanOf(e.pass); if (s1) out.push(s1);
+      if (e.pass2){ var s2 = spanOf(e.pass2); if (s2) out.push(s2); }
+    });
+    EXCHANGES.forEach(function(x){
+      x.turns.forEach(function(t){
+        if (t.pid===pid){ var s = spanOf(t.text); if (s) out.push(s); }
+      });
+    });
+    return out;
+  }
+  function allSpansExt(extKey){
+    var out = [];
+    EXCHANGES.forEach(function(x){
+      x.turns.forEach(function(t){
+        if (t.ext===extKey){ var s = spanOf(t.text); if (s) out.push(s); }
+      });
+    });
+    return out;
+  }
+  function markAll(target, text, spans, hot){
+    var hits = [];
+    spans.forEach(function(sp){
+      var i = text.indexOf(sp);
+      if (i>-1) hits.push({ i:i, l:sp.length, hot:sp===hot });
+    });
+    hits.sort(function(a,b){ return a.i-b.i; });
+    var cur = 0;
+    hits.forEach(function(h){
+      if (h.i < cur) return;
+      target.appendChild(document.createTextNode(text.slice(cur,h.i)));
+      var m = el("mark",null,text.slice(h.i,h.i+h.l));
+      if (h.hot) m.id = "hotmark";
+      target.appendChild(m);
+      cur = h.i+h.l;
+    });
+    target.appendChild(document.createTextNode(text.slice(cur)));
+  }
+
+  function drawSheet(){
+    var sh = document.getElementById("sheet");
+    sh.innerHTML = "";
+    if (!sheetState) return;
+    var isExt = !!sheetState.ext;
+    var p = isExt ? EXT[sheetState.ext] : pos(sheetState.pid);
+
+    var h = el("div","sheet-h");
+    var who = el("div","who"); who.appendChild(dot(p.c)); who.appendChild(document.createTextNode(isExt ? p.name : p.full));
+    h.appendChild(who);
+    var tabs = el("div","sheettabs");
+    [["passage","Passage"],["full", isExt ? "Erhobener Auszug" : (DSMETA.fullLabel || "Ganzer Text")]].forEach(function(o){
+      var b = el("button","stab"+(sheetState.tab===o[0]?" on":""), o[1]);
+      b.type="button";
+      b.onclick=function(){ sheetState.tab=o[0]; drawSheet(); };
+      tabs.appendChild(b);
+    });
+    h.appendChild(tabs);
+    var x = el("button","sheet-x","×"); x.type="button"; x.setAttribute("aria-label","Schliessen"); x.onclick=closeSheet;
+    h.appendChild(x);
+    sh.appendChild(h);
+
+    var b = el("div","sheet-b");
+    var src = el("p","sheet-src");
+    var links = (p.urls && p.urls.length) ? p.urls : (p.url ? [{ l:"Quelle öffnen", u:p.url }] : []);
+    src.appendChild(document.createTextNode(p.src + (links.length ? " · " : "")));
+    links.forEach(function(s, i){ if (i) src.appendChild(document.createTextNode(" · ")); var a = el("a",null,s.l + " ↗"); a.href = s.u; a.target="_blank"; a.rel="noopener"; src.appendChild(a); });
+    b.appendChild(src);
+
+    if (sheetState.tab==="passage"){
+      var pa = el("div","passage"); pa.style.borderLeftColor = p.c;
+      markify(pa, sheetState.pass);
+      b.appendChild(pa);
+      b.appendChild(el("p","sheetnote","Markiert: der Satz, aus dem die Aussage extrahiert wurde. Der zweite Reiter zeigt den vollständigen erhobenen Text mit allen extrahierten Stellen."));
+    } else {
+      var spans = isExt ? allSpansExt(sheetState.ext) : allSpans(sheetState.pid);
+      var hot = spanOf(sheetState.pass);
+      var paras = isExt ? p.fullT : FULL[sheetState.pid];
+      paras.forEach(function(para){
+        var fp = el("p","fullpara");
+        if (para.h) fp.appendChild(el("b","ph",para.h));
+        var holder = el("span");
+        markAll(holder, para.t, spans, hot);
+        if (hot && para.t.indexOf(hot)>-1) fp.classList.add("hot");
+        fp.appendChild(holder);
+        b.appendChild(fp);
+      });
+      b.appendChild(el("p","sheetnote","Alle markierten Stellen sind extrahierte Aussagen dieses Textes; die hervorgehobene Passage ist die, von der du gekommen bist. [...] = Auslassung der Erhebung."));
+      requestAnimationFrame(function(){
+        var hm = document.getElementById("hotmark");
+        if (hm) hm.scrollIntoView({ block:"center" });
+      });
+    }
+    sh.appendChild(b);
+  }
+
+  var EXCHANGES = []; var EXT = {};
+  function qOf(tp){ return QQ[tp.id] || tp.q; }
+
+  function gapStatement(tp){ return (ST[tp.id] && (ST[tp.id].ja || ST[tp.id].nein || ST[tp.id].ref)) || tp.q; }
+  /* classes for the open questions (KI-Kritik) — deutsch, mit Farbe */
+  var OQK = {
+    beleg:  { l:"Unbelegte Behauptung", c:"#b45309" },
+    wert:   { l:"Wertung als Tatsache", c:"#9333ea" },
+    quelle: { l:"Quelle unklar",        c:"#0e7490" },
+    luecke: { l:"Lücke im Argument",    c:"#b91c1c" },
+    vage:   { l:"Vage Formulierung",    c:"#64748b" }
+  };
+  function oqChip(k){
+    var d = OQK[k] || { l:k, c:"#64748b" };
+    var s = el("span","kchip",d.l);
+    s.style.color = d.c;
+    s.style.background = d.c+"14";
+    s.style.border = "1px solid "+d.c+"55";
+    return s;
+  }
+  function oqFor(pid, t){ return OQ.filter(function(o){ return o.pid===pid && o.t===t; }); }
+  /* Crux pro Streitfrage: was die jeweilige Frage entscheiden würde (redaktionell) */
+  var CRUX_EXPL = "Crux = der Punkt, an dem eine Streitfrage tatsächlich hängt: was geklärt sein müsste, damit sich der Streit bewegt — eine nachschlagbare Quelle, ein fehlender Beleg, oder die Einsicht, dass hier eine Rangfolge von Gütern entscheidet, kein Faktum.";
+  var STEEL_EXPL = "Steelman = die stärkste Fassung einer Seite, vom Tool formuliert — nicht aus der Quelle. Als Fairness-Übung gedacht: Würde die Seite diese Fassung als ihre beste anerkennen?";
+  function onDS(d){ G10 = d.G10 || {}; OQ = d.OQ || []; PRUEF = d.PRUEF || {}; VCRUX = d.VCRUX || []; STEEL2 = d.STEEL2 || null; }
+
+  function openSheetFull(pid){
+    openSheet(pid, "");
+    sheetState.tab = "full";
+    drawSheet();
+  }
+
+  /* gap axis row (0–10), used by gap page and kombi strip */
+  function gapRow(tp, compact){
+    var box = el("div","gaprow"+(compact?" compact":""));
+    if (!compact){
+      var lab = el("div","gaplab");
+      lab.appendChild(document.createTextNode(gapStatement(tp)));
+      var m = el("div","am"); m.appendChild(stStamp(tp.st));
+      lab.appendChild(m);
+      box.appendChild(lab);
+    }
+    var track = el("div","gaptrack");
+    var scores = G10[tp.id] || {};
+    var vals = Object.keys(scores).map(function(k){ return scores[k]; });
+    if (vals.length>1){
+      var lo=Math.min.apply(null,vals), hi=Math.max.apply(null,vals);
+      var span = el("div","gapspan2");
+      span.style.left = (lo*10)+"%"; span.style.width = ((hi-lo)*10)+"%";
+      span.style.background = tp.st==="contested" ? "var(--st-contested)" : "var(--st-united)";
+      track.appendChild(span);
+    }
+    var byScore = {};
+    Object.keys(scores).forEach(function(pid){ (byScore[scores[pid]] = byScore[scores[pid]] || []).push(pid); });
+    Object.keys(scores).forEach(function(pid){
+      var p = pos(pid);
+      var grp = byScore[scores[pid]], gi = grp.indexOf(pid);
+      var d = el("button","gapdot");
+      d.type="button";
+      d.style.left = (scores[pid]*10)+"%";
+      d.style.top = (6 + (gi - (grp.length-1)/2)*9) + "px";
+      d.style.background = p.c;
+      d.title = p.short+" — "+scores[pid]+"/10 (KI-Einschätzung; Klick öffnet das Zitat)";
+      d.setAttribute("aria-label", p.short+" "+scores[pid]+" von 10");
+      d.onclick = function(ev){ ev.stopPropagation(); if (tp.e[pid]) openSheet(pid, tp.e[pid].pass); };
+      track.appendChild(d);
+    });
+    box.appendChild(track);
+    var ax = el("div","gapax");
+    ax.appendChild(el("span",null,"0 · lehnt ab"));
+    ax.appendChild(el("span",null,"5"));
+    ax.appendChild(el("span",null,"10 · stimmt zu"));
+    box.appendChild(ax);
+    return box;
+  }
+
+  /* ===== Datensatz: bericht ===== */
+/* ===== Datensatz: Erläuternder Bericht des Bundesrates zur Vernehmlassung «Paket Schweiz–EU» (13.6.2025) =====
+   Abschnitt «Übersicht» (S. 2–4 des 931-seitigen Berichts), transkribiert aus dem PDF (zwei Extraktionen konsistent).
+   Eine Position; Fragen, Themen, Aussagen, Kurzfassungen und Klassen der offenen Fragen: vom Tool. */
+(function(){
+  var POS = [
+    { id:"R", short:"Bundesrat", name:"Bundesrat — Erläuternder Bericht", full:"Erläuternder Bericht des Bundesrates zur Eröffnung der Vernehmlassung «Paket Schweiz–EU», 13.6.2025 — Abschnitt «Übersicht» (S. 2–4)",
+      c:"#1d4ed8", side:null, stype:"Erläuternder Bericht", badge:"empfiehlt Annahme",
+      src:"Erläuternder Bericht zur Eröffnung des Vernehmlassungsverfahrens, Paket Schweiz–EU, 13.6.2025, «Übersicht» S. 2–4 (Transkription aus dem PDF)",
+      url:"https://www.europa.eda.admin.ch/dam/de/sd-web/D1B9F4b1HKA2/20250613%20Erl%C3%A4uternder%20Bericht%20(DE).pdf" }
+  ];
+  var FULL = {
+    R:[
+      { h:"Ausgangslage", t:"Für die Leistungsfähigkeit einer offenen Volkswirtschaft wie der Schweiz, die über keine bedeutenden Rohstoffe und einen nur begrenzten Binnenmarkt verfügt, spielt der Zugang zu ausländischen Märkten eine unabdingbare Rolle. Die Schweiz setzt sich dafür ein, dass dieser Zugang möglichst weitreichend und geografisch diversifiziert ist. Damit wird auch die Widerstandsfähigkeit in Krisen gestärkt. Gleichzeitig konzentriert sich die Schweiz auf ihre wichtigsten Wirtschaftspartner. Die EU ist mit einem Anteil von rund 59 Prozent am Warenhandel die mit Abstand wichtigste Handelspartnerin der Schweiz. Aus diesen Gründen stehen die Stabilisierung und Weiterentwicklung der Beziehungen mittels des bewährten bilateralen Wegs zwischen der Schweiz und der EU im Zentrum der bundesrätlichen Aussen- und Wirtschaftspolitik." },
+      { t:"Die Welt wird instabiler, unsicherer und unvorhersehbarer. Globale Entwicklungen fordern die einzelnen Staaten heraus: Grossmächtekonkurrenz, zunehmendes Gewicht neuer informeller Gruppierungen (z. B. BRICS), Erosion des internationalen Rechts (Macht vor Recht), die Klimaveränderung, ein weiter zunehmender Migrationsdruck, Entwicklungen in der Informationstechnologie und im Energiesektor, aber auch wachsende Staatsschulden, eine Fragmentierung der internationalen Wirtschaftsordnung, zunehmende handelspolitische Spannungen sowie fragmentierte und polarisierte Gesellschaften." },
+      { t:"Ein regelrechter «Ring of Fire» mit dem Krieg in der Ukraine, Unruhen im Balkan und im Kaukasus, Konflikten im Mittleren Osten, einer instabilen Lage in Nordafrika sowie Machtumstürze in Subsahara-Afrika machen die Weltlage zu einem fragilen Umfeld. Diesen globalen Instabilitäten kann die Schweiz entgegentreten, wenn die Beziehungen zu ihrer unmittelbaren Nachbarschaft, zu Partnern, die ihre Werte teilen, stabil und berechenbar sind. Vor diesem Hintergrund sind geregelte Beziehungen zur EU für die Schweiz von strategischer Bedeutung." },
+      { t:"Die Schweiz verfolgt seit mehr als 25 Jahren auf konsequente Weise den bilateralen Weg mit der EU. Der bilaterale Weg weist von allen Optionen (Nichtstun, Freihandel, Beitritt zum EWR, Beitritt zur EU) das ausgewogenste Verhältnis von konkretem, namentlich wirtschaftlichem Nutzen sowie politischem Gestaltungsspielraum auf. Die Erfahrung aus diesen 25 Jahren zeigt, dass der bilaterale Weg sich bewährt. Er wurde deshalb direkt und indirekt neun Mal durch das Volk an der Urne bestätigt." },
+      { t:"Die Schweiz kann aufgrund der mit der EU abgeschlossenen Binnenmarkt- und Kooperationsabkommen gezielt an denjenigen Bereichen teilhaben, die ihren Kernanliegen dienen, ohne dass die Kompetenzen der Kantone, der Bundesversammlung, des Bundesrates, der Gerichte oder des Volkes eingeschränkt werden. Mit den ausgehandelten Mitwirkungsrechten in der dynamischen Rechtsübernahme für Bund, Kantone und Parlament wird sie sich in Zukunft ausserdem bei der Weiterentwicklung des Rechts, das Teil der Abkommen ist und sein wird, einbringen können." },
+      { h:"Inhalt der Vorlage", t:"Das vorliegende Paket ist Ausdruck der Kontinuität der massgeschneiderten Beziehungen zwischen der Schweiz und der EU. Es stabilisiert den bewährten bilateralen Weg und garantiert das Funktionieren der bestehenden bilateralen Verträge für die Zukunft. Zudem werden dadurch die Beziehungen in denjenigen Bereichen weiterentwickelt, die im Interesse der Schweiz liegen." },
+      { t:"Konkret umfasst es einen Stabilisierungsteil mit (i) der sektoriellen Verankerung von institutionellen Elementen in den bestehenden Binnenmarktabkommen Personenfreizügigkeit, technische Handelshemmnisse (MRA), Land- und Luftverkehr unter Berücksichtigung von Ausnahmen, Absicherungen und Prinzipien, (ii) der Aufnahme von Bestimmungen über staatliche Beihilfen in die bestehenden Land- und Luftverkehrsabkommen, (iii) weiteren Anpassungen der bestehenden Abkommen (Personenfreizügigkeit, technische Handelshemmnisse (MRA), Land- und Luftverkehr sowie Landwirtschaft), (iv) Kooperationsabkommen in den Bereichen Forschung, Bildung und Weltraum sowie (v) der Verstetigung des Schweizer Beitrags." },
+      { t:"Ein Weiterentwicklungsteil widerspiegelt die Schweizer Interessen an einem gezielten Ausbau der bilateralen Beziehungen mit der EU. Er umfasst: (i) neue Binnenmarktabkommen in den Bereichen Strom (inkl. institutionelle Elemente und staatliche Beihilfen) und Lebensmittelsicherheit (inkl. institutionelle Elemente) sowie (ii) ein neues Kooperationsabkommen im Bereich Gesundheit. Die Schweiz und die EU streben zudem nach einem regelmässigen politischen Austausch in unterschiedlichen Bereichen. Folglich wurden (i) ein hochrangiger Dialog und (ii) eine institutionalisierte parlamentarische Zusammenarbeit beschlossen. In einer gemeinsamen Erklärung wurden Übergangsregeln für die Phase ab Ende 2024 bis zum Inkrafttreten des Pakets festgelegt." },
+      { t:"Die vorliegenden Abkommen sichern die verfassungsmässigen Kompetenzen der Kantone, der Bundesversammlung, des Bundesrates, der Gerichte und des Volkes. Die durch die Bundesverfassung garantierten Initiativ- und Referendumsrechte (Art. 136 Abs. 2 BV) sind weiterhin in vollem Umfang gewährleistet. Weder die einzelnen Abkommen noch die darin enthaltenen institutionellen Elemente verhindern, dass eine Volksinitiative lanciert werden kann, die sich gegen die Übernahme einer relevanten Weiterentwicklung des EU-Rechts in das betroffene Abkommen richtet. Ebenso wird gegen eine solche Rechtsübernahme beziehungsweise ein in diesem Zusammenhang erforderliches neues Gesetz oder eine erforderliche Gesetzesanpassung wie bisher das Referendum ergriffen werden können." },
+      { t:"Es ist der Schweiz somit gelungen, ihr Kernziel mit Blick auf ihre Beziehungen zur EU zu erreichen: eine bestmögliche gegenseitige Beteiligung an klar definierten Bereichen des Binnenmarkts sowie Kooperation in ausgewählten Interessenbereichen, unter Wahrung des grösstmöglichen politischen Handlungsspielraums." },
+      { t:"Dazu kommen inländische Massnahmen in den Bereichen Lohnschutz, Zuwanderung, Studiengebühren, Strom und Landverkehr. Es handelt sich dabei um Massnahmen, die für die Umsetzung der völkerrechtlichen Verträge nicht zwingend sind, vom Bundesrat jedoch zugunsten der innenpolitischen Tragfähigkeit des Pakets ausgearbeitet wurden. Sie stützen sich auf einen breiten, inklusiven und transparenten Prozess mit einer Vielzahl von innenpolitischen Akteuren, namentlich den Kantonen, den parlamentarischen Kommissionen der eidgenössischen Räte, den Städten und Gemeinden, den Verbänden und Unternehmen sowie den Sozialpartnern und den politischen Parteien." },
+      { t:"Der Bundesrat empfiehlt die Annahme der Umsetzungsgesetzgebung sowie der Begleitmassnahmen." }
+    ]
+  };
+  /* Aussagen (Textstellen), an denen die offenen Fragen hängen. q: Frageform, vom Tool; die Aussageform steht in ST[id].ref. */
+  var TOPICS = [
+    { id:0, st:"one", q:"Ist die EU mit rund 59 Prozent am Warenhandel die wichtigste Handelspartnerin der Schweiz?", kind:"Faktenfrage — prüfbar", e:{ R:{ w:"führt an", pass:"§Die EU ist mit einem Anteil von rund 59 Prozent am Warenhandel die mit Abstand wichtigste Handelspartnerin der Schweiz.§" } } },
+    { id:1, st:"one", q:"Wird die Welt instabiler, unsicherer und unvorhersehbarer?", kind:"Lagebeurteilung", e:{ R:{ w:"führt an", pass:"§Die Welt wird instabiler, unsicherer und unvorhersehbarer.§" } } },
+    { id:2, st:"one", q:"Ist der bilaterale Weg von allen Optionen die ausgewogenste?", kind:"Wertfrage — Abwägung", e:{ R:{ w:"führt an", pass:"§Der bilaterale Weg weist von allen Optionen (Nichtstun, Freihandel, Beitritt zum EWR, Beitritt zur EU) das ausgewogenste Verhältnis von konkretem, namentlich wirtschaftlichem Nutzen sowie politischem Gestaltungsspielraum auf.§" } } },
+    { id:3, st:"one", q:"Wurde der bilaterale Weg neun Mal an der Urne bestätigt?", kind:"Faktenfrage — prüfbar", e:{ R:{ w:"führt an", pass:"§Er wurde deshalb direkt und indirekt neun Mal durch das Volk an der Urne bestätigt.§" } } },
+    { id:4, st:"one", q:"Bleiben die Kompetenzen von Kantonen, Parlament, Bundesrat, Gerichten und Volk uneingeschränkt?", kind:"Rechtsfrage", e:{ R:{ w:"führt an", pass:"Die Schweiz kann aufgrund der mit der EU abgeschlossenen Binnenmarkt- und Kooperationsabkommen gezielt an denjenigen Bereichen teilhaben, die ihren Kernanliegen dienen, §ohne dass die Kompetenzen der Kantone, der Bundesversammlung, des Bundesrates, der Gerichte oder des Volkes eingeschränkt werden.§" } } },
+    { id:5, st:"one", q:"Garantiert das Paket das Funktionieren der bestehenden Verträge für die Zukunft?", kind:"Prognosefrage", e:{ R:{ w:"führt an", pass:"§Es stabilisiert den bewährten bilateralen Weg und garantiert das Funktionieren der bestehenden bilateralen Verträge für die Zukunft.§" } } },
+    { id:6, st:"one", q:"Bleiben die Initiativ- und Referendumsrechte in vollem Umfang gewährleistet?", kind:"Rechtsfrage", e:{ R:{ w:"führt an", pass:"§Die durch die Bundesverfassung garantierten Initiativ- und Referendumsrechte (Art. 136 Abs. 2 BV) sind weiterhin in vollem Umfang gewährleistet.§" } } },
+    { id:7, st:"one", q:"Ist das Kernziel erreicht — Binnenmarktbeteiligung bei grösstmöglichem Handlungsspielraum?", kind:"Erfolgsurteil", e:{ R:{ w:"führt an", pass:"Es ist der Schweiz somit gelungen, ihr Kernziel mit Blick auf ihre Beziehungen zur EU zu erreichen: §eine bestmögliche gegenseitige Beteiligung an klar definierten Bereichen des Binnenmarkts sowie Kooperation in ausgewählten Interessenbereichen, unter Wahrung des grösstmöglichen politischen Handlungsspielraums.§" } } },
+    { id:8, st:"one", q:"Stimmt es, dass die inländischen Massnahmen für die Umsetzung nicht zwingend sind?", kind:"Faktenfrage — Rechtsnatur", e:{ R:{ w:"führt an", pass:"§Es handelt sich dabei um Massnahmen, die für die Umsetzung der völkerrechtlichen Verträge nicht zwingend sind, vom Bundesrat jedoch zugunsten der innenpolitischen Tragfähigkeit des Pakets ausgearbeitet wurden.§" } } },
+    { id:9, st:"one", q:"Stützen sich die Massnahmen auf einen breiten, inklusiven und transparenten Prozess?", kind:"Verfahrensaussage", e:{ R:{ w:"führt an", pass:"§Sie stützen sich auf einen breiten, inklusiven und transparenten Prozess mit einer Vielzahl von innenpolitischen Akteuren,§ namentlich den Kantonen, den parlamentarischen Kommissionen der eidgenössischen Räte, den Städten und Gemeinden, den Verbänden und Unternehmen sowie den Sozialpartnern und den politischen Parteien." } } },
+    { id:10, st:"one", q:"Stärkt ein diversifizierter Marktzugang die Widerstandsfähigkeit in Krisen?", kind:"Kausalfrage", e:{ R:{ w:"führt an", pass:"Die Schweiz setzt sich dafür ein, dass dieser Zugang möglichst weitreichend und geografisch diversifiziert ist. §Damit wird auch die Widerstandsfähigkeit in Krisen gestärkt.§" } } },
+    { id:11, st:"one", q:"Macht ein «Ring of Fire» die Weltlage zu einem fragilen Umfeld?", kind:"Lagebeurteilung", e:{ R:{ w:"führt an", pass:"§Ein regelrechter «Ring of Fire» mit dem Krieg in der Ukraine, Unruhen im Balkan und im Kaukasus, Konflikten im Mittleren Osten, einer instabilen Lage in Nordafrika sowie Machtumstürze in Subsahara-Afrika machen die Weltlage zu einem fragilen Umfeld.§" } } }
+  ];
+  /* Einzelposition: nur Wurzeltext, kein Ja/Nein-Ast. */
+  var TREE = { root:"Erläuternder Bericht — Aussagen der Übersicht" };
+  var THEMES = [
+    { l:"Ausgangslage: Wirtschaft", d:"Warum ist der Zugang zu ausländischen Märkten — und die EU — für die Schweiz zentral?", topics:[0,10] },
+    { l:"Ausgangslage: Weltlage", d:"Welche globale Lage macht geregelte Beziehungen zur EU strategisch bedeutsam?", topics:[1,11] },
+    { l:"Bilateraler Weg und Souveränität", d:"Hat sich der bilaterale Weg bewährt — und bleiben Kompetenzen und Volksrechte gewahrt?", topics:[2,3,4,6] },
+    { l:"Das Paket und seine Massnahmen", d:"Was leistet das Paket, und welche Rolle spielen die inländischen Massnahmen?", topics:[5,7,8,9] }
+  ];
+  var QQ = {}; /* alle q sind Fragen */
+  /* Referenzaussage je Topic (Aussageform des Berichts), vom Tool. */
+  var ST = {
+    0:{ ref:"Die EU ist mit rund 59 Prozent am Warenhandel die wichtigste Handelspartnerin." },
+    1:{ ref:"Die Welt wird instabiler, unsicherer und unvorhersehbarer." },
+    2:{ ref:"Der bilaterale Weg ist die ausgewogenste Option." },
+    3:{ ref:"Der bilaterale Weg wurde neun Mal an der Urne bestätigt." },
+    4:{ ref:"Die Kompetenzen von Kantonen, Parlament, Bundesrat, Gerichten und Volk werden nicht eingeschränkt." },
+    5:{ ref:"Das Paket garantiert das Funktionieren der bestehenden Verträge für die Zukunft." },
+    6:{ ref:"Initiativ- und Referendumsrechte bleiben in vollem Umfang gewährleistet." },
+    7:{ ref:"Das Kernziel ist erreicht: Binnenmarktbeteiligung bei grösstmöglichem Handlungsspielraum." },
+    8:{ ref:"Die inländischen Massnahmen sind für die Umsetzung nicht zwingend." },
+    9:{ ref:"Die Massnahmen stützen sich auf einen breiten, inklusiven und transparenten Prozess." },
+    10:{ ref:"Diversifizierter Marktzugang stärkt die Widerstandsfähigkeit in Krisen." },
+    11:{ ref:"Ein «Ring of Fire» macht die Weltlage zu einem fragilen Umfeld." }
+  };
+  /* Kurzfassungen (ein Block je Topic), vom Tool; Zitate in «». */
+  var SUMS = {
+    0:[ { l:"Bundesrat — Erläuternder Bericht", t:"Die EU sei «mit einem Anteil von rund 59 Prozent am Warenhandel die mit Abstand wichtigste Handelspartnerin» — die Zahl trägt das Ausgangs-Argument; Jahr und Quelle nennt die Übersicht nicht." } ],
+    1:[ { l:"Bundesrat — Erläuternder Bericht", t:"«Die Welt wird instabiler, unsicherer und unvorhersehbarer» — der Bericht zählt Grossmächtekonkurrenz, BRICS, Erosion des Völkerrechts, Klimaveränderung, Migrationsdruck, Staatsschulden und polarisierte Gesellschaften auf." } ],
+    2:[ { l:"Bundesrat — Erläuternder Bericht", t:"Der bilaterale Weg weise «von allen Optionen» das «ausgewogenste Verhältnis» von wirtschaftlichem Nutzen und politischem Gestaltungsspielraum auf — genannt werden Nichtstun, Freihandel, EWR- und EU-Beitritt." } ],
+    3:[ { l:"Bundesrat — Erläuternder Bericht", t:"Der bilaterale Weg sei «direkt und indirekt neun Mal durch das Volk an der Urne bestätigt» worden; welche neun Abstimmungen gemeint sind, sagt die Übersicht nicht." } ],
+    4:[ { l:"Bundesrat — Erläuternder Bericht", t:"Die Schweiz nehme gezielt an Bereichen teil, «ohne dass die Kompetenzen der Kantone, der Bundesversammlung, des Bundesrates, der Gerichte oder des Volkes eingeschränkt werden»." } ],
+    5:[ { l:"Bundesrat — Erläuternder Bericht", t:"Das Paket «stabilisiert den bewährten bilateralen Weg und garantiert das Funktionieren der bestehenden bilateralen Verträge für die Zukunft»." } ],
+    6:[ { l:"Bundesrat — Erläuternder Bericht", t:"Initiativ- und Referendumsrechte (Art. 136 Abs. 2 BV) seien «weiterhin in vollem Umfang gewährleistet»; Volksinitiativen und Referenden gegen eine Rechtsübernahme blieben möglich." } ],
+    7:[ { l:"Bundesrat — Erläuternder Bericht", t:"Das Kernziel sei erreicht: Binnenmarktbeteiligung und Kooperation «unter Wahrung des grösstmöglichen politischen Handlungsspielraums»." } ],
+    8:[ { l:"Bundesrat — Erläuternder Bericht", t:"Die inländischen Massnahmen seien «für die Umsetzung der völkerrechtlichen Verträge nicht zwingend», aber «zugunsten der innenpolitischen Tragfähigkeit des Pakets» ausgearbeitet." } ],
+    9:[ { l:"Bundesrat — Erläuternder Bericht", t:"Die Massnahmen stützten sich auf einen «breiten, inklusiven und transparenten Prozess» mit Kantonen, Kommissionen, Städten und Gemeinden, Verbänden, Sozialpartnern und Parteien." } ],
+    10:[ { l:"Bundesrat — Erläuternder Bericht", t:"Ein möglichst weitreichender und geografisch diversifizierter Marktzugang: «Damit wird auch die Widerstandsfähigkeit in Krisen gestärkt.»" } ],
+    11:[ { l:"Bundesrat — Erläuternder Bericht", t:"Ein «Ring of Fire» — Ukraine, Balkan, Kaukasus, Mittlerer Osten, Nordafrika, Subsahara-Afrika — mache die Weltlage «zu einem fragilen Umfeld»; daraus folge die strategische Bedeutung geregelter Beziehungen zur EU." } ]
+  };
+  var G10 = {}; /* Einzelposition: keine Gap-Achse */
+  /* Offene Fragen des Tools — in Frageform, nie Urteil. Klassen: beleg · wert · quelle · luecke · vage. */
+  var OQ = [
+    { pid:"R", t:0,   k:"quelle",  q:"«Rund 59 Prozent am Warenhandel» — welches Jahr, welche Quelle, und gilt es auch für Dienstleistungen? Die Zahl trägt das ganze Ausgangs-Argument, bleibt im Text aber unbelegt." },
+    { pid:"R", t:1,   k:"beleg",   q:"«Die Welt wird instabiler, unsicherer und unvorhersehbarer» — eine Diagnose ohne Massstab: instabiler als wann, gemessen woran?" },
+    { pid:"R", t:11,  k:"vage",    q:"«Ring of Fire» — Bild statt Befund: Die Metapher bündelt sehr verschiedene Lagen zu einer Bedrohung. Welche davon berührt die Beziehung Schweiz–EU konkret?" },
+    { pid:"R", t:10,  k:"luecke",  q:"«Damit wird auch die Widerstandsfähigkeit in Krisen gestärkt» — Diversifizierung soll Resilienz schaffen, das Paket vertieft aber die Bindung an eine einzige Partnerin. Wie passt beides zusammen? Der Text verbindet die Sätze nicht." },
+    { pid:"R", t:2,   k:"wert",    q:"«Das ausgewogenste Verhältnis» von Nutzen und Gestaltungsspielraum — eine Abwägung in Tatsachenform: nach welcher Gewichtung? Wer Gestaltungsspielraum höher gewichtet, kommt zu einem anderen Ergebnis." },
+    { pid:"R", t:3,   k:"quelle",  q:"«Direkt und indirekt neun Mal bestätigt» — welche neun Abstimmungen? «Indirekt» dehnt den Begriff: Zählen auch Vorlagen, in denen der bilaterale Weg nur Nebenthema war?" },
+    { pid:"R", t:4,   k:"beleg",   q:"«Ohne dass die Kompetenzen … eingeschränkt werden» — die Gegenseite in der Vernehmlassung (SVP, sgv) bestreitet genau dies für die dynamische Rechtsübernahme. Der Satz behauptet den Punkt, den die Vernehmlassung verhandelt — womit begründet ihn die Übersicht?" },
+    { pid:"R", t:5,   k:"beleg",   q:"«Garantiert das Funktionieren … für die Zukunft» — eine Garantie hängt an Kündigungs- und Ausgleichsklauseln: Welche Vorkehrung garantiert, was die EU künftig tut?" },
+    { pid:"R", t:6,   k:"luecke",  q:"Referendumsrechte «in vollem Umfang» — formell ja; die Frage der Kritiker ist die materielle: Was kostet ein Nein nach einem Referendum (Ausgleichsmassnahmen)? Dazu schweigt die Übersicht." },
+    { pid:"R", t:7,   k:"wert",    q:"«Kernziel erreicht … unter Wahrung des grösstmöglichen politischen Handlungsspielraums» — Erfolgsurteil in Tatsachenform: grösstmöglich gemessen an welchen Alternativen?" },
+    { pid:"R", t:8,   k:"luecke",  q:"«Für die Umsetzung nicht zwingend» — wenn Lohnschutz- und Zuwanderungsmassnahmen nicht zwingend sind: Was gilt, falls das Parlament sie kürzt? Der Bericht lässt die Kopplung offen — genau dort setzen SGB und SP ihre Bedingung." },
+    { pid:"R", t:9,   k:"vage",    q:"«Breit, inklusiv und transparent» — drei Attribute ohne Massstab. Die Vernehmlassung zeigt, dass Verbände die Massnahme 14 als «sachfremd» ablehnen: Wie breit war der Konsens tatsächlich?" }
+  ];
+  var PRUEF = {};  /* keine Streitfragen (Einzelposition) */
+  var VCRUX = [];  /* keine Crux der Vorlage aus einer einzelnen Position */
+  registerDS("bericht", {
+    meta:{ title:"Erläuternder Bericht Paket Schweiz–EU", sub:"Bundesrat, 13.6.2025 · Übersicht", rootLabel:"erläuternder bericht · 13.6.2025", fullLabel:"Erhobener Auszug",
+           noSides:true, single:true,
+           keinNote:"Themen → Aussagen des Textes. Jede Aussage endet am Zitat.",
+           zweiNote:"Nur eine Position: Der Bericht hat keine Gegenseite, die man gegenüberstellen könnte — Gegenstimmen stehen in den Stellungnahmen der Vernehmlassung.",
+           rootText:"Erläuternder Bericht — welche Aussagen trägt die Übersicht?",
+           headTitle:"Eine Position",
+           headText:"Die Aussagen des Berichts, nach Themen gruppiert; jede Aussage endet am Zitat.",
+           sidesNote:"Der Bericht ist eine einzelne Position — der Bundesrat empfiehlt die Annahme. Gegenstimmen finden sich nicht in diesem Text, sondern in den Stellungnahmen der Vernehmlassung.",
+           caption:"Text: Erläuternder Bericht des Bundesrates zur Vernehmlassung «Paket Schweiz–EU», 13.6.2025, Abschnitt «Übersicht» (S. 2–4 von 931) — Transkription aus dem PDF, zwei Extraktionen konsistent; vor Weitergabe gegen das PDF prüfen. Fragen, Themen, Aussage-Formulierungen, Kurzfassungen und Klassen der offenen Fragen: vom Tool." },
+    POS:POS, FULL:FULL, TOPICS:TOPICS, TREE:TREE, THEMES:THEMES, QQ:QQ, ST:ST, SUMS:SUMS,
+    G10:G10, OQ:OQ, PRUEF:PRUEF, VCRUX:VCRUX, STEEL2:null
+  });
+})();
+
+
+  /* ===== Datensatz: cassis ===== */
+/* ===== Datensatz: Votum von Bundesrat Ignazio Cassis im Ständerat, 12.3.2026 — Neutralitätsinitiative (24.092) =====
+   Quelle: Amtliches Bulletin, Ständerat, 12.03.2026, AB SR 2026 S. 225–226 (Korpus neutralitaet-voten.md, Votum 14, [Q2]).
+   Auszug, [...] = Auslassung; französische Passagen wie gehalten. Eine Position; Fragen, Themen, Aussagen und Klassen: vom Tool. */
+(function(){
+  var POS = [
+    { id:"A", short:"Cassis", name:"Ignazio Cassis (Bundesrat)", full:"Ignazio Cassis, Vorsteher EDA — Votum im Ständerat, 12.3.2026",
+      c:"#0891b2", side:null, stype:"Parlamentsdebatte SR", badge:"empfiehlt Ablehnung der Initiative — ohne Gegenvorschlag",
+      src:"Amtliches Bulletin, Ständerat, 12.3.2026 (AB SR 2026 S. 225–226)",
+      url:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779",
+        urls:[{ l:"Amtliches Bulletin (parlament.ch)", u:"https://www.parlament.ch/de/ratsbetrieb/amtliches-bulletin/amtliches-bulletin-die-verhandlungen?SubjectId=70779" }, { l:"PDF-Auszug (Politchronik)", u:"https://politchronik.swiss/references/838316/download?filename=AB+SR%2C+2026%2C+S.+220+ff._12_20260312.pdf&inline=true&locale=de" }] }
+  ];
+
+  /* Verbatim aus dem Korpus (Votum 14). Der letzte Absatz des Auszugs (989 Zeichen) ist an einer Satzgrenze geteilt. */
+  var FULL = {
+    A:[
+      { t:"Am 27. November 2024 hat der Bundesrat mit seiner Botschaft empfohlen, die Neutralitäts-Initiative ohne Gegenvorschlag und ohne Gegenentwurf abzulehnen. Das hat er, wie er es immer tut, nach einer vertieften Auslegeordnung des Initiativtextes, eines allfälligen Gegenentwurfes oder eines indirekten Gegenvorschlags getan. Ihr Rat hat am 19. Juni letzten Jahres beschlossen, der Neutralitäts-Initiative einen direkten Gegenentwurf gegenüberzustellen. Der Nationalrat ist nun letzten Donnerstag der Empfehlung des Bundesrates gefolgt und hat sich gegen einen Gegenentwurf ausgesprochen. Gestern hat sich Ihre APK ebenfalls gegen einen Gegenentwurf ausgesprochen." },
+      { t:"Le Conseil fédéral estime qu'un tel projet n'est ni judicieux ni nécessaire. Permettez-moi de vous en rappeler brièvement les cinq raisons principales. La première : un contre-projet implique une nécessité d'agir qui n'existe justement pas. La situation actuelle laisse la marge de manoeuvre nécessaire pour mettre à profit la neutralité dans les meilleurs intérêts de la Suisse. [...]" },
+      { t:"En matière de neutralité, il n'existe pas de recette universelle qui permettrait de régler définitivement toutes les questions. C'est, aux yeux du Conseil fédéral, la raison pour laquelle 90 pour cent de la population est pour la neutralité, parce que la neutralité est une projection de ce qu'on pense d'elle. Et c'est important qu'elle reste ainsi." },
+      { t:"Sie haben absolut recht, Herr Ständerat Germann, die Neutralität ist ein Identitätsmerkmal unseres Landes. Ich komme kurz zu den Voten der Ständeräte Germann und Poggia." },
+      { t:"Herr Ständerat Germann, Sie haben erstens gesagt, die Schweiz lasse sich nicht in den Krieg hineinziehen. Dann haben Sie zweitens gesagt, die Neutralität sei das Merkmal Nummer eins und identitätsstiftend. Drittens haben Sie gesagt, die Neutralität sei auch international ein Identitätsmerkmal der Schweiz. Herr Ständerat, Sie haben recht, zu hundert Prozent recht. Der Bundesrat geht mit Ihnen einig, genau so ist die Lage. Es ist das Resultat der heutigen Lage, rechtlich und politisch. Sind Sie sicher, dass eine Änderung ohne Not, egal welche, der Verfassung die heutige Akzeptanz weiterhin garantiert? Wenn ein Gesetz unnötig ist, dann ist es nötig, kein Gesetz zu machen. Den Spruch kennen Sie, die Amerikaner sagen: \"If it ain't broke, don't fix it.\" Bewährtes soll man nicht ändern." },
+      { t:"Sie haben es gehört, ein neuer Neutralitätsartikel würde eine Reihe von Interpretationen durch Universitätsprofessoren, Doktorarbeiten und so weiter und so fort zur Folge haben. Wir würden mit der Suche nach der Definition, was Neutralität für jeden Normalbürger heisst, in Teufels Küche kommen. Das würde der Schweiz sicherheitspolitisch und aussenpolitisch nicht helfen." },
+      { t:"Monsieur le conseiller aux États Poggia, vous avez dit que ce qui va sans dire, il vaut peut-être mieux qu'on le dise. Je suis d'accord avec le \"peut-être\". Dans ce cas, je pense qu'il vaut mieux ne pas le dire." },
+      { t:"Si vous posez la question de savoir ce que le monde comprendra de la décision suisse, le Conseil fédéral est convaincu que le monde comprendra qu'un refus de changer quoi que ce soit par le peuple suisse signifie que la Suisse ne change rien à sa neutralité. Avec n'importe quelle autre décision, il comprendra que la Suisse change sa neutralité. Le simple fait de dire que la Suisse change sa neutralité aura un effet sur les marchés financiers et sur les marchés économiques, au-delà de la guerre et de la paix. Réfléchissez à la portée de cela. La Suisse ne serait plus la même, alors qu'elle est la même depuis 180 ans. Si on change quelque chose, il y aura une différence. La Suisse ne sera plus la même et tout le monde cherchera à comprendre quelle est cette différence." }
+    ]
+  };
+
+  /* Aussagen des Votums (Textstellen), an denen die offenen Fragen hängen. q: Frageform, vom Tool. */
+  var TOPICS = [
+    { id:0, st:"one", q:"Empfiehlt der Bundesrat, die Neutralitätsinitiative ohne Gegenvorschlag und ohne Gegenentwurf abzulehnen?", kind:"Position — Empfehlung",
+      e:{ A:{ w:"empfiehlt Ablehnung",
+              pass:"§Am 27. November 2024 hat der Bundesrat mit seiner Botschaft empfohlen, die Neutralitäts-Initiative ohne Gegenvorschlag und ohne Gegenentwurf abzulehnen.§ Das hat er, wie er es immer tut, nach einer vertieften Auslegeordnung des Initiativtextes, eines allfälligen Gegenentwurfes oder eines indirekten Gegenvorschlags getan.",
+              pass2:"Ihr Rat hat am 19. Juni letzten Jahres beschlossen, der Neutralitäts-Initiative einen direkten Gegenentwurf gegenüberzustellen. §Der Nationalrat ist nun letzten Donnerstag der Empfehlung des Bundesrates gefolgt und hat sich gegen einen Gegenentwurf ausgesprochen. Gestern hat sich Ihre APK ebenfalls gegen einen Gegenentwurf ausgesprochen.§" } } },
+    { id:1, st:"one", q:"Besteht kein Handlungsbedarf, weil die heutige Lage den nötigen Spielraum lässt, die Neutralität im Interesse der Schweiz zu nutzen?", kind:"Faktenfrage — Lagebeurteilung",
+      e:{ A:{ w:"kein Handlungsbedarf",
+              pass:"Le Conseil fédéral estime qu'un tel projet n'est ni judicieux ni nécessaire. Permettez-moi de vous en rappeler brièvement les cinq raisons principales. §La première : un contre-projet implique une nécessité d'agir qui n'existe justement pas. La situation actuelle laisse la marge de manoeuvre nécessaire pour mettre à profit la neutralité dans les meilleurs intérêts de la Suisse.§" } } },
+    { id:2, st:"one", q:"Gibt es in Neutralitätsfragen kein Universalrezept, das alle Fragen endgültig regeln könnte?", kind:"Grundsatzaussage",
+      e:{ A:{ w:"führt an",
+              pass:"§En matière de neutralité, il n'existe pas de recette universelle qui permettrait de régler définitivement toutes les questions.§ C'est, aux yeux du Conseil fédéral, la raison pour laquelle 90 pour cent de la population est pour la neutralité, parce que la neutralité est une projection de ce qu'on pense d'elle." } } },
+    { id:3, st:"one", q:"Sind 90 Prozent der Bevölkerung für die Neutralität, weil sie eine Projektion dessen ist, was man von ihr denkt?", kind:"Faktenfrage mit Kausalklausel",
+      e:{ A:{ w:"führt an",
+              pass:"En matière de neutralité, il n'existe pas de recette universelle qui permettrait de régler définitivement toutes les questions. §C'est, aux yeux du Conseil fédéral, la raison pour laquelle 90 pour cent de la population est pour la neutralité, parce que la neutralité est une projection de ce qu'on pense d'elle.§ Et c'est important qu'elle reste ainsi." } } },
+    { id:4, st:"one", q:"Teilt der Bundesrat Germanns Aussagen — die Schweiz lasse sich nicht in den Krieg hineinziehen, die Neutralität sei Merkmal Nummer eins und international ein Identitätsmerkmal?", kind:"Konzession",
+      e:{ A:{ w:"konzediert",
+              pass:"Drittens haben Sie gesagt, die Neutralität sei auch international ein Identitätsmerkmal der Schweiz. §Herr Ständerat, Sie haben recht, zu hundert Prozent recht. Der Bundesrat geht mit Ihnen einig, genau so ist die Lage.§ Es ist das Resultat der heutigen Lage, rechtlich und politisch.",
+              pass2:"§Sie haben absolut recht, Herr Ständerat Germann, die Neutralität ist ein Identitätsmerkmal unseres Landes.§ Ich komme kurz zu den Voten der Ständeräte Germann und Poggia." } } },
+    { id:5, st:"one", q:"Garantiert eine Verfassungsänderung ohne Not die heutige Akzeptanz der Neutralität weiterhin?", kind:"Prognosefrage — Gegenfrage an Germann",
+      e:{ A:{ w:"bezweifelt",
+              pass:"Der Bundesrat geht mit Ihnen einig, genau so ist die Lage. §Es ist das Resultat der heutigen Lage, rechtlich und politisch. Sind Sie sicher, dass eine Änderung ohne Not, egal welche, der Verfassung die heutige Akzeptanz weiterhin garantiert?§" } } },
+    { id:6, st:"one", q:"Soll man Bewährtes nicht ändern — und ist es nötig, kein Gesetz zu machen, wenn ein Gesetz unnötig ist?", kind:"Grundsatz — Wertfrage",
+      e:{ A:{ w:"führt an",
+              pass:"Wenn ein Gesetz unnötig ist, dann ist es nötig, kein Gesetz zu machen. §Den Spruch kennen Sie, die Amerikaner sagen: \"If it ain't broke, don't fix it.\" Bewährtes soll man nicht ändern.§" } } },
+    { id:7, st:"one", q:"Würde ein neuer Neutralitätsartikel eine Reihe von Interpretationen auslösen, die der Schweiz sicherheits- und aussenpolitisch nicht helfen?", kind:"Prognosefrage",
+      e:{ A:{ w:"prognostiziert",
+              pass:"§Sie haben es gehört, ein neuer Neutralitätsartikel würde eine Reihe von Interpretationen durch Universitätsprofessoren, Doktorarbeiten und so weiter und so fort zur Folge haben.§ Wir würden mit der Suche nach der Definition, was Neutralität für jeden Normalbürger heisst, in Teufels Küche kommen. Das würde der Schweiz sicherheitspolitisch und aussenpolitisch nicht helfen.",
+              pass2:"Wir würden mit der Suche nach der Definition, was Neutralität für jeden Normalbürger heisst, in Teufels Küche kommen. §Das würde der Schweiz sicherheitspolitisch und aussenpolitisch nicht helfen.§" } } },
+    { id:8, st:"one", q:"Ist es besser, nicht auszusprechen, was sich von selbst versteht?", kind:"Wertfrage — Entgegnung an Poggia",
+      e:{ A:{ w:"widerspricht Poggia",
+              pass:"Monsieur le conseiller aux États Poggia, vous avez dit que ce qui va sans dire, il vaut peut-être mieux qu'on le dise. §Je suis d'accord avec le \"peut-être\". Dans ce cas, je pense qu'il vaut mieux ne pas le dire.§" } } },
+    { id:9, st:"one", q:"Wird die Welt ein Nein des Volkes zu jeder Änderung so verstehen, dass die Schweiz ihre Neutralität nicht ändert — und jede andere Entscheidung als Änderung?", kind:"Prognosefrage — Aussenwirkung",
+      e:{ A:{ w:"ist überzeugt",
+              pass:"Si vous posez la question de savoir ce que le monde comprendra de la décision suisse, §le Conseil fédéral est convaincu que le monde comprendra qu'un refus de changer quoi que ce soit par le peuple suisse signifie que la Suisse ne change rien à sa neutralité.§ Avec n'importe quelle autre décision, il comprendra que la Suisse change sa neutralité.",
+              pass2:"§Avec n'importe quelle autre décision, il comprendra que la Suisse change sa neutralité.§ Le simple fait de dire que la Suisse change sa neutralité aura un effet sur les marchés financiers et sur les marchés économiques, au-delà de la guerre et de la paix." } } },
+    { id:10, st:"one", q:"Hätte allein die Aussage, die Schweiz ändere ihre Neutralität, Auswirkungen auf die Finanz- und Wirtschaftsmärkte?", kind:"Prognosefrage — Kausalkette",
+      e:{ A:{ w:"prognostiziert",
+              pass:"§Le simple fait de dire que la Suisse change sa neutralité aura un effet sur les marchés financiers et sur les marchés économiques, au-delà de la guerre et de la paix.§ Réfléchissez à la portée de cela." } } },
+    { id:11, st:"one", q:"Wäre die Schweiz nach einer Änderung nicht mehr dieselbe, die sie seit 180 Jahren ist?", kind:"Wertfrage — Kontinuität",
+      e:{ A:{ w:"führt an",
+              pass:"§La Suisse ne serait plus la même, alors qu'elle est la même depuis 180 ans.§ Si on change quelque chose, il y aura une différence. La Suisse ne sera plus la même et tout le monde cherchera à comprendre quelle est cette différence." } } }
+  ];
+
+  /* Einzelposition: nur Wurzeltext, kein Ja/Nein-Ast. */
+  var TREE = { root:"Votum Cassis — Aussagen" };
+
+  var THEMES = [
+    { l:"Empfehlung und Verfahren", d:"Was empfiehlt der Bundesrat — und warum sieht er keinen Handlungsbedarf für einen Gegenentwurf?", topics:[0,1] },
+    { l:"Akzeptanz und Unbestimmtheit", d:"Woher kommt die Zustimmung zur Neutralität, und was würde eine Festschreibung mit ihr machen?", topics:[2,3,4,5] },
+    { l:"Ändern oder nicht ändern", d:"Warum soll Bewährtes nicht geändert werden — und was folgte aus einem neuen Artikel?", topics:[6,7] },
+    { l:"Aussenwirkung", d:"Wie würde die Welt ein Nein — oder eine Änderung — lesen, und was folgte daraus?", topics:[8,9,10,11] }
+  ];
+
+  var QQ = {}; /* alle q sind Fragen */
+
+  /* Referenzaussage je Topic (Aussageform des Votums), vom Tool. */
+  var ST = {
+    0:{ ref:"Der Bundesrat empfiehlt, die Neutralitätsinitiative ohne Gegenvorschlag und ohne Gegenentwurf abzulehnen; Nationalrat und APK-S sind dieser Empfehlung gefolgt." },
+    1:{ ref:"Ein Gegenentwurf ist weder sinnvoll noch nötig: Es besteht kein Handlungsbedarf, die heutige Lage lässt den nötigen Spielraum." },
+    2:{ ref:"In Neutralitätsfragen gibt es kein Universalrezept, das alle Fragen endgültig regeln könnte." },
+    3:{ ref:"90 Prozent der Bevölkerung sind für die Neutralität, weil sie eine Projektion dessen ist, was man von ihr denkt — und das soll so bleiben." },
+    4:{ ref:"Germanns drei Aussagen treffen zu hundert Prozent zu; der Bundesrat geht mit ihm einig — genau so ist die Lage." },
+    5:{ ref:"Die heutige Akzeptanz ist das Resultat der heutigen rechtlichen und politischen Lage; ob eine Verfassungsänderung ohne Not sie weiterhin garantiert, ist nicht sicher." },
+    6:{ ref:"Wenn ein Gesetz unnötig ist, ist es nötig, kein Gesetz zu machen: Bewährtes soll man nicht ändern." },
+    7:{ ref:"Ein neuer Neutralitätsartikel würde eine Reihe von Interpretationen zur Folge haben und der Schweiz sicherheits- und aussenpolitisch nicht helfen." },
+    8:{ ref:"Was sich von selbst versteht, sagt man besser nicht." },
+    9:{ ref:"Die Welt wird ein Nein zu jeder Änderung so verstehen, dass die Schweiz ihre Neutralität nicht ändert — jede andere Entscheidung als Änderung." },
+    10:{ ref:"Allein die Aussage, die Schweiz ändere ihre Neutralität, hätte Auswirkungen auf die Finanz- und Wirtschaftsmärkte." },
+    11:{ ref:"Nach einer Änderung wäre die Schweiz nicht mehr dieselbe, die sie seit 180 Jahren ist." }
+  };
+
+  /* Kurzfassungen (ein Block je Topic), vom Tool; Zitate in «». */
+  var SUMS = {
+    0:[ { l:"Cassis — Bundesrat", t:"Der Bundesrat hat am 27. November 2024 empfohlen, die Initiative «ohne Gegenvorschlag und ohne Gegenentwurf» abzulehnen — «nach einer vertieften Auslegeordnung». Nationalrat und APK-S sind dieser Empfehlung gefolgt; der Ständerat hatte am 19. Juni 2025 noch einen Gegenentwurf beschlossen." } ],
+    1:[ { l:"Cassis — Bundesrat", t:"Erster von fünf Gründen gegen einen Gegenentwurf: Er «implique une nécessité d'agir qui n'existe justement pas» — die heutige Lage lasse den Spielraum, die Neutralität im besten Interesse der Schweiz zu nutzen. Die übrigen vier Gründe fehlen im erhobenen Auszug." } ],
+    2:[ { l:"Cassis — Bundesrat", t:"«Il n'existe pas de recette universelle» — kein Rezept regle alle Neutralitätsfragen endgültig. Der Satz leitet zur These über, warum die Zustimmung so hoch sei." } ],
+    3:[ { l:"Cassis — Bundesrat", t:"«90 pour cent de la population est pour la neutralité» — «parce que la neutralité est une projection de ce qu'on pense d'elle». Eine Zahl ohne Quellenangabe, eine Kausalklausel als Erklärung; «et c'est important qu'elle reste ainsi»." } ],
+    4:[ { l:"Cassis — Bundesrat", t:"Cassis gibt Germann in allen drei Punkten recht — «zu hundert Prozent» — und nennt die Neutralität selbst ein «Identitätsmerkmal unseres Landes». Die Konzession bereitet die Gegenfrage vor: «genau so ist die Lage»." } ],
+    5:[ { l:"Cassis — Bundesrat", t:"Die Akzeptanz sei «das Resultat der heutigen Lage, rechtlich und politisch». Germanns Schluss auf eine Verfassungsänderung wird nicht bestritten, sondern mit einer Gegenfrage angehalten: ob «eine Änderung ohne Not, egal welche» die Akzeptanz «weiterhin garantiert»." } ],
+    6:[ { l:"Cassis — Bundesrat", t:"«Wenn ein Gesetz unnötig ist, dann ist es nötig, kein Gesetz zu machen» — dazu der amerikanische Spruch «If it ain't broke, don't fix it» und die Regel «Bewährtes soll man nicht ändern»." } ],
+    7:[ { l:"Cassis — Bundesrat", t:"Ein neuer Artikel hätte «eine Reihe von Interpretationen durch Universitätsprofessoren, Doktorarbeiten und so weiter» zur Folge; die Suche nach der Definition führe «in Teufels Küche» und helfe «sicherheitspolitisch und aussenpolitisch nicht»." } ],
+    8:[ { l:"Cassis — Bundesrat", t:"Poggias «peut-être» wird aufgegriffen und umgedreht: «Je suis d'accord avec le \"peut-être\". Dans ce cas, je pense qu'il vaut mieux ne pas le dire.»" } ],
+    9:[ { l:"Cassis — Bundesrat", t:"Der Bundesrat ist «convaincu», die Welt lese ein Nein zu jeder Änderung als «la Suisse ne change rien à sa neutralité» — jede andere Entscheidung dagegen als Änderung der Neutralität." } ],
+    10:[ { l:"Cassis — Bundesrat", t:"«Le simple fait de dire que la Suisse change sa neutralité aura un effet sur les marchés financiers et sur les marchés économiques» — «au-delà de la guerre et de la paix». Mechanismus und Grösse bleiben ungenannt: «Réfléchissez à la portée de cela.»" } ],
+    11:[ { l:"Cassis — Bundesrat", t:"«La Suisse ne serait plus la même, alors qu'elle est la même depuis 180 ans» — jede Änderung mache einen Unterschied, den «tout le monde» zu verstehen suchen würde." } ]
+  };
+
+  var G10 = {}; /* Einzelposition: keine Gap-Achse */
+
+  /* Offene Fragen des Tools — in Frageform, nie Urteil. Klassen: beleg · wert · quelle · luecke · vage. */
+  var OQ = [
+    { pid:"A", t:3,  k:"quelle", q:"«90 pour cent de la population est pour la neutralité» — welche Erhebung, welches Jahr? Das Votum nennt keine Quelle; im Nationalrat hatte Reimann mit der ETH-Studie «Sicherheit 2025» «über 50 Prozent» angeführt. Messen beide dasselbe?" },
+    { pid:"A", t:3,  k:"luecke", q:"«parce que la neutralité est une projection de ce qu'on pense d'elle» — die Kausalklausel verknüpft Zustimmung und Unbestimmtheit: Woraus folgt, dass eine Definition die Zustimmung senken würde und nicht festigen? Der Schritt wird behauptet, nicht begründet." },
+    { pid:"A", t:5,  k:"luecke", q:"«Sind Sie sicher, dass eine Änderung ohne Not, egal welche, der Verfassung die heutige Akzeptanz weiterhin garantiert?» — Das Votum konzediert Germanns drei Prämissen «zu hundert Prozent» und hält dem Schluss eine Gegenfrage entgegen. Wo genau bricht die Inferenz von «identitätsstiftend» zu «in die Verfassung» — und welchen Beleg trägt die Gegenfrage selbst?" },
+    { pid:"A", t:4,  k:"wert",   q:"«Sie haben recht, zu hundert Prozent recht. Der Bundesrat geht mit Ihnen einig» — die Konzession umfasst auch «Merkmal Nummer eins und identitätsstiftend», eine Wertung, die als Tatsache bestätigt wird. Was wird hier zu hundert Prozent bestätigt: ein Befund über die Bevölkerung oder eine geteilte Bewertung?" },
+    { pid:"A", t:7,  k:"beleg",  q:"«würde eine Reihe von Interpretationen durch Universitätsprofessoren, Doktorarbeiten und so weiter und so fort zur Folge haben» — eine Prognose ohne Beleg: Welche Erfahrung mit anderen Verfassungsartikeln stützt sie, und warum wäre wissenschaftliche Auslegung ein sicherheits- und aussenpolitischer Nachteil?" },
+    { pid:"A", t:10, k:"beleg",  q:"«aura un effet sur les marchés financiers et sur les marchés économiques» — welcher Mechanismus, welche Evidenz? Richtung und Grösse des Effekts bleiben offen; das Votum belässt es bei «Réfléchissez à la portée de cela»." },
+    { pid:"A", t:6,  k:"wert",   q:"«Bewährtes soll man nicht ändern» / «If it ain't broke, don't fix it» — ein Grundsatz in Tatsachenform: Wer entscheidet, ob etwas «broke» ist? Germann nennt die Auslegung der Neutralität «komplett divers» — die Befürworter sehen genau dort Klärungsbedarf. Ist «bewährt» hier ein Befund oder eine Gewichtung?" },
+    { pid:"A", t:1,  k:"vage",   q:"«une nécessité d'agir qui n'existe justement pas» — gemessen woran? Der Ständerat hatte am 19. Juni 2025 einen Gegenentwurf beschlossen: Welches Kriterium trennt fehlenden von bestehendem Handlungsbedarf?" },
+    { pid:"A", t:9,  k:"beleg",  q:"«le Conseil fédéral est convaincu que le monde comprendra …» — worauf stützt sich die Überzeugung, wie «die Welt» ein Abstimmungsresultat liest? Poggia prognostiziert für dasselbe Nein einen «dégât d'image». Zwei Prognosen über dieselbe Rezeption — welche Beobachtung würde zwischen ihnen entscheiden?" },
+    { pid:"A", t:11, k:"vage",   q:"«alors qu'elle est la même depuis 180 ans» — dieselbe in welcher Hinsicht: Rechtslage, Praxis oder Wahrnehmung? Und von welchem Ereignis an sind die 180 Jahre gerechnet?" },
+    { pid:"A", t:8,  k:"quelle", q:"«vous avez dit que ce qui va sans dire, il vaut peut-être mieux qu'on le dise» — im erhobenen Auszug von Poggias Votum steht «Ce qui va sans dire va souvent mieux en le disant», ohne «peut-être». Woran setzt die Zustimmung zum «peut-être» an — an Poggias Wortlaut oder an der Paraphrase?" },
+    { pid:"A", t:2,  k:"vage",   q:"«il n'existe pas de recette universelle» — was folgt daraus: dass keine Definition möglich ist, oder dass keine nötig ist? Der Satz trägt beide Lesarten; das Votum legt sich nicht fest." }
+  ];
+
+  var PRUEF = {};  /* keine Streitfragen (Einzelposition) */
+  var VCRUX = [];  /* keine Crux der Vorlage aus einer einzelnen Stimme */
+
+  registerDS("cassis", {
+    meta:{ title:"Bundesrats-Votum Cassis", sub:"Ständerat, 12.3.2026", rootLabel:"votum · ständerat · 12.3.2026", fullLabel:"Erhobener Auszug",
+           noSides:true, single:true,
+           keinNote:"Themen → Aussagen des Votums. Jede Aussage endet am Zitat.",
+           zweiNote:"Nur eine Position: Ein einzelnes Votum hat keine Gegenseite, die man gegenüberstellen könnte — die Voten, auf die Cassis antwortet, stehen im Datensatz «Neutralität — Parlamentsdebatte».",
+           rootText:"Votum von Bundesrat Cassis — welche Aussagen trägt es?",
+           headTitle:"Eine Position",
+           headText:"Die Aussagen des Votums, nach Themen gruppiert; jede Aussage endet am Zitat.",
+           sidesNote:"Ein einzelnes Votum ist keine Debatte: Der Datensatz enthält nur die Aussagen des Bundesrates; die Voten Germann und Poggia, auf die er antwortet, kommen nur in seiner Wiedergabe vor.",
+           caption:"Text: Votum von Bundesrat Ignazio Cassis im Ständerat, 12.3.2026 — Amtliches Bulletin, AB SR 2026 S. 225–226 (via politchronik.swiss); Auszug, [...] = Auslassung, französische Passagen wie gehalten. Fragen, Themen, Aussage-Formulierungen, Kurzfassungen und Klassen der offenen Fragen: vom Tool." },
+    POS:POS, FULL:FULL, TOPICS:TOPICS, TREE:TREE, THEMES:THEMES, QQ:QQ, ST:ST, SUMS:SUMS,
+    G10:G10, OQ:OQ, PRUEF:PRUEF, VCRUX:VCRUX, STEEL2:null
+  });
+})();
+
+
+  var openQ = {};
+  function onTab(){ openQ = {}; }
+  function drawView(){
+    var stage = document.getElementById("stage");
+    stage.innerHTML = "";
+    stage.appendChild(legendRow());
+    var kl = el("div","legendrow"); kl.style.margin="0 0 14px";
+    kl.appendChild(el("span","lgt","Klassen"));
+    Object.keys(OQK).forEach(function(k){ kl.appendChild(oqChip(k)); });
+    stage.appendChild(kl);
+    var intro = el("p","tnote");
+    intro.appendChild(el("b",null,"Lesehilfe: "));
+    intro.appendChild(document.createTextNode("Jede Position als ganzer Text. Unterstrichene Stellen sind Passagen, zu denen das Tool eine offene Frage stellt — die Farbe zeigt die Klasse. Klick auf die Stelle öffnet die Frage; die Fragen sind Fragen, nie Urteile."));
+    intro.style.marginBottom="14px";
+    stage.appendChild(intro);
+    POS.forEach(function(p){
+      var qs = OQ.filter(function(o){ return o.pid===p.id; });
+      var sec = el("section","posbox");
+      sec.style.borderLeftColor = p.c;
+      var h = el("div","poshead");
+      h.appendChild(dot(p.c));
+      h.appendChild(el("b",null,p.name));
+      h.appendChild(el("span","sideb", p.badge || (p.side==="ja" ? "empfiehlt Ja" : "empfiehlt Nein")));
+      h.appendChild(el("span","psrc",p.src));
+      sec.appendChild(h);
+      var marks = [];
+      qs.forEach(function(o){
+        var tp = TOPICS[o.t];
+        var e = tp.e[p.id]; if (!e) return;
+        var sp = spanOf(e.pass);
+        if (sp) marks.push({ o:o, sp:sp, pass:e.pass });
+      });
+      FULL[p.id].forEach(function(para){
+        var inPara = marks.filter(function(m){ return para.t.indexOf(m.sp)>-1; });
+        var fp = el("p","fullpara");
+        if (para.h) fp.appendChild(el("b","ph",para.h));
+        var boxes = el("div");
+        if (!inPara.length){
+          fp.appendChild(document.createTextNode(para.t));
+        } else {
+          var hits = inPara.map(function(m){ return { i:para.t.indexOf(m.sp), m:m }; })
+                           .sort(function(a,b){ return a.i-b.i; });
+          var cur = 0;
+          hits.forEach(function(hh){
+            if (hh.i < cur) return;
+            fp.appendChild(document.createTextNode(para.t.slice(cur,hh.i)));
+            var mk = hh.m, key = mk.o.pid+"_"+mk.o.t;
+            var col = (OQK[mk.o.k]||{}).c || "#b45309";
+            /* span, not button: a button box cannot break across lines, a span flows with the text */
+            var btn = el("span","oqmark",mk.sp);
+            btn.setAttribute("role","button"); btn.tabIndex = 0;
+            btn.style.borderBottomColor = col;
+            if (openQ[key]){ btn.style.background = col+"14"; }
+            btn.title = "Offene Frage des Tools zu dieser Stelle — Klick zum Öffnen";
+            btn.onclick = function(){ openQ[key]=!openQ[key]; drawView(); };
+            btn.addEventListener("keydown", function(ev){ if (ev.key==="Enter"||ev.key===" "){ ev.preventDefault(); openQ[key]=!openQ[key]; drawView(); } });
+            fp.appendChild(btn);
+            cur = hh.i + mk.sp.length;
+            if (openQ[key]){
+              var bx = el("div","oqbox");
+              var tag = el("div"); tag.style.cssText="display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:4px";
+              tag.appendChild(el("span","prueftag","offene frage · vom tool"));
+              tag.appendChild(oqChip(mk.o.k));
+              bx.appendChild(tag);
+              bx.appendChild(el("div",null,mk.o.q));
+              var lk = el("button","tlink","Textstelle im Zusammenhang →");
+              lk.type="button"; lk.style.marginTop="5px";
+              lk.onclick=function(){ openSheet(p.id, mk.pass); };
+              bx.appendChild(lk);
+              boxes.appendChild(bx);
+            }
+          });
+          fp.appendChild(document.createTextNode(para.t.slice(cur)));
+        }
+        sec.appendChild(fp);
+        sec.appendChild(boxes);
+      });
+      var foot = el("div"); foot.style.marginTop="4px";
+      var lk2 = el("button","tlink","Ganzer Text mit allen extrahierten Stellen →");
+      lk2.type="button";
+      lk2.onclick=function(){ openSheetFull(p.id); };
+      foot.appendChild(lk2);
+      sec.appendChild(foot);
+      stage.appendChild(sec);
+    });
+    var note = el("p","tnote");
+    note.appendChild(el("b",null,"Klassen (vom Tool vergeben): "));
+    note.appendChild(document.createTextNode("Unbelegte Behauptung = Kausal- oder Tatsachenzusage ohne Beleg · Wertung als Tatsache = Wertung oder Zusicherung in Tatsachenform · Quelle unklar = unbenannte oder widersprüchliche Quelle · Lücke im Argument = fehlende Rangfolge, offener Fall oder unbegründeter Schluss · Vage Formulierung = doppelt abgeschwächte Kernaussage. [...] = Auslassung der Erhebung."));
+    note.style.marginTop="4px";
+    stage.appendChild(note);
+  }
+  function draw(){ drawTabs(); drawView(); }
+  useDS(DSORDER[0]); resetState(); draw();
+})();
+</script>
+</body>
+</html>
