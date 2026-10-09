@@ -1,0 +1,503 @@
+<!doctype html>
+<html lang="de"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Pflichtinhalte prüfen</title>
+<style>
+:root{--bg:#eceae6;--card:#ffffff;--ink:#23252c;--muted:#6b6862;--dim:#8a8781;--line:#d2cec6;--soft:#f4f2ee;--accent:#4f46e5;
+  --ok:#15803d;--ok-soft:#e3f3e7;--unk:#b45309;--unk-soft:#fdf1e3;--miss:#b4231f;--miss-soft:#fbe5e3;--hatch:#f5f3ef;--hatch2:#e6e2da;
+  --mono:ui-monospace,Menlo,Consolas,monospace;--serif:ui-serif,"Iowan Old Style",Palatino,Georgia,serif;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color-scheme:light}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1c1b19;--card:#26241f;--ink:#ece9e2;--muted:#b0aca3;--dim:#8a8781;--line:#3a3833;--soft:#2c2a25;--accent:#8b85ff;
+  --ok:#5bd17f;--ok-soft:#1d3324;--unk:#f0a35a;--unk-soft:#3a2a18;--miss:#ff8a80;--miss-soft:#3d2120;--hatch:#2a2823;--hatch2:#34312b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1b19;--card:#26241f;--ink:#ece9e2;--muted:#b0aca3;--dim:#8a8781;--line:#3a3833;--soft:#2c2a25;--accent:#8b85ff;
+  --ok:#5bd17f;--ok-soft:#1d3324;--unk:#f0a35a;--unk-soft:#3a2a18;--miss:#ff8a80;--miss-soft:#3d2120;--hatch:#2a2823;--hatch2:#34312b;color-scheme:dark}
+*{box-sizing:border-box}
+html{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;font:14px/1.55 var(--sans);background:var(--bg);color:var(--ink)}
+a{color:var(--accent)}
+a:focus-visible,button:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+[hidden]{display:none!important}
+.ix{max-width:880px;margin:0 auto;padding:40px 24px 80px}
+.back{font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--dim);text-decoration:none}
+.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:14px 0 10px}
+.eyebrow b{color:var(--accent);font-weight:600}
+h1{font-family:var(--serif);font-size:clamp(28px,4.6vw,38px);margin:0 0 12px;letter-spacing:-.02em;font-weight:600;text-wrap:balance}
+p.sub{color:var(--muted);font-size:15.5px;margin:0 0 16px;max-width:64ch}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;margin:0 0 22px;font-size:12.5px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.dtabs{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.dtab{border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:20px;padding:6px 15px;font:inherit;cursor:pointer;text-align:left;display:inline-flex;flex-direction:column;gap:0}
+.dtab .dt{font-weight:700;font-size:13.5px}
+.dtab .ds{font-size:11.5px;color:var(--muted)}
+.dtab.on{background:var(--card);border-color:var(--accent);box-shadow:0 0 0 1.5px var(--accent)}
+.doc{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:16px 20px;display:grid;grid-template-columns:minmax(0,1fr) auto;gap:12px 24px;align-items:center;margin:0 0 18px}
+.doc .k{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:4px}
+.doc h2{font-family:var(--serif);font-size:20px;margin:0 0 4px;font-weight:600;text-wrap:balance;line-height:1.3}
+.doc .meta{color:var(--muted);font-size:13px;margin:0}
+.score{text-align:right}
+.counts{display:flex;gap:12px;justify-content:flex-end;flex-wrap:wrap;font-size:13px;color:var(--muted)}
+.counts .n b{font-family:var(--serif);font-size:22px;font-weight:600;color:var(--ink);margin-right:2px;font-variant-numeric:tabular-nums}
+.counts .n.unk b{color:var(--unk)} .counts .n.miss b{color:var(--miss)}
+.sqs{display:flex;gap:4px;justify-content:flex-end;margin:8px 0 4px}
+.sq{width:14px;height:14px;border-radius:3px;display:inline-block}
+.sq.ok,.dot.ok{background:var(--ok)} .sq.unk,.dot.unk{background:var(--unk)} .sq.miss,.dot.miss{background:var(--miss)}
+.dot{width:10px;height:10px;border-radius:50%;display:inline-block}
+.dot.na{background:var(--card);border:1.5px dashed var(--dim)}
+.score .cap{font-size:12px;color:var(--dim)}
+.rhead{display:flex;justify-content:space-between;gap:12px;font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);padding:0 16px 6px;border-bottom:1px solid var(--line)}
+.rhead i{font-style:normal;text-transform:none;letter-spacing:0;font-family:var(--sans);font-size:12px}
+.raster{display:flex;flex-direction:column;gap:6px}
+p.grp{font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:16px 2px 2px}
+details.pr{background:var(--card);border:1px solid var(--line);border-radius:9px}
+details.pr.miss{border-color:var(--miss)} details.pr.unk{border-color:var(--unk)}
+details.pr.na{background:repeating-linear-gradient(135deg,var(--hatch),var(--hatch) 8px,var(--hatch2) 8px,var(--hatch2) 9px)}
+details.pr>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:14px;padding:11px 16px}
+details.pr>summary::-webkit-details-marker{display:none}
+details.pr>summary::before{content:"▸";color:var(--dim);font-size:11px;flex:none;transition:transform .15s}
+details.pr[open]>summary::before{transform:rotate(90deg)}
+.req{flex:1 1 230px;min-width:0;display:flex;flex-direction:column}
+.req b{font-size:14.5px;font-weight:650;line-height:1.35}
+.req .basis{font-size:12px;color:var(--dim);margin-top:1px}
+.res{display:flex;align-items:center;gap:10px;flex:none}
+.loc{font-family:var(--mono);font-size:11px;color:var(--dim);white-space:nowrap}
+.chip{display:inline-block;font-family:var(--mono);font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;padding:3px 8px;border-radius:4px;font-weight:600;min-width:84px;text-align:center}
+.chip.ok{color:var(--ok);background:var(--ok-soft)} .chip.unk{color:var(--unk);background:var(--unk-soft)} .chip.miss{color:var(--miss);background:var(--miss-soft)}
+.chip.na{color:var(--dim);background:var(--card);border:1px dashed var(--line)}
+.pbody{padding:0 16px 14px 41px}
+.find{margin:0;max-width:64ch}
+blockquote.ev{margin:10px 0 0;padding:8px 12px;border-left:3px solid var(--line);background:var(--bg);border-radius:0 6px 6px 0;font-family:var(--serif);font-size:14.5px;line-height:1.5;max-width:66ch}
+details.pr.miss blockquote.ev{border-left-color:var(--miss)} details.pr.unk blockquote.ev{border-left-color:var(--unk)}
+blockquote.ev .ref{display:block;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);margin-bottom:3px}
+.law{margin:8px 0 0;font-size:12px;color:var(--dim)}
+.law a{color:var(--dim)}
+.why{margin:34px 0 0;padding:14px 18px;border:1px solid var(--line);border-radius:9px;background:var(--card);font-size:13.5px;color:var(--muted)}
+.why p{margin:0}
+.why b{color:var(--ink)}
+.why details{margin-top:10px}
+.why summary{cursor:pointer;color:var(--ink);font-weight:600;font-size:13px}
+.freq{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:18px;margin-top:10px}
+table{border-collapse:collapse;width:100%;font-size:12.5px}
+caption{text-align:left;font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);padding-bottom:4px}
+th,td{text-align:left;padding:4px 6px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-weight:600;color:var(--ink);font-size:11.5px}
+td:not(:first-child),th:not(:first-child){text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+td i{font-style:normal;color:var(--dim)}
+p.foot{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:30px;line-height:1.7}
+p.foot a{color:var(--dim)}
+@media (max-width:640px){
+  .ix{padding:28px 16px 60px}
+  .doc{grid-template-columns:1fr} .score{text-align:left} .counts,.sqs{justify-content:flex-start}
+  details.pr>summary{flex-wrap:wrap;gap:6px 10px;padding:10px 12px}
+  .res{margin-left:21px}
+  .pbody{padding:0 12px 12px 33px}
+  .rhead i{display:none}
+}
+@media (prefers-reduced-motion: reduce){*{transition:none!important}}
+</style></head>
+<body>
+<div class="ix">
+  <a class="back" href="index.html">← Übersicht</a>
+  <p class="eyebrow"><b>Expert*innen</b></p>
+  <h1>Pflichtinhalte prüfen</h1>
+  <p class="sub">Das Prüfraster fragt pro Dokument ab, was das Recht verlangt, und meldet pro Punkt einen Befund mit Belegstelle. Das Tool liest dazu den ganzen Abschnitt, nicht nur die Überschrift.</p>
+  <div class="legend" aria-label="Befunde">
+    <span><i class="dot ok"></i>vorhanden</span>
+    <span><i class="dot unk"></i>unklar: nur teilweise oder nicht eindeutig, von Hand prüfen</span>
+    <span><i class="dot miss"></i>fehlt</span>
+    <span><i class="dot na"></i>entfällt</span>
+  </div>
+  <div class="dtabs" role="tablist" aria-label="Beispiel"><button type="button" class="dtab on" role="tab" id="tab-bot" aria-controls="doc-bot" aria-selected="true" data-k="bot"><span class="dt">Botschaft</span><span class="ds">Bund</span></button><button type="button" class="dtab" role="tab" id="tab-eb" aria-controls="doc-eb" aria-selected="false" data-k="eb"><span class="dt">Erläuternder Bericht</span><span class="ds">Bund</span></button><button type="button" class="dtab" role="tab" id="tab-be" aria-controls="doc-be" aria-selected="false" data-k="be"><span class="dt">Vortrag</span><span class="ds">Kanton Bern</span></button></div>
+
+  <section class="docsec" id="doc-bot" role="tabpanel" aria-labelledby="tab-bot">
+    <div class="doc">
+      <div>
+        <span class="k">Botschaft · Bund</span>
+        <h2>Botschaft zur Änderung des Zivildienstgesetzes</h2>
+        <p class="meta">Bundesrat, 19. Februar 2025 · BBl 2025 784 · <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/fga/2025/784/de/html/fedlex-data-admin-ch-eli-fga-2025-784-de-html.html" target="_blank" rel="noopener">auf Fedlex</a><br>Dieselbe Vorlage, über die am 14. Juni 2026 abgestimmt wurde.</p>
+      </div>
+      <div class="score">
+        <div class="counts"><span class="n ok"><b>5</b> vorhanden</span><span class="n unk"><b>1</b> unklar</span><span class="n miss"><b>1</b> fehlt</span></div>
+        <div class="sqs"><span class="sq ok" title="Auswirkungen auf den Bund: Finanzen und Personal: vorhanden"></span><span class="sq ok" title="Auswirkungen auf Kantone und Gemeinden, Städte, Agglomerationen und Berggebiete: vorhanden"></span><span class="sq ok" title="Auswirkungen auf die Volkswirtschaft: vorhanden"></span><span class="sq ok" title="Auswirkungen auf die Gesellschaft: vorhanden"></span><span class="sq unk" title="Auswirkungen auf die Umwelt: unklar"></span><span class="sq ok" title="Verhältnis zum Finanzplan: vorhanden"></span><span class="sq miss" title="Verhältnis zu den Strategien des Bundesrates: fehlt"></span></div>
+        <div class="cap"><span class="n na">2 entfallen</span></div>
+      </div>
+    </div>
+    <div class="rhead"><span>Verlangt <i>· Punkte, die immer verlangt sind und oft fehlen</i></span><span>Befund</span></div>
+    <div class="raster"><p class="grp">Auswirkungen</p>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Auswirkungen auf den Bund: Finanzen und Personal</b><span class="basis">Art. 141 Abs. 2 Bst. f ParlG</span></span>
+          <span class="res"><span class="loc">Ziff. 6.1.1</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Finanzen, Personal und Armeebestände, je in einem eigenen Abschnitt.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 6.1.1</span>«Für das Finanzplanjahr 2028 wird ein Ertrag in Höhe von rund 35,1 Millionen Franken erwartet, was im Vergleich mit dem Voranschlag 2025 einen Rückgang um rund 3 Millionen Franken bedeutet.»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2003/510/20260302/de/html/fedlex-data-admin-ch-eli-cc-2003-510-20260302-de-html-2.html" target="_blank" rel="noopener">Art. 141 Abs. 2 Bst. f ParlG</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Auswirkungen auf Kantone und Gemeinden, Städte, Agglomerationen und Berggebiete</b><span class="basis">Art. 141 Abs. 2 Bst. f und a<sup>ter</sup> ParlG</span></span>
+          <span class="res"><span class="loc">Ziff. 6.2</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Weniger Zivildiensteinsätze zugunsten von Kantonen, Gemeinden und Berggebieten.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 6.2</span>«Dieser Rückgang wird dazu führen, dass in einigen Tätigkeitsbereichen weniger Zivildienst zugunsten von Kantonen und Gemeinden, urbanen Zentren, Agglomerationen und Berggebieten geleistet wird.»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2003/510/20260302/de/html/fedlex-data-admin-ch-eli-cc-2003-510-20260302-de-html-2.html" target="_blank" rel="noopener">Art. 141 Abs. 2 Bst. f und a<sup>ter</sup> ParlG</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Auswirkungen auf die Volkswirtschaft</b><span class="basis">Art. 141 Abs. 2 Bst. g ParlG</span></span>
+          <span class="res"><span class="loc">Ziff. 6.3</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Abwesenheiten vom Arbeitsplatz, Belastung der Arbeitgeber und der EO.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 6.3</span>«Wer einen länger dauernden zivilen Ersatzdienst leistet, bleibt seinem Ausbildungs- oder Arbeitsplatz öfter fern als Militärdienstleistende und belastet damit die Volkswirtschaft und die EO zusätzlich.»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2003/510/20260302/de/html/fedlex-data-admin-ch-eli-cc-2003-510-20260302-de-html-2.html" target="_blank" rel="noopener">Art. 141 Abs. 2 Bst. g ParlG</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Auswirkungen auf die Gesellschaft</b><span class="basis">Art. 141 Abs. 2 Bst. g ParlG</span></span>
+          <span class="res"><span class="loc">Ziff. 6.3</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Weniger Personen für Aufgaben der Gemeinschaft.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 6.3</span>«[...] stehen längerfristig weniger Personen und weniger Diensttage zur Erfüllung wichtiger Aufgaben der Gemeinschaft zur Verfügung, für die schon heute Personalressourcen fehlen oder nicht ausreichen.»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2003/510/20260302/de/html/fedlex-data-admin-ch-eli-cc-2003-510-20260302-de-html-2.html" target="_blank" rel="noopener">Art. 141 Abs. 2 Bst. g ParlG</a></p>
+        </div>
+      </details>
+      <details class="pr unk" open>
+        <summary>
+          <span class="req"><b>Auswirkungen auf die Umwelt</b><span class="basis">Art. 141 Abs. 2 Bst. g ParlG</span></span>
+          <span class="res"><span class="loc">Ziff. 6.2</span><span class="chip unk">unklar</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Nur indirekt: Ziffer 6.3 nennt die Umwelt im Titel, sagt im Text aber nichts dazu. Ziffer 6.2 nennt den Umwelt- und Naturschutz als einen der betroffenen Tätigkeitsbereiche. Von Hand prüfen, ob das genügt.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 6.2</span>«Betroffene Tätigkeitsbereiche können insbesondere der Umwelt- und Naturschutz, das Sozialwesen, das Schulwesen und die Landwirtschaft sein.»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2003/510/20260302/de/html/fedlex-data-admin-ch-eli-cc-2003-510-20260302-de-html-2.html" target="_blank" rel="noopener">Art. 141 Abs. 2 Bst. g ParlG</a></p>
+        </div>
+      </details>
+      <details class="pr na">
+        <summary>
+          <span class="req"><b>Wo keine Auswirkungen erwartet werden: als geprüft ausgewiesen</b><span class="basis">Botschaftsleitfaden, Grundsatz der Transparenz</span></span>
+          <span class="res"><span class="chip na">entfällt</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Entfällt: Die Botschaft verneint in keinem Bereich Auswirkungen.</p>
+          
+          <p class="law">Grundlage: <a href="https://www.bk.admin.ch/dam/de/sd-web/j9cDd13OplmQ/Botschaftsleitfaden_April_2026_de.pdf" target="_blank" rel="noopener">Botschaftsleitfaden, Grundsatz der Transparenz</a></p>
+        </div>
+      </details><p class="grp">Planung</p>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Verhältnis zum Finanzplan</b><span class="basis">Art. 141 Abs. 2 Bst. h ParlG</span></span>
+          <span class="res"><span class="loc">Ziff. 6.1.1</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Vorhanden, aber nicht unter Ziffer 1.3, wo der Titel es ankündigt, sondern in Ziffer 6.1.1, mit Bezug auf den Voranschlag 2025 und den Aufgaben- und Finanzplan 2026–2028.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 6.1.1</span>«Für die Finanzplanjahre ab 2026 werden das Inkrafttreten der Änderung des ZDG per 1. Januar 2026 und ein Rückgang der Zulassungen auf 4000 Personen pro Jahr angenommen, auch wenn eine zuverlässige Aussage über die tatsächlichen Auswirkungen der vorliegenden Gesetzesänderung auf die Anzahl der Zulassungen nicht möglich ist (siehe Ziff. 4.2).»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2003/510/20260302/de/html/fedlex-data-admin-ch-eli-cc-2003-510-20260302-de-html-2.html" target="_blank" rel="noopener">Art. 141 Abs. 2 Bst. h ParlG</a></p>
+        </div>
+      </details>
+      <details class="pr miss" open>
+        <summary>
+          <span class="req"><b>Verhältnis zu den Strategien des Bundesrates</b><span class="basis">Botschaftsleitfaden</span></span>
+          <span class="res"><span class="loc">Ziff. 1.3</span><span class="chip miss">fehlt</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Ziffer 1.3 nennt die «nationalen Strategien des Bundesrates» im Titel, der Text behandelt nur die Legislaturplanung. Gäbe es keine einschlägige Strategie, würde laut Leitfaden ein Hinweis darauf genügen; auch der fehlt.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 1.3</span>«Die Vorlage ist weder in der Botschaft vom 24. Januar 2024 zur Legislaturplanung 2023–2027 noch im Bundesbeschluss vom 6. Juni 2024 über die Legislaturplanung 2023–2027 angekündigt.»</blockquote>
+          <p class="law">Grundlage: <a href="https://www.bk.admin.ch/dam/de/sd-web/j9cDd13OplmQ/Botschaftsleitfaden_April_2026_de.pdf" target="_blank" rel="noopener">Botschaftsleitfaden</a></p>
+        </div>
+      </details><p class="grp">Zahlen</p>
+      <details class="pr na">
+        <summary>
+          <span class="req"><b>Verlässlichkeit der wichtigsten Zahlen, mit Quellen und Berechnung</b><span class="basis">Art. 8 Abs. 4<sup>bis</sup> VlV</span></span>
+          <span class="res"><span class="chip na">entfällt</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Entfällt: nur für erläuternde Berichte verlangt.</p>
+          
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2005/543/20220801/de/html/fedlex-data-admin-ch-eli-cc-2005-543-20220801-de-html-7.html" target="_blank" rel="noopener">Art. 8 Abs. 4<sup>bis</sup> VlV</a></p>
+        </div>
+      </details>
+    </div>
+  </section>
+  <section class="docsec" id="doc-eb" role="tabpanel" aria-labelledby="tab-eb" hidden>
+    <div class="doc">
+      <div>
+        <span class="k">Erläuternder Bericht · Bund</span>
+        <h2>Finanzierung der Rüstungsausgaben der Armee durch Erhöhung der Mehrwertsteuer</h2>
+        <p class="meta">Erläuternder Bericht des Bundesrates zur Vernehmlassung ab 6. März 2026 · 42 Seiten · <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/dl/proj/2026/23/cons_1/doc_6/de/pdf-a/fedlex-data-admin-ch-eli-dl-proj-2026-23-cons_1-doc_6-de-pdf-a.pdf" target="_blank" rel="noopener">PDF auf Fedlex</a></p>
+      </div>
+      <div class="score">
+        <div class="counts"><span class="n ok"><b>6</b> vorhanden</span><span class="n unk"><b>1</b> unklar</span><span class="n miss"><b>1</b> fehlt</span></div>
+        <div class="sqs"><span class="sq ok" title="Auswirkungen auf den Bund: Finanzen und Personal: vorhanden"></span><span class="sq ok" title="Auswirkungen auf Kantone und Gemeinden, Städte, Agglomerationen und Berggebiete: vorhanden"></span><span class="sq ok" title="Auswirkungen auf die Volkswirtschaft: vorhanden"></span><span class="sq ok" title="Auswirkungen auf die Gesellschaft: vorhanden"></span><span class="sq miss" title="Auswirkungen auf die Umwelt: fehlt"></span><span class="sq ok" title="Verhältnis zum Finanzplan: vorhanden"></span><span class="sq ok" title="Verhältnis zu den Strategien des Bundesrates: vorhanden"></span><span class="sq unk" title="Verlässlichkeit der wichtigsten Zahlen, mit Quellen und Berechnung: unklar"></span></div>
+        <div class="cap"><span class="n na">1 entfällt</span></div>
+      </div>
+    </div>
+    <div class="rhead"><span>Verlangt <i>· Punkte, die immer verlangt sind und oft fehlen; dazu die Verlässlichkeit der Zahlen</i></span><span>Befund</span></div>
+    <div class="raster"><p class="grp">Auswirkungen</p>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Auswirkungen auf den Bund: Finanzen und Personal</b><span class="basis">Art. 8 Abs. 3 Bst. a VlV</span></span>
+          <span class="res"><span class="loc">Ziff. 5.1</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Eigener Abschnitt mit finanziellen und personellen Auswirkungen.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 5.1</span>«Der zusätzliche Personalmehrbedarf beläuft sich für die zivilen Bundesämter mit Sicherheitsaufgaben in den nächsten Jahren auf über 400 Vollzeitstellen (vgl. Ziff. 1.1.2).»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2005/543/20220801/de/html/fedlex-data-admin-ch-eli-cc-2005-543-20220801-de-html-7.html" target="_blank" rel="noopener">Art. 8 Abs. 3 Bst. a VlV</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Auswirkungen auf Kantone und Gemeinden, Städte, Agglomerationen und Berggebiete</b><span class="basis">Art. 8 Abs. 3 Bst. a VlV</span></span>
+          <span class="res"><span class="loc">Ziff. 5.2</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Mehrausgaben für Kantone und Gemeinden durch die höhere Mehrwertsteuer auf ihren Einkäufen.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 5.2</span>«Bei den Gemeinden wäre mit Mehrausgaben von ungefähr 120 Mio. Franken zu rechnen (Stand: 2023).»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2005/543/20220801/de/html/fedlex-data-admin-ch-eli-cc-2005-543-20220801-de-html-7.html" target="_blank" rel="noopener">Art. 8 Abs. 3 Bst. a VlV</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Auswirkungen auf die Volkswirtschaft</b><span class="basis">Art. 8 Abs. 3 Bst. d VlV</span></span>
+          <span class="res"><span class="loc">Ziff. 5.3</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Unternehmen, Konsumentinnen und Konsumenten und Gesamtwirtschaft, je eigens.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 5.3</span>«Bei einer proportionalen Erhöhung der MWST-Sätze um 0,8 Prozentpunkte ist – unter der Annahme vollständiger Überwälzung auf die Konsumentinnen und Konsumenten – mit einer Zunahme des Landesindex der Konsumentenpreise LIK um rund 0,4 Prozent zu rechnen.»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2005/543/20220801/de/html/fedlex-data-admin-ch-eli-cc-2005-543-20220801-de-html-7.html" target="_blank" rel="noopener">Art. 8 Abs. 3 Bst. d VlV</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Auswirkungen auf die Gesellschaft</b><span class="basis">Art. 8 Abs. 5 VlV</span></span>
+          <span class="res"><span class="loc">Ziff. 5.4</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Verteilung der Mehrbelastung nach Einkommen und Haushaltstyp.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 5.4</span>«Das heisst, dass eine Anhebung der MWST-Sätze Haushalte mit tiefen Einkommen absolut (in Franken) zwar weniger belastet, relativ (in Prozent ihres Einkommens) aber stärker trifft.»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2005/543/20220801/de/html/fedlex-data-admin-ch-eli-cc-2005-543-20220801-de-html-7.html" target="_blank" rel="noopener">Art. 8 Abs. 5 VlV</a></p>
+        </div>
+      </details>
+      <details class="pr miss" open>
+        <summary>
+          <span class="req"><b>Auswirkungen auf die Umwelt</b><span class="basis">Art. 8 Abs. 5 VlV</span></span>
+          <span class="res"><span class="chip miss">fehlt</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Kein Abschnitt und keine Aussage: Das Wort «Umwelt» kommt im Bericht nicht vor.</p>
+          
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2005/543/20220801/de/html/fedlex-data-admin-ch-eli-cc-2005-543-20220801-de-html-7.html" target="_blank" rel="noopener">Art. 8 Abs. 5 VlV</a></p>
+        </div>
+      </details>
+      <details class="pr na">
+        <summary>
+          <span class="req"><b>Wo keine Auswirkungen erwartet werden: als geprüft ausgewiesen</b><span class="basis">Art. 8 Abs. 5 VlV, Grundsatz der Transparenz</span></span>
+          <span class="res"><span class="chip na">entfällt</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Entfällt: Der Bericht verneint in keinem Bereich Auswirkungen. Die Umwelt behandelt er gar nicht (siehe oben).</p>
+          
+          <p class="law">Grundlage: <a href="https://www.bk.admin.ch/dam/de/sd-web/j9cDd13OplmQ/Botschaftsleitfaden_April_2026_de.pdf" target="_blank" rel="noopener">Art. 8 Abs. 5 VlV, Grundsatz der Transparenz</a></p>
+        </div>
+      </details><p class="grp">Planung</p>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Verhältnis zum Finanzplan</b><span class="basis">Art. 8 Abs. 5 VlV</span></span>
+          <span class="res"><span class="loc">Ziff. 1.3</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Finanzplan 2027–2029 und Voranschlag 2027.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 1.3</span>«Der aktuelle Finanzplan 2027– 2029 berücksichtigt eine Erhöhung der Armeeausgaben auf 1 Prozent des BIP bis 2032. Er sieht aber keine Mehreinnahmen aus einer Erhöhung der Mehrwertsteuer vor.»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2005/543/20220801/de/html/fedlex-data-admin-ch-eli-cc-2005-543-20220801-de-html-7.html" target="_blank" rel="noopener">Art. 8 Abs. 5 VlV</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Verhältnis zu den Strategien des Bundesrates</b><span class="basis">Art. 8 Abs. 5 VlV</span></span>
+          <span class="res"><span class="loc">Ziff. 1.3</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Bezug auf die Sicherheitspolitische Strategie 2026.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 1.3</span>«Es besteht ein direkter Zusammenhang zwischen der Vorlage und der Strategie des Bundesrates.»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2005/543/20220801/de/html/fedlex-data-admin-ch-eli-cc-2005-543-20220801-de-html-7.html" target="_blank" rel="noopener">Art. 8 Abs. 5 VlV</a></p>
+        </div>
+      </details><p class="grp">Zahlen</p>
+      <details class="pr unk" open>
+        <summary>
+          <span class="req"><b>Verlässlichkeit der wichtigsten Zahlen, mit Quellen und Berechnung</b><span class="basis">Art. 8 Abs. 4<sup>bis</sup> VlV</span></span>
+          <span class="res"><span class="loc">Ziff. 5.1</span><span class="chip unk">unklar</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Eine Einschätzung der Verlässlichkeit steht nur bei einzelnen Schätzungen, etwa zur Schattensteuer und zur Kaufkraft («nicht geeignet, die exakte Höhe der Belastung darzustellen», Ziffer 5.4). Von Hand prüfen, ob das für die wichtigsten Zahlen genügt, etwa den Mehrbedarf der Armee.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 5.1</span>«Die Höhe der Schattensteuer lässt sich jedoch nur grob schätzen.»</blockquote>
+          <p class="law">Grundlage: <a href="https://fedlex.data.admin.ch/filestore/fedlex.data.admin.ch/eli/cc/2005/543/20220801/de/html/fedlex-data-admin-ch-eli-cc-2005-543-20220801-de-html-7.html" target="_blank" rel="noopener">Art. 8 Abs. 4<sup>bis</sup> VlV</a></p>
+        </div>
+      </details>
+    </div>
+  </section>
+  <section class="docsec" id="doc-be" role="tabpanel" aria-labelledby="tab-be" hidden>
+    <div class="doc">
+      <div>
+        <span class="k">Vortrag zu einem Ausgabenbeschluss · Kanton Bern</span>
+        <h2>Rahmenkredit 2027–2029 für Fachapplikationen und Digitalisierung der Wirtschafts-, Energie- und Umweltdirektion</h2>
+        <p class="meta">Regierungsrat des Kantons Bern, 19. August 2026 · Geschäft 2025.WEU.4845 · <a href="https://ogd.parl.apps.be.ch/pdf-upload/691261e615d94cfaa18ed74781a09231-332.pdf" target="_blank" rel="noopener">PDF</a></p>
+      </div>
+      <div class="score">
+        <div class="counts"><span class="n ok"><b>8</b> vorhanden</span><span class="n unk"><b>1</b> unklar</span><span class="n miss"><b>1</b> fehlt</span></div>
+        <div class="sqs"><span class="sq ok" title="Das Vorhaben: vorhanden"></span><span class="sq miss" title="Mögliche Alternativen: fehlt"></span><span class="sq ok" title="Folgen eines Verzichts: vorhanden"></span><span class="sq ok" title="Rechtsgrundlagen und Rechtmässigkeit der Ausgabe: vorhanden"></span><span class="sq ok" title="Verhältnis zu den Richtlinien der Regierungspolitik: vorhanden"></span><span class="sq ok" title="Verhältnis zu Budget, Aufgaben- und Finanzplan und Investitionsplanung: vorhanden"></span><span class="sq ok" title="Auswirkungen auf Finanzen, Organisation, Personal, IT und Raum: vorhanden"></span><span class="sq ok" title="Art und Auswirkungen der Investitionen: vorhanden"></span><span class="sq ok" title="Auswirkungen auf die Gemeinden: vorhanden"></span><span class="sq unk" title="Auswirkungen auf Wirtschaft, Umwelt und Gesellschaft: unklar"></span></div>
+        <div class="cap"><span class="n na">1 entfällt</span></div>
+      </div>
+    </div>
+    <div class="rhead"><span>Verlangt <i>· alle Punkte von Art. 68 Abs. 1 GO</i></span><span>Befund</span></div>
+    <div class="raster"><p class="grp">Vorhaben und Recht</p>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Das Vorhaben</b><span class="basis">Art. 68 Abs. 1 Bst. a GO</span></span>
+          <span class="res"><span class="loc">Ziff. 1, 4</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Zusammenfassung und Übersicht über die beantragten Ausgaben.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 1, 4</span>«Mit diesem Rahmenkredit bewilligt der Grosse Rat einen Kostenrahmen von rund CHF 16.1 Millionen Franken einmalig und CHF 8.1 Millionen Franken wiederkehrend, Total rund CHF 24.2 Mio.»</blockquote>
+          <p class="law">Grundlage: <a href="https://www.belex.sites.be.ch/app/de/texts_of_law/151.211" target="_blank" rel="noopener">Art. 68 Abs. 1 Bst. a GO</a></p>
+        </div>
+      </details>
+      <details class="pr miss" open>
+        <summary>
+          <span class="req"><b>Mögliche Alternativen</b><span class="basis">Art. 68 Abs. 1 Bst. c GO</span></span>
+          <span class="res"><span class="chip miss">fehlt</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Keine Aussage zu Alternativen zum Rahmenkredit; Ziffer 4.4 beschreibt nur, wie neue Projekte geprüft werden.</p>
+          
+          <p class="law">Grundlage: <a href="https://www.belex.sites.be.ch/app/de/texts_of_law/151.211" target="_blank" rel="noopener">Art. 68 Abs. 1 Bst. c GO</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Folgen eines Verzichts</b><span class="basis">Art. 68 Abs. 1 Bst. c GO</span></span>
+          <span class="res"><span class="loc">Ziff. 5</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Eigener Abschnitt «Auswirkung der Nichtgenehmigung».</p>
+          <blockquote class="ev"><span class="ref">Ziff. 5</span>«Insgesamt führt eine Nichtgenehmigung zu massgeblichen Beeinträchtigungen bei der Erbringung der gesetzlichen Verwaltungsleistungen.»</blockquote>
+          <p class="law">Grundlage: <a href="https://www.belex.sites.be.ch/app/de/texts_of_law/151.211" target="_blank" rel="noopener">Art. 68 Abs. 1 Bst. c GO</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Rechtsgrundlagen und Rechtmässigkeit der Ausgabe</b><span class="basis">Art. 68 Abs. 1 Bst. d GO</span></span>
+          <span class="res"><span class="loc">Ziff. 2, 3</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Für die Rechtsgrundlagen verweist Ziffer 2 auf den Beschluss; Ziffer 3 qualifiziert die Ausgaben nach dem Finanzhaushaltsgesetz.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 2, 3</span>«Die Kosten für Beratung und Weiterentwicklung sind daher neu.»</blockquote>
+          <p class="law">Grundlage: <a href="https://www.belex.sites.be.ch/app/de/texts_of_law/151.211" target="_blank" rel="noopener">Art. 68 Abs. 1 Bst. d GO</a></p>
+        </div>
+      </details>
+      <details class="pr na">
+        <summary>
+          <span class="req"><b>Einlässliche Begründung bei gebundenen Ausgaben</b><span class="basis">Art. 68 Abs. 1 Bst. e GO</span></span>
+          <span class="res"><span class="chip na">entfällt</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Entfällt: Alle Ausgaben sind als neu qualifiziert.</p>
+          
+          <p class="law">Grundlage: <a href="https://www.belex.sites.be.ch/app/de/texts_of_law/151.211" target="_blank" rel="noopener">Art. 68 Abs. 1 Bst. e GO</a></p>
+        </div>
+      </details><p class="grp">Planung</p>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Verhältnis zu den Richtlinien der Regierungspolitik</b><span class="basis">Art. 68 Abs. 1 Bst. f GO</span></span>
+          <span class="res"><span class="loc">Ziff. 4.4</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Nicht in Ziffer 9, die nur die Strategie Digitale Verwaltung und ICT nennt, sondern in Ziffer 4.4.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 4.4</span>«Diese Vorhaben dienen der Umsetzung der strategischen Vorgaben der ICT und der digitalen Verwaltung: ‒ Richtlinien der Regierungspolitik 2027-2030»</blockquote>
+          <p class="law">Grundlage: <a href="https://www.belex.sites.be.ch/app/de/texts_of_law/151.211" target="_blank" rel="noopener">Art. 68 Abs. 1 Bst. f GO</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Verhältnis zu Budget, Aufgaben- und Finanzplan und Investitionsplanung</b><span class="basis">Art. 68 Abs. 1 Bst. f GO</span></span>
+          <span class="res"><span class="loc">Ziff. 4.1</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Bezug auf Budget und Finanzplan bei der Übersicht der Ausgaben und im Anhang.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 4.1</span>«Gemäss Absprache mit der FiKo umfasst der Kredit eine Reserve von 8 Prozent auf den einmaligen Ausgaben, die im Budget und Finanzplan nicht eingestellt ist.»</blockquote>
+          <p class="law">Grundlage: <a href="https://www.belex.sites.be.ch/app/de/texts_of_law/151.211" target="_blank" rel="noopener">Art. 68 Abs. 1 Bst. f GO</a></p>
+        </div>
+      </details><p class="grp">Auswirkungen</p>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Auswirkungen auf Finanzen, Organisation, Personal, IT und Raum</b><span class="basis">Art. 68 Abs. 1 Bst. f1 GO</span></span>
+          <span class="res"><span class="loc">Ziff. 8</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Eigener Abschnitt mit Investitionen, Abschreibungen und Folgekosten.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 8</span>«Abgesehen vom Gesagten hat der vorliegende Beschluss keine besonderen Auswirkungen auf Finanzen, Organisation, Personal, ICT und Raum.»</blockquote>
+          <p class="law">Grundlage: <a href="https://www.belex.sites.be.ch/app/de/texts_of_law/151.211" target="_blank" rel="noopener">Art. 68 Abs. 1 Bst. f1 GO</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Art und Auswirkungen der Investitionen</b><span class="basis">Art. 68 Abs. 1 Bst. f2 GO</span></span>
+          <span class="res"><span class="loc">Ziff. 8.1, 8.2</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Werterhaltende und wertvermehrende Investitionen, Abschreibungen.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 8.1, 8.2</span>«Als wertvermehrend werden Investitionen für Projekte und Weiterentwicklungen klassifiziert, als werterhaltend alle anderen Investitionen.»</blockquote>
+          <p class="law">Grundlage: <a href="https://www.belex.sites.be.ch/app/de/texts_of_law/151.211" target="_blank" rel="noopener">Art. 68 Abs. 1 Bst. f2 GO</a></p>
+        </div>
+      </details>
+      <details class="pr ok">
+        <summary>
+          <span class="req"><b>Auswirkungen auf die Gemeinden</b><span class="basis">Art. 68 Abs. 1 Bst. g GO</span></span>
+          <span class="res"><span class="loc">Ziff. 10</span><span class="chip ok">vorhanden</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Ein Satz.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 10</span>«Der Kredit hat keine direkten Auswirkungen auf die Gemeinden.»</blockquote>
+          <p class="law">Grundlage: <a href="https://www.belex.sites.be.ch/app/de/texts_of_law/151.211" target="_blank" rel="noopener">Art. 68 Abs. 1 Bst. g GO</a></p>
+        </div>
+      </details>
+      <details class="pr unk" open>
+        <summary>
+          <span class="req"><b>Auswirkungen auf Wirtschaft, Umwelt und Gesellschaft</b><span class="basis">Art. 68 Abs. 1 Bst. g1 GO</span></span>
+          <span class="res"><span class="loc">Ziff. 11</span><span class="chip unk">unklar</span></span>
+        </summary>
+        <div class="pbody">
+          <p class="find">Ziffer 11 nennt Wirtschaft und Gesellschaft, die Umwelt nicht. Von Hand prüfen, ob die Umwelt hier keine Rolle spielt.</p>
+          <blockquote class="ev"><span class="ref">Ziff. 11</span>«Die Entwicklung bzw. Weiterentwicklung von Fachapplikationen zur Digitalisierung von Verwaltungsprozessen hat positive Auswirkungen auf Wirtschaft und Gesellschaft, indem administrative Prozesse effizienter gestaltet sowie der Zugang zu behördlichen Dienstleistungen vereinfacht werden.»</blockquote>
+          <p class="law">Grundlage: <a href="https://www.belex.sites.be.ch/app/de/texts_of_law/151.211" target="_blank" rel="noopener">Art. 68 Abs. 1 Bst. g1 GO</a></p>
+        </div>
+      </details>
+    </div>
+  </section>
+
+  <aside class="why" aria-label="Warum ein Prüfraster">
+    <p><b>Warum ein Prüfraster?</b> In einer eigenen Auswertung fehlte mindestens einer der Punkte in 46 von 57 Botschaften seit Januar 2025, in 59 von 60 erläuternden Berichten und in 17 von 20 Vorträgen des Regierungsrates zu Ausgabenbeschlüssen. Die Urteile hat das Tool erhoben; Menschen haben sie noch nicht bestätigt.</p>
+    <details>
+      <summary>Häufigkeit pro Punkt</summary>
+      <div class="freq">
+        <table><caption>Bund · fehlt in …</caption><thead><tr><th>Punkt</th><th>57 Botschaften</th><th>60 Berichten</th></tr></thead><tbody><tr><td>Bund: Finanzen und Personal</td><td>0</td><td>4</td></tr><tr><td>Kantone und Gemeinden</td><td>2</td><td>6</td></tr><tr><td>Volkswirtschaft</td><td>6</td><td>13</td></tr><tr><td>Gesellschaft</td><td>11</td><td>20</td></tr><tr><td>Umwelt</td><td>21</td><td>33</td></tr><tr><td>Verneinte Auswirkungen als geprüft ausgewiesen</td><td>18</td><td>18 von 59</td></tr><tr><td>Finanzplan</td><td>8</td><td>51</td></tr><tr><td>Strategien des Bundesrates</td><td>33</td><td>52</td></tr><tr><td>Verlässlichkeit der Zahlen</td><td>—</td><td>43 von 48 mit Zahlen</td></tr></tbody></table>
+        <table><caption>Kanton Bern · 20 Vorträge zu Ausgabenbeschlüssen</caption><thead><tr><th>Punkt</th><th>fehlt</th><th>unklar</th></tr></thead><tbody><tr><td>Vorhaben</td><td>0</td><td>0</td></tr><tr><td>Mögliche Alternativen</td><td>12</td><td>3</td></tr><tr><td>Folgen eines Verzichts</td><td>1</td><td>5</td></tr><tr><td>Rechtsgrundlagen</td><td>0</td><td>1</td></tr><tr><td>Begründung gebundener Ausgaben <i>(nur 1 anwendbar)</i></td><td>0</td><td>0</td></tr><tr><td>Richtlinien der Regierungspolitik</td><td>5</td><td>2</td></tr><tr><td>Budget und Finanzplan</td><td>1</td><td>0</td></tr><tr><td>Finanzen, Organisation, Personal, IT, Raum</td><td>0</td><td>11</td></tr><tr><td>Investitionen <i>(nur 10 anwendbar)</i></td><td>0</td><td>0</td></tr><tr><td>Gemeinden</td><td>6</td><td>1</td></tr><tr><td>Wirtschaft, Umwelt und Gesellschaft</td><td>3</td><td>8</td></tr></tbody></table>
+      </div>
+    </details>
+  </aside>
+
+  <p class="foot">Prüfraster nach Art. 141 Abs. 2 ParlG, Art. 8 VlV, dem Botschaftsleitfaden der Bundeskanzlei (April 2026) und Art. 68 der Geschäftsordnung des Grossen Rates (GO). Belegstellen wörtlich: Botschaft aus der HTML-Fassung auf Fedlex, Fussnotenzeichen weggelassen; erläuternder Bericht und Vortrag aus den PDFs, Trennstriche aus Zeilenumbrüchen getilgt; [...] = Auslassung. Befunde: vom Tool formuliert. Stand 9.10.2026.</p>
+</div>
+<script>
+(function(){
+  var tabs = document.querySelectorAll('.dtab');
+  function show(k){
+    tabs.forEach(function(t){ var on = t.dataset.k === k; t.classList.toggle('on', on); t.setAttribute('aria-selected', String(on)); });
+    document.querySelectorAll('.docsec').forEach(function(s){ s.hidden = s.id !== 'doc-' + k; });
+  }
+  tabs.forEach(function(t){ t.addEventListener('click', function(){ show(t.dataset.k); }); });
+})();
+</script>
+</body></html>

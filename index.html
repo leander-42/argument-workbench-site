@@ -1,182 +1,132 @@
-<!doctype html>
-<html lang="de">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<!doctype html><html lang="de"><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Argument Workbench</title>
-<style>body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}</style>
-</head>
-<body>
 <style>
-:root{--bg:#eceae6;--card:#ffffff;--ink:#23252c;--muted:#6b6862;--dim:#8a8781;--line:#d2cec6;--accent:#4f46e5;--accent-soft:#e7e5ff;--warn:#b45309;--warn-soft:#fdf1e3;--hatch:#f5f3ef;--hatch2:#e6e2da;--mono:ui-monospace,Menlo,Consolas,monospace;--serif:ui-serif,"Iowan Old Style",Palatino,Georgia,serif}
-@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1c1b19;--card:#26241f;--ink:#ece9e2;--muted:#b0aca3;--dim:#8a8781;--line:#3a3833;--accent:#8b85ff;--accent-soft:#2b2a4a;--warn:#f0a35a;--warn-soft:#3a2a18;--hatch:#2a2823;--hatch2:#34312b}}
-:root[data-theme="dark"]{--bg:#1c1b19;--card:#26241f;--ink:#ece9e2;--muted:#b0aca3;--dim:#8a8781;--line:#3a3833;--accent:#8b85ff;--accent-soft:#2b2a4a;--warn:#f0a35a;--warn-soft:#3a2a18;--hatch:#2a2823;--hatch2:#34312b}
-body{margin:0;font:14px -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55}
-.ix{max-width:760px;margin:0 auto;padding:56px 24px 90px}
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--dim);margin:0 0 16px}
+/* Layout: pro Anwendung eine klickbare Karte, eine pro Zeile; darin Titel, ein Satz und die Daten als Liste */
+:root{--bg:#eceae6;--card:#ffffff;--ink:#23252c;--muted:#6b6862;--dim:#8a8781;--line:#d2cec6;--accent:#4f46e5;--accent-soft:#e7e5ff;--warn:#b45309;--warn-soft:#fdf1e3;--hatch:#f5f3ef;--hatch2:#e6e2da;
+  --mono:ui-monospace,Menlo,Consolas,monospace;--serif:ui-serif,"Iowan Old Style",Palatino,Georgia,serif;--sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#1c1b19;--card:#26241f;--ink:#ece9e2;--muted:#b0aca3;--dim:#8a8781;--line:#3a3833;--accent:#8b85ff;--accent-soft:#2b2a4a;--warn:#f0a35a;--warn-soft:#3a2a18;--hatch:#2a2823;--hatch2:#34312b;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#1c1b19;--card:#26241f;--ink:#ece9e2;--muted:#b0aca3;--dim:#8a8781;--line:#3a3833;--accent:#8b85ff;--accent-soft:#2b2a4a;--warn:#f0a35a;--warn-soft:#3a2a18;--hatch:#2a2823;--hatch2:#34312b;color-scheme:dark}
+body{margin:0;font:14px/1.55 var(--sans);background:var(--bg);color:var(--ink)}
+.ix{max-width:800px;margin:0 auto;padding:52px 24px 90px}
 h1{font-family:var(--serif);font-size:clamp(30px,5vw,42px);margin:0 0 14px;letter-spacing:-.02em;font-weight:600;text-wrap:balance}
-p.sub{color:var(--muted);font-size:16px;line-height:1.65;margin:0 0 30px;max-width:62ch}
+p.sub{color:var(--muted);font-size:16px;line-height:1.65;margin:0 0 10px;max-width:62ch}
 p.sub strong{color:var(--ink)}
-h2.user{font-family:var(--serif);font-size:24px;margin:44px 0 4px;letter-spacing:-.01em;font-weight:600}
-p.userdesc{color:var(--muted);margin:0 0 14px;max-width:62ch}
-.sec{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:22px 0 8px;display:flex;align-items:center;gap:10px}
-.sec:after{content:"";flex:1;height:1px;background:var(--line)}
-p.data{font-size:13px;color:var(--muted);margin:0 0 10px;max-width:66ch}
-p.data b{color:var(--ink);font-weight:600}
-.cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:0 0 6px}
-.topics{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin:0 0 12px}
-.topic{border-left:2px solid var(--line);padding:2px 0 2px 12px;font-size:13px;color:var(--muted);line-height:1.5}
-.topic b{display:block;color:var(--ink);font-weight:600;margin-bottom:2px}
-.topic .k{font-family:var(--mono);font-style:normal;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:4px}
-a.card{display:block;border:1px solid var(--line);border-radius:9px;background:var(--card);padding:13px 15px;text-decoration:none;color:var(--ink)}
-a.card:hover,a.card:focus-visible{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent);outline:none}
-a.card b{display:block;font-size:15.5px;margin-bottom:3px}
-a.card span{font-size:13px;color:var(--muted);line-height:1.5;display:block}
-a.card.soon{border-style:dashed;background:repeating-linear-gradient(135deg,var(--hatch),var(--hatch) 8px,var(--hatch2) 8px,var(--hatch2) 9px)}
-a.card em{font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);display:block;margin-bottom:5px}
-p.none{font-size:13px;color:var(--dim);border-left:2px solid var(--line);padding:2px 0 2px 12px;margin:10px 0 0;max-width:62ch}
-.backlog{border:1px solid var(--line);border-radius:9px;background:var(--card);padding:6px 16px 4px;margin-top:8px}
-.bl{padding:12px 0;border-bottom:1px solid var(--line)}
+h2.user{font-family:var(--serif);font-size:25px;margin:46px 0 4px;letter-spacing:-.01em;font-weight:600}
+p.userdesc{color:var(--muted);margin:0 0 16px;max-width:64ch}
+.apps{display:grid;grid-template-columns:minmax(0,1fr);gap:14px;margin:0}
+h2.user + .apps{margin-top:14px}
+.appcard{position:relative;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px 16px;min-width:0}
+.appcard:hover{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+.appcard:focus-within{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent)}
+.appcard h3{font-size:18px;margin:0 0 6px;letter-spacing:-.005em;line-height:1.3}
+.appcard h3 a{color:inherit;text-decoration:none}
+.appcard h3 a::after{content:"";position:absolute;inset:0;border-radius:12px}
+.appcard h3 a:focus-visible{outline:none}
+.appcard .what{margin:0 0 14px;color:var(--muted);font-size:13.5px;line-height:1.5}
+.dh{font-family:var(--mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--dim);margin:0 0 7px;padding-top:12px;border-top:1px solid var(--line)}
+.data{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.data li{font-size:13px;line-height:1.45;color:var(--muted)}
+.data li b{display:block;color:var(--ink);font-weight:600;font-size:13.5px}
+.open{margin:auto 0 0;padding-top:14px;font-size:12.5px;font-weight:600;color:var(--accent);text-align:right}
+.backlog{border:1px solid var(--line);border-radius:9px;background:var(--card);padding:4px 16px;margin-top:10px}
+.bl{padding:10px 0;border-bottom:1px solid var(--line);display:grid;grid-template-columns:minmax(0,190px) minmax(0,1fr);gap:4px 16px}
 .bl:last-child{border-bottom:0}
-.bl b{display:block;font-size:14.5px;margin-bottom:3px}
-.bl b i{font-family:var(--mono);font-style:normal;font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--warn);background:var(--warn-soft);padding:2px 6px;border-radius:4px;margin-left:8px;vertical-align:middle}
-.bl p{margin:0 0 4px;color:var(--muted);font-size:13px;max-width:66ch}
-.bl .ex{font-size:13px;color:var(--ink);background:var(--bg);border-radius:6px;padding:8px 11px;margin-top:6px}
-.bl .ex .u{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--dim);display:block;margin-bottom:3px}
-p.foot{font-family:var(--mono);font-size:11px;color:var(--dim);margin-top:34px;line-height:1.7}
-p.foot a{color:var(--dim)}
-@media (max-width:480px){.ix{padding:36px 16px 60px}}
+.bl b{font-size:14px}
+.bl p{margin:0;color:var(--muted);font-size:13px}
+.bl a,p.userdesc a{color:var(--dim)}
+a:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media (max-width:560px){.ix{padding:36px 16px 60px}.bl{grid-template-columns:1fr}}
 </style>
 
 <div class="ix">
-  <p class="eyebrow">argument workbench · prototyp · nach anwender geordnet</p>
   <h1>Argument Workbench</h1>
-  <p class="sub">Ein Werkzeug, das politische Texte lesbar macht: Es zerlegt sie in einzelne Aussagen, zeigt
-  <strong>Einigkeit, Streit und Schweigen</strong> — und führt jede Darstellung auf die wörtliche Textstelle samt Quelle
-  zurück. Geordnet nach dem, was jemand in der Hand hat: <strong>Bürger*innen</strong> stehen vor einer Abstimmung mit
-  Büchlein und Parolen; <strong>Expert*innen</strong> in Fraktionssekretariat, Verband, Verwaltung und Journalismus lesen Rohtexte,
-  die noch niemand zusammengefasst hat — Stellungnahmen, Debatten, Berichte. Innerhalb jeder Gruppe zählt, ob
-  <strong>mehrere Positionen</strong> gegeneinanderstehen oder <strong>eine Position</strong> für sich zu prüfen ist.</p>
-
-  <h2 class="user">Für Bürger*innen &amp; Schulen</h2>
-  <p class="userdesc">Vor einer Abstimmung. Die Daten sind das Abstimmungsbüchlein und die Parolen-Begründungen der fünf grössten Parteien.</p>
-
-  <p class="sec">Mehrere Positionen</p>
-  <p class="data"><b>Zwei Themen:</b></p>
-  <div class="topics">
-    <div class="topic"><i class="k">Volksinitiative · Abstimmung 14. Juni 2026</i><b>«Keine 10-Millionen-Schweiz!» (Nachhaltigkeitsinitiative)</b><span>Abstimmungsbüchlein (Erläuterungen des Bundesrates, admin.ch) · Parolen mit Begründung: SVP, SP, FDP, Die Mitte, GRÜNE</span></div>
-    <div class="topic"><i class="k">Gesetzesänderung, Referendum · Abstimmung 14. Juni 2026</i><b>Zivildienstgesetz</b><span>Abstimmungsbüchlein (Erläuterungen des Bundesrates, admin.ch) · Parolen mit Begründung: SVP, SP, FDP, Die Mitte, GRÜNE</span></div>
-  </div>
-  <div class="cards">
-    <a class="card" href="b2-positionen.html"><b>Argumentbaum</b><span>Die Argumente als Baum, bis zur Quelle: nach Themen und Fragen oder als Ja/Nein. Jeder Pfad endet am Zitat.</span></a>
-    <a class="card" href="b2-argumentmap.html"><b>Argument map</b><span>Hauptthese, Thesen, Prämissen — mit Stütz- und Angriffspfeilen. Zwei Seiten, Querverbindungen zwischen ihnen.</span></a>
-    <a class="card" href="b2-gap.html"><b>Gap</b><span>Jede Aussage eine Achse (0 = lehnt ab, 10 = stimmt zu), jede Position ein Punkt.</span></a>
-    <a class="card" href="b2-crux.html"><b>Crux</b><span>Pro Streitfrage: was sie entscheiden würde. Zuunterst die Crux(es) der ganzen Vorlage — eine Frage statt zwanzig Argumente.</span></a>
-    <a class="card soon" href="b-aufkommend.html"><em>Aufkommend · Mock-up</em><b>Abstimmung vom 29. November 2026</b><span>AHV-Zusatzfinanzierung (Mehrwertsteuer) · Feuerwerk-Initiative · Ehepaar-Initiative (faire Bundessteuern) · Kriegsmaterialgesetz (Referendum)</span></a>
-  </div>
-  <p class="none"><b>Eine Position:</b> kein Anwendungsfall.</p>
+  <p class="sub">Das Werkzeug macht politische Texte lesbar. Es ordnet Stellungnahmen, Voten, Abstimmungsunterlagen und Parolen nach Themen und Fragen, zeigt, <strong>wer welche Position vertritt</strong>, und führt jede Aussage <strong>zur wörtlichen Textstelle</strong>. Bei Botschaften, erläuternden Berichten und Vorträgen prüft es, ob die Pflichtinhalte drinstehen.</p>
 
   <h2 class="user">Für Expert*innen</h2>
-  <p class="userdesc">Fraktionssekretariat, Verband, Verwaltung, Journalismus. Die Daten sind Rohtexte: Stellungnahmen einer Vernehmlassung, Voten einer Parlamentsdebatte, ein Bericht, ein einzelnes Votum.</p>
+  <p class="userdesc">Fraktionen und Kommissionen mit ihren Sekretariaten, Verbände, Verwaltung, Journalismus. Sie lesen Rohtexte, die noch niemand zusammengefasst hat.</p>
+  <div class="apps">
+    <article class="appcard" id="a">
+      <h3><a href="a-baum.html">Stellungnahmen lesbar machen</a></h3>
+      <p class="what">Die Stellungnahmen einer Vernehmlassung nach Themen und Fragen: wer was sagt, mit Zitat.</p>
+      <p class="dh">Daten</p>
+      <ul class="data">
+        <li><b>Paket Schweiz–EU (Bilaterale III)</b>Bund · Vernehmlassung Herbst 2025 · 8 Stellungnahmen</li>
+        <li><b>Steuergesetzrevision 2027</b>Kanton Bern · Vernehmlassung Herbst 2024 · 8 Stellungnahmen</li>
+      </ul>
+      <p class="open" aria-hidden="true">Öffnen →</p>
+    </article>
+    <article class="appcard" id="b">
+      <h3><a href="b-pflicht.html">Pflichtinhalte prüfen</a></h3>
+      <p class="what">Prüft, ob ein Dokument enthält, was das Recht verlangt: vorhanden, unklar oder fehlt, mit Belegstelle.</p>
+      <p class="dh">Daten</p>
+      <ul class="data">
+        <li><b>Botschaft zum Zivildienstgesetz</b>Bund · Bundesrat, 19.2.2025</li>
+        <li><b>Erläuternder Bericht zur Finanzierung der Rüstungsausgaben</b>Bund · Vernehmlassung ab 6.3.2026</li>
+        <li><b>Vortrag zum Rahmenkredit Fachapplikationen der WEU</b>Kanton Bern · Regierungsrat, 19.8.2026</li>
+      </ul>
+      <p class="open" aria-hidden="true">Öffnen →</p>
+    </article>
+    <article class="appcard" id="d">
+      <h3><a href="d-baum.html">Debatten und Anträge verstehen</a></h3>
+      <p class="what">Die Voten einer Parlamentsdebatte nach Themen und Fragen: wer was sagt, mit Zitat.</p>
+      <p class="dh">Daten</p>
+      <ul class="data">
+        <li><b>Neutralitätsinitiative (24.092)</b>Nationalrat 4.3.2026, Ständerat 12.3.2026 · 14 Voten</li>
+        <li><b>Steuergesetzrevision 2027</b>Grosser Rat des Kantons Bern, 1. Lesung 9.9.2025 · 8 Fraktionen und Regierungsrat · mit Abstimmungsresultaten zu den Anträgen</li>
+      </ul>
+      <p class="open" aria-hidden="true">Öffnen →</p>
+    </article>
+  </div>
 
-  <p class="sec">Mehrere Positionen</p>
-  <p class="data"><b>Zwei Themen:</b></p>
-  <div class="topics">
-    <div class="topic"><i class="k">Vernehmlassung · Herbst 2025</i><b>Paket Schweiz–EU (Bilaterale III)</b><span>Acht Stellungnahmen: economiesuisse, SP, Die Mitte, SVP, sgv, SGB, FDP, GRÜNE · Quellen: Vernehmlassungsantworten der Organisationen (PDF/Website)</span></div>
-    <div class="topic"><i class="k">Parlamentsdebatte · Nationalrat 4. März 2026, Ständerat 12. März 2026</i><b>Neutralitätsinitiative</b><span>Vierzehn Voten · Quelle: Amtliches Bulletin (parlament.ch)</span></div>
-  </div>
-  <div class="cards">
-    <a class="card" href="e2-positionen.html"><b>Argumentbaum</b><span>Die Argumente als Baum, bis zur Quelle: Stellungnahmen ohne Lager, die Debatte als Ja/Nein. Jeder Pfad endet am Zitat.</span></a>
-    <a class="card" href="e2-argumentmap.html"><b>Argument map</b><span>Hauptthese, Thesen, Prämissen — mit Stütz- und Angriffspfeilen. Zwei Seiten, Querverbindungen zwischen ihnen; bei der Vernehmlassung folgen die Seiten der Haltung, nicht einer Abstimmung.</span></a>
-    <a class="card" href="e2-gap.html"><b>Gap</b><span>Jede Aussage eine Achse (0 = lehnt ab, 10 = stimmt zu), jede Organisation oder Redner*in ein Punkt.</span></a>
-    <a class="card" href="e2-crux.html"><b>Crux</b><span>Woran hängt der Streit — an einer Zahl, einem fehlenden Beleg, einer Rangfolge von Gütern? Pro Streitfrage und für die ganze Vorlage.</span></a>
-    <a class="card soon" href="e-aufkommend.html"><em>Aufkommend · Mock-up</em><b>Paket Schweiz–EU: Ständerat 28.–30. September 2026 → Nationalrat</b><span>Sobald die Debatte im Amtlichen Bulletin steht, füllt sich diese Ansicht — für alle, die im Zweitrat antworten müssen.</span></a>
-  </div>
-
-  <p class="sec">Eine Position</p>
-  <p class="data"><b>Zwei Themen:</b></p>
-  <div class="topics">
-    <div class="topic"><i class="k">Erläuternder Bericht · Bundesrat, 13. Juni 2025</i><b>Paket Schweiz–EU (Bilaterale III)</b><span>Abschnitt «Übersicht» · Quelle: EDA (PDF)</span></div>
-    <div class="topic"><i class="k">Votum · Ständerat, 12. März 2026</i><b>Neutralitätsinitiative — Bundesrat Cassis</b><span>Quelle: Amtliches Bulletin (parlament.ch)</span></div>
-  </div>
-  <div class="cards">
-    <a class="card" href="e1-offene-fragen.html"><b>Offene Fragen</b><span>Der Text im Ganzen, kritische Stellen markiert und klassiert (unbelegte Behauptung, Wertung als Tatsache, Quelle unklar, …).</span></a>
-    <a class="card" href="e1-position.html"><b>Argumentbaum</b><span>Ein einzelner Text als Baum: seine Aussagen, nach Themen gruppiert, ohne Gegenseite — jede endet am Zitat.</span></a>
-    <a class="card" href="e1-argumentmap.html"><b>Argument map</b><span>Ein Text als Karte: welche Prämisse trägt welche These, und wo hängt die Hauptthese.</span></a>
+  <h2 class="user">Für Bürger*innen &amp; Schulen</h2>
+  <div class="apps">
+    <article class="appcard" id="c">
+      <h3><a href="c-buechlein-baum.html">Abstimmung verstehen – pro und contra</a></h3>
+      <p class="what">Die Argumente beider Seiten aus dem Büchlein: vom Ja oder Nein zum Argument und zum Zitat.</p>
+      <p class="dh">Daten</p>
+      <ul class="data">
+        <li><b>Abstimmungsbüchlein zur 10-Millionen-Initiative</b>Erläuterungen des Bundesrates · Abstimmung 14.6.2026 · Komitee, Bundesrat und Parlament</li>
+        <li><b>Abstimmungsbüchlein zum Zivildienstgesetz</b>Erläuterungen des Bundesrates · Abstimmung 14.6.2026 · Komitee, Bundesrat und Parlament</li>
+        <li><b>Abstimmungserläuterungen zur Berner Bildungsinitiative</b>Erläuterungen des Grossen Rates des Kantons Bern · Abstimmung 27.9.2026 · Komitee, Mehrheit und Minderheit im Grossen Rat</li>
+      </ul>
+      <p class="open" aria-hidden="true">Öffnen →</p>
+    </article>
+    <article class="appcard" id="c2">
+      <h3><a href="c-parolen-baum.html">Abstimmung verstehen – vertieft</a></h3>
+      <p class="what">Die Begründungen der Parolen nach Themen und Fragen: wer was sagt, mit Zitat.</p>
+      <p class="dh">Daten</p>
+      <ul class="data">
+        <li><b>Parolen zur 10-Millionen-Initiative</b>Begründungen von SVP, SP, FDP, Die Mitte und GRÜNEN</li>
+        <li><b>Parolen zum Zivildienstgesetz</b>Begründungen von SVP, SP, FDP, Die Mitte und GRÜNEN</li>
+      </ul>
+      <p class="open" aria-hidden="true">Öffnen →</p>
+    </article>
   </div>
 
   <h2 class="user">Backlog</h2>
-  <p class="userdesc">Funktionen, die noch nicht gebaut sind.</p>
   <div class="backlog">
-    <div class="bl">
-      <b>Steelman</b>
-      <p>Die stärkste Fassung einer Position — die Idee: Der Steelman kann helfen, diese Position besser zu verstehen, gerade von der Gegenseite aus.</p>
-    </div>
-    <div class="bl">
-      <b>Meinungsbildung: eigene Werte und Meinungen eingeben → Einsichten</b>
-      <p>Die Nutzerin kann die Extraktion verändern und ihr widersprechen — und daraus Einsichten gewinnen.</p>
-    </div>
-    <div class="bl">
-      <b>Pro/Contra ergänzen: «Contra, aber pro Gegenvorschlag»</b>
-      <p>Eine dritte Haltung neben Ja und Nein bei Initiativen mit Gegenentwurf — als eigener Ast und Stempel.</p>
-    </div>
-    <div class="bl">
-      <b>Argument map: gleiche Fakten, andere Schlussfolgerung</b>
-      <p>Es kommt vor, dass dieselben Fakten von verschiedenen Akteuren anders interpretiert werden — die Karte soll das sichtbar machen: ein geteilter Fakt, zwei Schlussfolgerungen.</p>
-    </div>
-    <div class="bl">
-      <b>Andere Anwendungsmöglichkeiten prüfen</b>
-      <p>Nicht nur politische Texte.</p>
-    </div>
+    <div class="bl"><b>Crux</b><p>Woran der Streit hängt: an einer Zahl, einem fehlenden Beleg, einer Rangfolge von Gütern.</p></div>
+    <div class="bl"><b>Offene Fragen</b><p>Kritische Stellen eines einzelnen Textes, markiert und klassiert.</p></div>
+    <div class="bl"><b>Ein einzelner Text</b><p>Baum und Karte eines Berichts oder eines Votums, ohne Gegenseite.</p></div>
+    <div class="bl"><b>Präzision und Recall</b><p>Ein Schieberegler, mit dem man selbst wählt, wie viele Themen die Extraktion findet.</p></div>
+    <div class="bl"><b>Steelman</b><p>Die stärkste Fassung einer Position, gerade für die Gegenseite.</p></div>
+    <div class="bl"><b>Meinungsbildung</b><p>Eigene Werte und Meinungen eingeben, der Extraktion widersprechen und daraus lernen.</p></div>
+    <div class="bl"><b>Dritte Haltung</b><p>«Contra, aber pro Gegenvorschlag» bei Initiativen mit Gegenentwurf.</p></div>
+    <div class="bl"><b>Gleiche Fakten</b><p>In der Karte zeigen, wenn dieselben Fakten zu verschiedenen Schlüssen führen.</p></div>
+    <div class="bl"><b>Andere Anwendungen</b><p>Nicht nur politische Texte.</p></div>
   </div>
 
-  <h2 class="user">Limitations</h2>
+  <h2 class="user">Grenzen</h2>
   <p class="userdesc">Was der Prototyp nicht oder nur eingeschränkt leistet.</p>
   <div class="backlog">
-    <div class="bl">
-      <b>Vollständigkeit</b>
-      <p>Ausser den Argumente-Seiten des Büchleins sind alle Texte Auszüge — ausgewählte Texte (8 von 1'377 Stellungnahmen, 14 von rund 100 Redner*innen) und daraus ausgewählte Absätze. Was nicht extrahiert wurde, erscheint nirgends — auch nicht als Schweigen.</p>
-    </div>
-    <div class="bl">
-      <b>Akteure</b>
-      <p>Bei den Abstimmungen nur die fünf grössten Parteien, keine Verbände oder Komitees; bei der Vernehmlassung nur Parteien und Dachverbände.</p>
-    </div>
-    <div class="bl">
-      <b>Sprache</b>
-      <p>Nur Deutsch; französische Voten stehen im Original, ohne Übersetzung.</p>
-    </div>
-    <div class="bl">
-      <b>Momentaufnahme</b>
-      <p>Positionen können sich seither verschoben haben.</p>
-    </div>
-    <div class="bl">
-      <b>Quellen-Mix</b>
-      <p>Eine Position setzt sich teils aus verschiedenen Textsorten zusammen (Medienmitteilung, Parteitagsrede, leichte Sprache); das begrenzt die Vergleichbarkeit.</p>
-    </div>
-    <div class="bl">
-      <b>Ermessen des Modells</b>
-      <p>Streitfragen, Crux, Karten und Einschätzungen (0–10) sind vom Tool formuliert und nicht validiert; die Einschätzungen sind grob.</p>
-    </div>
-    <div class="bl">
-      <b>Nicht reproduzierbar</b>
-      <p>Ein neuer Lauf oder ein anderes Modell ergäbe eine andere Struktur.</p>
-    </div>
-    <div class="bl">
-      <b>Framing</b>
-      <p>Welche Streitfragen es gibt und wie sie formuliert sind, prägt die Lesart — auch eine neutral gemeinte Struktur ist eine Entscheidung.</p>
-    </div>
-    <div class="bl">
-      <b>Schein-Objektivität</b>
-      <p>Eine saubere Darstellung mit Quellen wirkt vollständiger und neutraler, als sie ist.</p>
-    </div>
-    <div class="bl">
-      <b>Nicht evaluiert</b>
-      <p>Keine Nutzer*innen-Tests, keine Ground Truth.</p>
-    </div>
+    <div class="bl"><b>Auszüge</b><p>Ausser den Argumente-Seiten des Büchleins sind alle Texte Auszüge: ausgewählte Texte (beim Bund 8 von 1377 Stellungnahmen, 14 von rund 100 Redner*innen) und daraus ausgewählte Absätze. Was nicht erhoben wurde, erscheint nirgends, auch nicht als Schweigen.</p></div>
+    <div class="bl"><b>Akteure</b><p>Bei den Abstimmungen nur die fünf grössten Parteien. Bei den Vernehmlassungen Parteien und einige Verbände, in Bern dazu die Stadt Bern.</p></div>
+    <div class="bl"><b>Sprache</b><p>Nur Deutsch; französische Voten stehen im Original.</p></div>
+    <div class="bl"><b>Ermessen des Modells</b><p>Themen, Fragen, Antworten, Kurzfassungen, Karten und Einschätzungen 0–10 sind vom Tool formuliert und nicht validiert; die Einschätzungen sind grob.</p></div>
+    <div class="bl"><b>Momentaufnahme</b><p>Positionen können sich seither verschoben haben. Ein neuer Lauf ergäbe eine andere Struktur.</p></div>
+    <div class="bl"><b>Framing</b><p>Welche Fragen es gibt und wie sie formuliert sind, prägt die Lesart. Eine saubere Darstellung mit Quellen wirkt vollständiger und neutraler, als sie ist.</p></div>
+    <div class="bl"><b>Nicht evaluiert</b><p>Keine Tests mit Nutzer*innen, keine Ground Truth. Die Urteile zu den Pflichtinhalten hat noch niemand bestätigt.</p></div>
   </div>
 
-  <p class="foot">Quellen: Erläuterungen des Bundesrates (Abstimmungsbüchlein 14.6.2026, admin.ch, PDF v2), Parolen-Begründungen der Parteien (Medienmitteilungen, Parteitags-Unterlagen, Kampagnenseiten — Quellenlink an jeder Position), Vernehmlassungsantworten zum Paket Schweiz–EU (Herbst 2025, Original-PDFs/-Webseiten der Organisationen, Auszüge), Amtliches Bulletin (Nationalrat 4.3.2026, Ständerat 12.3.2026, parlament.ch; Voten als Auszüge), Erläuternder Bericht des Bundesrates (13.6.2025, Abschnitt «Übersicht»). Alle Zitate wurden am 27.9.2026 gegen die Originale geprüft (wörtlich; Quellenlinks pro Dokument an jeder Position). Kurzfassungen, Gruppierungen, Einschätzungen (0–10), Fragen, Klassen, Karten und Crux-Texte sind vom Tool formuliert und im Interface als solche markiert. Prototyp / interner Arbeitsstand, September 2026.</p>
 </div>
-
-</body>
-</html>
+</body></html>
