@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Abstimmung verstehen – pro und contra</title>
+<title>Interaktives Abstimmungsbüchlein – pro und contra</title>
 <style>
 :root {
   --board:#eceae6; --board-sunk:#e0ddd7; --board-line:#d2cec6;
@@ -435,6 +435,7 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
 .mapsec{margin:40px 0 0}
 .mapsec-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 4px}
 .mapsec-h h2{font-family:var(--serif);font-size:25px;margin:0;font-weight:600;letter-spacing:-.01em}
+.mapsec-sub{font-size:14px;color:var(--board-mute)}
 .xbadge{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#b45309;background:#fdf1e3;padding:2px 7px;border-radius:4px}
 .mapsec-d{color:var(--board-mute);font-size:13.5px;margin:0 0 12px;max-width:72ch}
 #awmap .panel{border-radius:12px}
@@ -445,8 +446,8 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
 <header class="masthead" style="padding:26px 0 6px">
   <a href="index.html" style="font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--board-dim);text-decoration:none">← Übersicht</a>
   <p class="s2crumb"><b>Bürger*innen &amp; Schulen</b></p>
-  <h1 style="font-size:clamp(24px,3.4vw,34px);margin:6px 0 8px;max-width:none">Abstimmung verstehen – pro und contra</h1>
-  <p class="standfirst" style="font-size:14.5px">Die Argumente aus den Abstimmungsunterlagen, nach Ja und Nein geordnet. Vom Ja oder Nein geht es zum Argument und zur einzelnen Aussage; jede Aussage führt zur wörtlichen Textstelle. Drei Vorlagen: zwei des Bundes vom 14. Juni 2026 (Komitee gegen Bundesrat und Parlament) und die «Berner Bildungsinitiative» vom 27. September 2026, bei der auch die Minderheit des Grossen Rates zu Wort kommt. Bei den Bundesvorlagen zuunterst die Argument map.</p>
+  <h1 style="font-size:clamp(24px,3.4vw,34px);margin:6px 0 8px;max-width:none">Interaktives Abstimmungsbüchlein – pro und contra</h1>
+  <p class="standfirst" style="font-size:14.5px">Die Argumente aus den Abstimmungsunterlagen, nach Ja und Nein geordnet. Vom Ja oder Nein geht es zum Argument und zur einzelnen Aussage; jede Aussage führt zur wörtlichen Textstelle. Drei Vorlagen: zwei des Bundes vom 14. Juni 2026 (Komitee gegen Bundesrat und Parlament) und die «Berner Bildungsinitiative» vom 27. September 2026, bei der auch die Minderheit des Grossen Rates zu Wort kommt. Bei den Bundesvorlagen zuunterst die Argumentkarte.</p>
 </header>
 
 <hr class="rule" />
@@ -459,8 +460,8 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
   <div class="stage" id="stage"></div>
 </div>
 <p class="caption" id="caption">Textstellen aus den Erläuterungen des Bundesrates zur Volksabstimmung vom 14. Juni 2026 (admin.ch, PDF v2, Redaktionsschluss 13.3.2026): die Argumente-Seite des Initiativkomitees vollständig, beim Bundesrat die Argumente-Seite und vier Absätze aus «Im Detail — Folgen der Initiative»; [...] = Auslassung. Abgelehnt mit 45,21 % Ja. Fragen, Aussagen pro Seite, Argument-Kurzsätze und Karte: vom Tool formuliert.</p>
-<section class="mapsec" id="awmap" aria-label="Argument map">
-  <div class="mapsec-h"><h2>Argument map</h2><span class="xbadge">Experimentell</span></div>
+<section class="mapsec" id="awmap" aria-label="Argumentkarte">
+  <div class="mapsec-h"><h2>Argumentkarte</h2><span class="mapsec-sub">Was stützt was</span><span class="xbadge">Experimentell</span></div>
   <p class="mapsec-d">Die Argumente beider Seiten als Karte: Hauptthese, Thesen und Prämissen mit Stütz- und Angriffspfeilen, links das Ja, rechts das Nein. Klick auf einen Knoten zeigt die wörtliche Textstelle. Die Karte folgt der oben gewählten Vorlage.</p>
 <section id="panel-zehnmio" class="panel">
   <p class="fine-print">Links das Ja des Initiativkomitees, rechts das Nein von Bundesrat und Parlament (Argumente-Seiten im Abstimmungsbüchlein, beim Bundesrat dazu vier Absätze «Im Detail — Folgen»). Kartierung (Knoten, Pfeile, Typen): vom Tool, die Textstellen sind wörtlich.</p>
@@ -852,7 +853,7 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
     var d = el("details","gapfield" + (cls ? " " + cls : ""));
     if (S.gopen[key]) d.open = true;
     var s = el("summary");
-    s.appendChild(el("span","gft","Gap"));
+    s.appendChild(el("span","gft","Wer steht wo"));
     s.appendChild(el("span","gfd",title));
     d.appendChild(s);
     d.addEventListener("toggle", function(){ S.gopen[key] = d.open; });

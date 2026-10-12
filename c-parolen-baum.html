@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Abstimmung verstehen – vertieft</title>
+<title>Interaktives Abstimmungsbüchlein – differenziert</title>
 <style>
 :root {
   --board:#eceae6; --board-sunk:#e0ddd7; --board-line:#d2cec6;
@@ -339,8 +339,8 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
 <header class="masthead" style="padding:26px 0 6px">
   <a href="index.html" style="font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--board-dim);text-decoration:none">← Übersicht</a>
   <p class="s2crumb"><b>Bürger*innen &amp; Schulen</b></p>
-  <h1 style="font-size:clamp(24px,3.4vw,34px);margin:6px 0 8px;max-width:none">Abstimmung verstehen – vertieft</h1>
-  <p class="standfirst" style="font-size:14.5px">Die Begründungen der Parolen von SVP, SP, FDP, Die Mitte und GRÜNEN, nach Themen und Fragen geordnet; jede Antwort führt zur wörtlichen Textstelle. Das aufklappbare Gap zeigt bei der Vorlage, bei jedem Thema und bei jeder Frage, wer wo steht. Zwei Vorlagen vom 14. Juni 2026.</p>
+  <h1 style="font-size:clamp(24px,3.4vw,34px);margin:6px 0 8px;max-width:none">Interaktives Abstimmungsbüchlein – differenziert</h1>
+  <p class="standfirst" style="font-size:14.5px">Die Begründungen der Parolen von SVP, SP, FDP, Die Mitte und GRÜNEN, nach Themen und Fragen geordnet; jede Antwort führt zur wörtlichen Textstelle. «Wer steht wo» lässt sich bei der Vorlage, bei jedem Thema und bei jeder Frage aufklappen. Zwei Vorlagen vom 14. Juni 2026.</p>
 </header>
 
 <hr class="rule" />
@@ -698,7 +698,7 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
     var d = el("details","gapfield" + (cls ? " " + cls : ""));
     if (S.gopen[key]) d.open = true;
     var s = el("summary");
-    s.appendChild(el("span","gft","Gap"));
+    s.appendChild(el("span","gft","Wer steht wo"));
     s.appendChild(el("span","gfd",title));
     d.appendChild(s);
     d.addEventListener("toggle", function(){ S.gopen[key] = d.open; });

@@ -1,5 +1,5 @@
 <!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
-<title>Debatten und Anträge verstehen</title>
+<title>Ratsdebatte: wer sagt was</title>
 <style>
 :root {
   --board:#eceae6; --board-sunk:#e0ddd7; --board-line:#d2cec6;
@@ -435,6 +435,7 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
 .mapsec{margin:40px 0 0}
 .mapsec-h{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 4px}
 .mapsec-h h2{font-family:var(--serif);font-size:25px;margin:0;font-weight:600;letter-spacing:-.01em}
+.mapsec-sub{font-size:14px;color:var(--board-mute)}
 .xbadge{font-family:var(--mono);font-size:9.5px;letter-spacing:.1em;text-transform:uppercase;color:#b45309;background:#fdf1e3;padding:2px 7px;border-radius:4px}
 .mapsec-d{color:var(--board-mute);font-size:13.5px;margin:0 0 12px;max-width:72ch}
 #awmap .panel{border-radius:12px}
@@ -445,8 +446,8 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
 <header class="masthead" style="padding:26px 0 6px">
   <a href="index.html" style="font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--board-dim);text-decoration:none">← Übersicht</a>
   <p class="s2crumb"><b>Expert*innen</b></p>
-  <h1 style="font-size:clamp(24px,3.4vw,34px);margin:6px 0 8px;max-width:none">Debatten und Anträge verstehen</h1>
-  <p class="standfirst" style="font-size:14.5px">Voten aus Parlamentsdebatten, nach Themen und Fragen geordnet; jede Antwort führt zur wörtlichen Textstelle. Das aufklappbare Gap zeigt, wer wo steht. Zwei Beispiele: die Neutralitätsinitiative im National- und Ständerat (März 2026) und die Steuergesetzrevision 2027 im Grossen Rat des Kantons Bern (1. Lesung, 9.9.2025). Beim Bund-Beispiel zuunterst die Argument map.</p>
+  <h1 style="font-size:clamp(24px,3.4vw,34px);margin:6px 0 8px;max-width:none">Ratsdebatte: wer sagt was</h1>
+  <p class="standfirst" style="font-size:14.5px">Voten aus Parlamentsdebatten, nach Themen und Fragen geordnet; jede Antwort führt zur wörtlichen Textstelle. «Wer steht wo» lässt sich aufklappen. Zwei Beispiele: die Neutralitätsinitiative im National- und Ständerat (März 2026) und die Steuergesetzrevision 2027 im Grossen Rat des Kantons Bern (1. Lesung, 9.9.2025). Beim Bund-Beispiel zuunterst die Argumentkarte.</p>
 </header>
 
 <hr class="rule" />
@@ -459,8 +460,8 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
   <div class="stage" id="stage"></div>
 </div>
 <p class="caption" id="caption">Zitate verbatim aus dem Amtlichen Bulletin zum Geschäft 24.092 (Nationalrat 4.3.2026, Ständerat 12.3.2026; Voten als Auszüge, [...] = Auslassung), geprüft gegen die offiziellen Transkripte auf parlament.ch. Themen, Fragen, Antworten, Kurzfassungen, Einschätzungen 0–10 und Karte: vom Tool formuliert und als solche markiert.</p>
-<section class="mapsec" id="awmap" aria-label="Argument map">
-  <div class="mapsec-h"><h2>Argument map</h2><span class="xbadge">Experimentell</span></div>
+<section class="mapsec" id="awmap" aria-label="Argumentkarte">
+  <div class="mapsec-h"><h2>Argumentkarte</h2><span class="mapsec-sub">Was stützt was</span><span class="xbadge">Experimentell</span></div>
   <p class="mapsec-d">Die Debatte als Karte: Hauptthese, Thesen und Prämissen mit Stütz- und Angriffspfeilen (Hover zeigt die Begründung). Die Karte kennt nur zwei Seiten, pro und contra Initiative. Klick auf einen Knoten zeigt die wörtliche Textstelle.</p>
 <section id="panel-neutralvoten" class="panel">
   <p class="fine-print">Fallbeispiel: die Debatte zur Neutralitätsinitiative (24.092) im Nationalrat (4.3.2026) und im Ständerat (12.3.2026), vierzehn Voten als Auszüge aus dem Amtlichen Bulletin. Kartierung (Knoten, Pfeile, Typen): vom Tool — die Textstellen sind wörtlich.</p>
@@ -831,7 +832,7 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
     var d = el("details","gapfield" + (cls ? " " + cls : ""));
     if (S.gopen[key]) d.open = true;
     var s = el("summary");
-    s.appendChild(el("span","gft","Gap"));
+    s.appendChild(el("span","gft","Wer steht wo"));
     s.appendChild(el("span","gfd",title));
     d.appendChild(s);
     d.addEventListener("toggle", function(){ S.gopen[key] = d.open; });
