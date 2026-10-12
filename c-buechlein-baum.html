@@ -333,6 +333,34 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
 .gapdot:focus-visible{outline:2px solid var(--p-accent);outline-offset:2px}
 .gapax{display:flex;justify-content:space-between;font-family:var(--mono);font-size:9px;color:var(--p-muted);text-transform:uppercase;letter-spacing:.05em;margin:2px 0 0}
 @media (prefers-reduced-motion:reduce){.gapfield>summary::before{transition:none}}
+.rowlab{text-align:center;font-size:12.5px;line-height:1.45;color:var(--p-muted);margin:0 auto 9px;max-width:70ch}
+.rowlab b{color:var(--p-ink);font-weight:700}
+.tiles .tileref{margin:0 0 10px;font-size:13px;line-height:1.5;color:var(--p-ink)}
+.tiles .tileref .tlab{font-family:var(--mono);font-size:9.5px;letter-spacing:.09em;text-transform:uppercase;color:var(--p-muted);font-weight:700;margin-right:8px}
+.tilegrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;align-items:stretch}
+@media (max-width:640px){.tilegrid{grid-template-columns:1fr}.tpgo-t{display:none}}
+.tile{--tc:#64748b;border:1px solid var(--p-border);border-top:3px solid var(--tc);border-radius:9px;background:var(--p-card);padding:10px 12px 12px;display:flex;flex-direction:column;gap:9px;min-width:0}
+.tile.t-nein{--tc:#c2410c}
+.tile.t-ja{--tc:#1d4ed8}
+.tile.t-mid{margin-top:10px}
+.tileh{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.tileh .cd2{display:inline-flex;gap:4px}
+.tilet{margin:0;font-size:15px;font-weight:800;color:var(--tc);letter-spacing:.01em}
+.tilesum{background:var(--p-sunk);border-radius:7px;padding:9px 11px}
+.tilesum .sumtag{margin-bottom:5px}
+.tilesl{margin:0 0 2px;font-size:12.5px;font-weight:700;line-height:1.4;color:var(--p-ink)}
+.tilesum .sumt+.tilesl{margin-top:10px}
+.tilesum .sumt{font-size:12.5px}
+.tilepos{display:flex;flex-direction:column;gap:5px}
+.tprow{display:flex;gap:5px;align-items:stretch}
+.tpos{flex:1;min-width:0;display:flex;align-items:center;gap:8px;text-align:left;border:1px solid var(--p-border);background:var(--p-card);border-radius:7px;padding:6px 10px;font:inherit;font-size:12.5px;color:var(--p-ink);cursor:pointer}
+.tpos:hover,.tpos2:hover{background:var(--p-sunk);border-color:var(--tc)}
+.tpos:focus-visible,.tpos2:focus-visible{outline:2px solid var(--p-accent);outline-offset:2px}
+.tptx{flex:1;min-width:0;line-height:1.4}
+.tptx .tpw{color:var(--p-muted);margin-left:3px}
+.tpgo{flex:none;font-size:11px;color:var(--p-accent);white-space:nowrap}
+.tpos2{flex:none;border:1px solid var(--p-border);background:var(--p-card);border-radius:7px;padding:4px 8px;font:inherit;font-size:11px;color:var(--p-accent);cursor:pointer;white-space:nowrap}
+.tile .hatch{min-height:46px}
 #awmap { --bg: #f6f7f9;
   --card: #ffffff;
   --ink: #1a202c;
@@ -878,19 +906,115 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
         title:function(p){ return p.short + (p.badge ? " — " + p.badge : ""); },
         onDot:function(pid){ openSheetFull(pid); } })], rg.note, "root");
   }
-  function themeGapField(ti){
-    if (!DSMETA.gap) return null;
-    var th = THEMES[ti];
-    var ids = th.topics.filter(function(ix){ var g = G10[ix]; return g && Object.keys(g).length; });
-    if (!ids.length) return null;
-    return gapField("t" + ti, th.l + " · " + ids.length + (ids.length === 1 ? " Aussage" : " Aussagen"),
-      ids.map(function(ix){ return gapRow(TOPICS[ix]); }), noteKI());
-  }
   function topicGapField(tp){
     if (!DSMETA.gap) return null;
     var g = G10[tp.id];
     if (!g || !Object.keys(g).length) return null;
     return gapField("q" + tp.id, "diese Aussage", [gapRow(tp)], noteKI());
+  }
+  /* Beschriftung über einer Baumzeile: [fett, Rest] oder Text */
+  function rowLabel(lab){
+    if (!lab) return null;
+    var d = el("div","rowlab");
+    if (typeof lab === "string") d.textContent = lab;
+    else { d.appendChild(el("b",null,lab[0])); if (lab[1]) d.appendChild(document.createTextNode(" · " + lab[1])); }
+    return d;
+  }
+
+  /* ===== Antwort-Kacheln: Nein links, Ja rechts, Zwischentöne darunter ===== */
+  function tileWord(w, title){
+    w = (w || "").trim();
+    if (w === "führt an") return "";
+    var first = (title || "").split(/[ ,]/)[0].toLowerCase();
+    var m = w.match(/^([^\s—–,-]+)\s*(?:[—–,-]\s*)?(.*)$/);
+    return (m && m[1].toLowerCase() === first) ? m[2] : w;
+  }
+  function tilePos(tp, p, title){
+    var e = tp.e[p.id];
+    var w = e.tw != null ? e.tw : tileWord(e.w, title);
+    var row = el("div","tprow");
+    var b = el("button","tpos"); b.type = "button";
+    b.appendChild(dot(p.c));
+    var tx = el("span","tptx");
+    tx.appendChild(el("b",null,p.short));
+    if (w){ tx.appendChild(document.createTextNode(" ")); tx.appendChild(el("span","tpw",w)); }
+    b.appendChild(tx);
+    var go = el("span","tpgo"); go.appendChild(el("span","tpgo-t","Textstelle ")); go.appendChild(document.createTextNode("→")); b.appendChild(go);
+    var sp = spanOf(e.pass);
+    b.title = (sp ? "«" + sp + "»\n\n" : "") + "Klick öffnet die Textstelle im Zusammenhang.";
+    b.setAttribute("aria-label", p.short + (w ? ", " + w : "") + ": Textstelle öffnen");
+    b.onclick = function(){ openSheet(p.id, e.pass); };
+    row.appendChild(b);
+    if (e.pass2){
+      var b2 = el("button","tpos2","2. Stelle"); b2.type = "button";
+      b2.title = "Zweite Textstelle von " + p.short;
+      b2.setAttribute("aria-label", p.short + ": zweite Textstelle öffnen");
+      b2.onclick = function(){ openSheet(p.id, e.pass2); };
+      row.appendChild(b2);
+    }
+    return row;
+  }
+  function answerTile(tp, c, title, members, sums){
+    var t = el("section","tile t-" + c + (members.length ? "" : " empty"));
+    var hd = el("div","tileh");
+    hd.appendChild(el("h4","tilet",title));
+    if (members.length){
+      var dd = el("span","cd2");
+      members.forEach(function(p){ var d = dot(p.c); d.title = p.short; dd.appendChild(d); });
+      hd.appendChild(dd);
+    }
+    t.appendChild(hd);
+    var ss = sums.filter(function(s){ return s.cat === c; });
+    if (ss.length){
+      var sb = el("div","tilesum");
+      sb.appendChild(el("div","sumtag","Kurzfassung · redaktionell"));
+      ss.forEach(function(s){ sb.appendChild(el("p","tilesl",s.l)); sb.appendChild(el("p","sumt",s.t)); });
+      t.appendChild(sb);
+    }
+    if (members.length){
+      var pl = el("div","tilepos");
+      members.forEach(function(p){ pl.appendChild(tilePos(tp, p, title)); });
+      t.appendChild(pl);
+    } else {
+      t.appendChild(el("div","hatch", DSMETA.tileEmpty || "niemand"));
+    }
+    return t;
+  }
+  function detailTiles(tp){
+    var box = el("div","tiles");
+    var T = tp.tiles || { nein:"Nein", ja:"Ja", mid:"Teils" };
+    var sums = SUMS[tp.id] || [];
+    if (T.ref){
+      var rf = el("p","tileref");
+      rf.appendChild(el("span","tlab","Bezugsaussage"));
+      rf.appendChild(document.createTextNode("«" + T.ref + "»"));
+      box.appendChild(rf);
+    }
+    var by = { nein:[], ja:[], mid:[] };
+    engaged(tp).forEach(function(p){ by[tp.e[p.id].cat || "mid"].push(p); });
+    var grid = el("div","tilegrid");
+    grid.appendChild(answerTile(tp, "nein", T.nein, by.nein, sums));
+    grid.appendChild(answerTile(tp, "ja", T.ja, by.ja, sums));
+    box.appendChild(grid);
+    if (by.mid.length) box.appendChild(answerTile(tp, "mid", T.mid, by.mid, sums));
+    var foot = el("div","detailfoot"); foot.style.marginTop = "12px";
+    if (tp.note){
+      var n = el("p","tnote"); n.style.margin = "0";
+      n.appendChild(el("b",null,"Beobachtung: ")); n.appendChild(document.createTextNode(tp.note));
+      foot.appendChild(n);
+    }
+    var sil = silent(tp);
+    if (sil.length){
+      var sr = el("div","silentrow");
+      sr.appendChild(document.createTextNode("Äussern sich nicht:"));
+      sil.forEach(function(p){
+        var c = el("span","pchip"); c.appendChild(dot(p.c)); c.appendChild(document.createTextNode(p.short));
+        sr.appendChild(c);
+      });
+      foot.appendChild(sr);
+    }
+    box.appendChild(foot);
+    return box;
   }
 
   /* ===== Datensatz: zehnmio ===== */
@@ -958,6 +1082,7 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
   /* Detail ohne Lager: Gruppen entstehen aus den Antworten selbst, nicht aus zwei Ästen.
      Positionen mit wortgleicher Antwort teilen eine Spalte; sonst steht jede für sich. */
   function detailNoSides(tp){
+    if (DSMETA.answerTiles) return detailTiles(tp);
     var box = el("div");
     /* (kein Gap-Streifen: die Gap-Achse setzt eine Referenzaussage mit zwei Polen voraus) */
     (SUMS[tp.id] || []).forEach(function(s){
@@ -1094,6 +1219,7 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
     stage.appendChild(rootCard(DSMETA.rootLabel || "frage", DSMETA.rootText || (TREE && TREE.root) || ""));
     var rg = rootGapField(); if (rg) stage.appendChild(rg);
     stage.appendChild(el("div","arrowdown","▾"));
+    var rl1 = rowLabel(DSMETA.themesLabel); if (rl1) stage.appendChild(rl1);
     var r1 = el("div","treerow");
     THEMES.forEach(function(th,ti){
       var b = el("button","argcard"+(m.theme!=null&&m.theme!==ti?" dim":""));
@@ -1110,8 +1236,8 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
       stage.appendChild(hint);
       return;
     }
-    var tg = themeGapField(m.theme); if (tg) stage.appendChild(tg);
     stage.appendChild(el("div","arrowdown","▾"));
+    var rl2 = rowLabel(DSMETA.questionsLabel); if (rl2) stage.appendChild(rl2);
     var r2 = el("div","treerow");
     THEMES[m.theme].topics.forEach(function(ix){
       var tp = TOPICS[ix];
