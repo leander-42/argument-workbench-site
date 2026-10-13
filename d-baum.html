@@ -373,6 +373,54 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
 .tsrc{border:0;background:none;padding:0;font:inherit;font-size:11.5px;line-height:1.5;color:var(--p-accent);cursor:pointer;text-align:left}
 .tsrc:hover{text-decoration:underline}
 .tsrc:focus-visible{outline:2px solid var(--p-accent);outline-offset:2px;border-radius:3px}
+
+/* Gegenüberstellung */
+.cmpsec{margin-top:18px}
+.cmpsec:first-of-type{margin-top:12px}
+.cmpth{font-size:11px;font-family:var(--mono);letter-spacing:.09em;text-transform:uppercase;color:var(--p-muted);font-weight:700;margin:0 0 8px}
+.cmprow{border:1px solid var(--p-border);border-radius:9px;background:var(--p-card);padding:11px 13px 12px;margin-bottom:8px}
+.cmpq{display:flex;align-items:baseline;gap:9px;flex-wrap:wrap;margin-bottom:9px}
+.cmpqt{font-weight:700;font-size:13.5px;line-height:1.4}
+.cmpcells{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cmpcell{--tc:#64748b;border-left:3px solid var(--tc);padding:1px 0 2px 11px;min-width:0}
+.cmpcell.c-nein{--tc:#c2410c}
+.cmpcell.c-ja{--tc:#1d4ed8}
+.cmpcell.empty{border-left-style:dashed}
+.cmpsl{display:flex;align-items:center;gap:6px;font-size:10.5px;font-family:var(--mono);letter-spacing:.06em;text-transform:uppercase;font-weight:700;color:var(--tc);margin-bottom:4px}
+.cmpsl .cd2{display:inline-flex;gap:3px}
+.cmpt{margin:0;font-size:13px;line-height:1.5;color:var(--p-ink)}
+.cmpsil{font-size:12.5px;color:var(--p-muted);font-style:italic}
+.cmpnote{margin:9px 0 0;font-size:12px;line-height:1.5;color:var(--p-muted)}
+@media (max-width:640px){.cmpcells{grid-template-columns:1fr;gap:10px}}
+/* Skala */
+.sparolen{display:flex;gap:8px 18px;flex-wrap:wrap;justify-content:center;margin:12px 0 4px;font-size:12.5px}
+.spg{display:inline-flex;align-items:center;gap:6px;flex-wrap:wrap}
+.snote{font-size:12px;color:var(--p-muted);margin:6px auto 0;max-width:70ch;text-align:center;line-height:1.5}
+.sclaims .snote{text-align:left;margin:0 0 8px}
+.sbox{border:1px solid var(--p-border);border-radius:9px;background:var(--p-card);padding:12px 13px;margin-bottom:9px}
+.sthesis{margin:0 0 10px;font-weight:700;font-size:14px;line-height:1.4}
+.scale{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:6px}
+.scol{border-top:3px solid var(--sc);background:#f4f6f9;border-radius:6px;padding:6px 6px 8px;min-height:50px}
+.scol.s1{--sc:#c2410c}.scol.s2{--sc:#f59e0b}.scol.s3{--sc:#94a3b8}.scol.s4{--sc:#60a5fa}.scol.s5{--sc:#1d4ed8}
+.slab{font-family:var(--mono);font-size:9.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--p-muted);font-weight:700;margin-bottom:6px;text-align:center}
+.schips{display:flex;flex-direction:column;gap:4px;align-items:stretch}
+.schip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--p-border);background:var(--p-card);border-radius:20px;padding:3px 9px;font:inherit;font-size:12px;font-weight:600;color:var(--p-ink);cursor:pointer;justify-content:center;white-space:nowrap}
+.schip:hover{border-color:var(--p-accent)}
+.schip:focus-visible{outline:2px solid var(--p-accent);outline-offset:2px}
+.sbox .silentrow{margin-top:8px}
+.sdet{margin-top:9px}
+.sdet>summary{cursor:pointer;font-size:12.5px;font-weight:600;color:var(--p-accent);list-style:none}
+.sdet>summary::-webkit-details-marker{display:none}
+.sdet>summary::before{content:"▸ ";color:var(--p-muted)}
+.sdet[open]>summary::before{content:"▾ "}
+.sdet>summary:focus-visible{outline:2px solid var(--p-accent);outline-offset:2px;border-radius:3px}
+.sdet .tunits{margin-top:8px}
+@media (max-width:560px){
+  .scale{grid-template-columns:1fr;gap:4px}
+  .scol{display:grid;grid-template-columns:86px 1fr;align-items:center;min-height:0;padding:5px 8px;border-top:0;border-left:3px solid var(--sc)}
+  .slab{margin:0;text-align:left}
+  .schips{flex-direction:row;flex-wrap:wrap}
+}
 #awmap { --bg: #f6f7f9;
   --card: #ffffff;
   --ink: #1a202c;
@@ -993,6 +1041,155 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
     card.appendChild(body);
     return card;
   }
+
+  /* ===== Gegenüberstellung (Büchlein pro und contra): pro Punkt eine Zeile, Nein links, Ja rechts ===== */
+  function sideLabel(sd){ return (DSMETA.sideLabels && DSMETA.sideLabels[sd]) || (sd === "ja" ? "Ja" : "Nein"); }
+  function srcLinks(tp, members){
+    var ln = el("div","tul");
+    if (members.length === 1){
+      var e1 = tp.e[members[0].id];
+      ln.appendChild(srcBtn("Textstelle →", members[0].id, e1.pass));
+      if (e1.pass2) ln.appendChild(srcBtn("2. Stelle →", members[0].id, e1.pass2));
+    } else {
+      ln.appendChild(el("span","tull","Textstelle:"));
+      members.forEach(function(p){
+        var e = tp.e[p.id];
+        ln.appendChild(srcBtn(p.short + " →", p.id, e.pass));
+        if (e.pass2) ln.appendChild(srcBtn(p.short + ", 2. Stelle →", p.id, e.pass2));
+      });
+    }
+    return ln;
+  }
+  function sideCell(tp, sd){
+    var cell = el("div","cmpcell c-" + sd);
+    var members = engaged(tp).filter(function(p){ return p.side === sd; });
+    var lab = el("div","cmpsl");
+    var dd = el("span","cd2");
+    POS.filter(function(p){ return p.side === sd; }).forEach(function(p){ var d = dot(p.c); d.title = p.short; dd.appendChild(d); });
+    lab.appendChild(dd); lab.appendChild(document.createTextNode(sideLabel(sd)));
+    cell.appendChild(lab);
+    if (!members.length){
+      cell.classList.add("empty");
+      cell.appendChild(el("div","cmpsil","geht auf diesen Punkt nicht ein"));
+      return cell;
+    }
+    cell.appendChild(el("p","cmpt", (ST[tp.id] && ST[tp.id][sd]) || ""));
+    cell.appendChild(srcLinks(tp, members));
+    return cell;
+  }
+  function viewCompare(stage){
+    stage.appendChild(rootCard(DSMETA.rootLabel || "frage", DSMETA.rootText || (TREE && TREE.root) || ""));
+    var seen = {};
+    var groups = THEMES.map(function(th){ th.topics.forEach(function(ix){ seen[ix] = 1; }); return { l: th.l, topics: th.topics }; });
+    var rest = TOPICS.filter(function(tp){ return !seen[tp.id]; }).map(function(tp){ return tp.id; });
+    if (rest.length) groups.push({ l: "Weitere Punkte", topics: rest });
+    groups.forEach(function(g){
+      var sec = el("section","cmpsec");
+      sec.appendChild(el("h3","cmpth", g.l));
+      g.topics.forEach(function(ix){
+        var tp = TOPICS[ix];
+        var row = el("div","cmprow");
+        var q = el("div","cmpq");
+        q.appendChild(el("span","cmpqt", qOf(tp)));
+        var sides = {}; engaged(tp).forEach(function(p){ sides[p.side] = 1; });
+        q.appendChild(Object.keys(sides).length < 2 ? el("span","stamp one","nur eine Seite") : stStamp(tp.st));
+        row.appendChild(q);
+        var cells = el("div","cmpcells");
+        cells.appendChild(sideCell(tp, "nein"));
+        cells.appendChild(sideCell(tp, "ja"));
+        row.appendChild(cells);
+        if (tp.note){
+          var n = el("p","cmpnote"); n.appendChild(el("b",null,"Beobachtung: ")); n.appendChild(document.createTextNode(tp.note));
+          row.appendChild(n);
+        }
+        sec.appendChild(row);
+      });
+      stage.appendChild(sec);
+    });
+  }
+
+  /* ===== Skala (Büchlein differenziert): These, Parteien von «lehnt ab» bis «stimmt zu» ===== */
+  var STEPS = ["lehnt ab","eher nicht","teils","eher zu","stimmt zu"];
+  function partyChip(tp, p){
+    var e = tp.e[p.id];
+    var b = el("button","schip"); b.type = "button";
+    b.appendChild(dot(p.c)); b.appendChild(document.createTextNode(p.short));
+    var sp = spanOf(e.pass);
+    b.title = (sp ? "«" + sp + "»\n\n" : "") + "Klick öffnet die Textstelle.";
+    b.setAttribute("aria-label", p.short + ", " + STEPS[tp.thesis.steps[p.id] - 1] + ": Textstelle öffnen");
+    b.onclick = function(){ openSheet(p.id, e.pass); };
+    return b;
+  }
+  function meanStep(tp, u){ var s = 0; u.ids.forEach(function(pid){ s += tp.thesis.steps[pid] || 3; }); return s / u.ids.length; }
+  function scaleRow(tp){
+    var box = el("div","sbox");
+    box.appendChild(el("p","sthesis", tp.thesis.t));
+    var sc = el("div","scale");
+    STEPS.forEach(function(lab, i){
+      var col = el("div","scol s" + (i + 1));
+      col.appendChild(el("div","slab", lab));
+      var chips = el("div","schips");
+      engaged(tp).forEach(function(p){ if (tp.thesis.steps[p.id] === i + 1) chips.appendChild(partyChip(tp, p)); });
+      col.appendChild(chips);
+      sc.appendChild(col);
+    });
+    box.appendChild(sc);
+    var sil = silent(tp);
+    if (sil.length){
+      var sr = el("div","silentrow");
+      sr.appendChild(document.createTextNode("Äussern sich nicht:"));
+      sil.forEach(function(p){ var c = el("span","pchip"); c.appendChild(dot(p.c)); c.appendChild(document.createTextNode(p.short)); sr.appendChild(c); });
+      box.appendChild(sr);
+    }
+    var det = el("details","sdet");
+    var key = "s" + tp.id;
+    if (S.gopen[key]) det.open = true;
+    det.addEventListener("toggle", function(){ S.gopen[key] = det.open; });
+    det.appendChild(el("summary",null,"Begründungen der Parteien"));
+    var ul = el("div","tunits");
+    (tp.units || []).slice().sort(function(a, b){ return meanStep(tp, a) - meanStep(tp, b); })
+      .forEach(function(u){ ul.appendChild(unitCard(tp, u)); });
+    det.appendChild(ul);
+    if (tp.note){
+      var n = el("p","cmpnote"); n.appendChild(el("b",null,"Beobachtung: ")); n.appendChild(document.createTextNode(tp.note));
+      det.appendChild(n);
+    }
+    box.appendChild(det);
+    return box;
+  }
+  function viewScale(stage){
+    stage.appendChild(rootCard(DSMETA.rootLabel || "frage", DSMETA.rootText || (TREE && TREE.root) || ""));
+    var pl = el("div","sparolen");
+    ["ja","nein"].forEach(function(sd){
+      var ms = POS.filter(function(p){ return p.side === sd; });
+      if (!ms.length) return;
+      var g = el("span","spg");
+      g.appendChild(el("b",null,"Parole " + (sd === "ja" ? "Ja" : "Nein") + ":"));
+      ms.forEach(function(p){ var c = el("span","pchip"); c.appendChild(dot(p.c)); c.appendChild(document.createTextNode(p.short)); g.appendChild(c); });
+      pl.appendChild(g);
+    });
+    stage.appendChild(pl);
+    stage.appendChild(el("p","snote","Wo steht jede Partei zur These? Die Stufe ist eine grobe Einschätzung des Tools aus den Begründungen; massgeblich ist die Textstelle (Klick auf die Partei)."));
+    var singles = [];
+    THEMES.forEach(function(th){
+      var main = [];
+      th.topics.forEach(function(ix){ var tp = TOPICS[ix]; if (tp.thesis) main.push(tp); else singles.push(tp); });
+      if (!main.length) return;
+      var sec = el("section","cmpsec");
+      sec.appendChild(el("h3","cmpth", th.l));
+      main.forEach(function(tp){ sec.appendChild(scaleRow(tp)); });
+      stage.appendChild(sec);
+    });
+    if (singles.length){
+      var sec = el("section","cmpsec sclaims");
+      sec.appendChild(el("h3","cmpth","Nur eine Partei sagt …"));
+      sec.appendChild(el("p","snote","Aussagen, auf die in den erhobenen Begründungen keine andere Partei eingeht."));
+      var ul = el("div","tunits");
+      singles.forEach(function(tp){ (tp.units || []).forEach(function(u){ ul.appendChild(unitCard(tp, u)); }); });
+      sec.appendChild(ul);
+      stage.appendChild(sec);
+    }
+  }
   function answerTile(tp, c, title, members, sums){
     var t = el("section","tile t-" + c + (members.length ? "" : " empty"));
     var hd = el("div","tileh");
@@ -1370,6 +1567,8 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
   function drawView(){
     var stage = document.getElementById("stage");
     stage.innerHTML = "";
+    if (DSMETA.view === "compare"){ viewCompare(stage); return; }
+    if (DSMETA.view === "scale"){ viewScale(stage); return; }
     stage.appendChild(legendRow());
     if (S.view==="kein" || DSMETA.noSides || !TREE || !TREE.ja) viewKein(stage);
     else viewZwei(stage);
