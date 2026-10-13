@@ -361,6 +361,18 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
 .tpgo{flex:none;font-size:11px;color:var(--p-accent);white-space:nowrap}
 .tpos2{flex:none;border:1px solid var(--p-border);background:var(--p-card);border-radius:7px;padding:4px 8px;font:inherit;font-size:11px;color:var(--p-accent);cursor:pointer;white-space:nowrap}
 .tile .hatch{min-height:46px}
+.tilestag{margin:0 0 8px}
+.tunits{display:flex;flex-direction:column;gap:6px}
+.tunit{display:flex;gap:9px;align-items:flex-start;border:1px solid var(--p-border);border-radius:7px;padding:8px 10px;background:var(--p-card)}
+.tunit .tud{display:flex;flex-direction:column;gap:3px;padding-top:5px;flex:none}
+.tub{flex:1;min-width:0}
+.tut{margin:0;font-size:12.5px;line-height:1.5;color:var(--p-ink)}
+.tut b{font-weight:700}
+.tul{display:flex;flex-wrap:wrap;gap:3px 12px;align-items:baseline;margin-top:5px}
+.tull{font-size:11px;color:var(--p-muted)}
+.tsrc{border:0;background:none;padding:0;font:inherit;font-size:11.5px;line-height:1.5;color:var(--p-accent);cursor:pointer;text-align:left}
+.tsrc:hover{text-decoration:underline}
+.tsrc:focus-visible{outline:2px solid var(--p-accent);outline-offset:2px;border-radius:3px}
 #awmap { --bg: #f6f7f9;
   --card: #ffffff;
   --ink: #1a202c;
@@ -469,13 +481,25 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
 #awmap .panel{border-radius:12px}
 #awmap .fine-print{margin:0 0 4px}
 </style>
+<script>
+(function(){
+  if (location.hash) return;
+  var moved = false;
+  ["wheel","touchstart","keydown","mousedown"].forEach(function(t){ window.addEventListener(t, function(){ moved = true; }, { passive:true, once:true }); });
+  try { if ("scrollRestoration" in history) history.scrollRestoration = "manual"; } catch (e) {}
+  function toTop(){ if (moved) return; try { window.scrollTo(0, 0); var r = document.documentElement; if (r.scrollIntoView) r.scrollIntoView({ block:"start" }); } catch (e) {} }
+  toTop();
+  document.addEventListener("DOMContentLoaded", toTop);
+  window.addEventListener("load", toTop);
+})();
+</script>
 <div class="wrap">
 
 <header class="masthead" style="padding:26px 0 6px">
   <a href="index.html" style="font-family:var(--mono);font-size:12px;letter-spacing:.06em;color:var(--board-dim);text-decoration:none">← Übersicht</a>
   <p class="s2crumb"><b>Expert*innen</b></p>
   <h1 style="font-size:clamp(24px,3.4vw,34px);margin:6px 0 8px;max-width:none">Ratsdebatte: wer sagt was</h1>
-  <p class="standfirst" style="font-size:14.5px">Voten aus Parlamentsdebatten, nach Themen und Fragen geordnet; jede Antwort führt zur wörtlichen Textstelle. «Wer steht wo» lässt sich aufklappen. Zwei Beispiele: die Neutralitätsinitiative im National- und Ständerat (März 2026) und die Steuergesetzrevision 2027 im Grossen Rat des Kantons Bern (1. Lesung, 9.9.2025). Beim Bund-Beispiel zuunterst die Argumentkarte.</p>
+  <p class="standfirst" style="font-size:14.5px">Voten aus Parlamentsdebatten, nach Themen und Fragen geordnet; jede Antwort führt zur wörtlichen Textstelle. «Wer steht wo» lässt sich aufklappen.</p>
 </header>
 
 <hr class="rule" />
@@ -933,6 +957,42 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
     }
     return row;
   }
+  /* Kurzfassung pro Akteur (oder pro Gruppe, die etwa dasselbe sagt), mit Link «Textstelle» je Akteur */
+  function boldify(target, t){
+    String(t).split("**").forEach(function(ch, i){ if (i % 2) target.appendChild(el("b",null,ch)); else if (ch) target.appendChild(document.createTextNode(ch)); });
+  }
+  function srcBtn(label, pid, pass){
+    var b = el("button","tsrc",label); b.type = "button";
+    var sp = spanOf(pass);
+    b.title = (sp ? "«" + sp + "»\n\n" : "") + "Öffnet die Textstelle im Zusammenhang.";
+    b.setAttribute("aria-label", pos(pid).short + ": " + label.replace(" →","") + " öffnen");
+    b.onclick = function(){ openSheet(pid, pass); };
+    return b;
+  }
+  function unitCard(tp, u){
+    var card = el("div","tunit");
+    var dd = el("span","tud");
+    u.ids.forEach(function(pid){ var p = pos(pid); var d = dot(p.c); d.title = p.short; dd.appendChild(d); });
+    card.appendChild(dd);
+    var body = el("div","tub");
+    var tx = el("p","tut"); boldify(tx, u.t); body.appendChild(tx);
+    var ln = el("div","tul");
+    if (u.ids.length === 1){
+      var e1 = tp.e[u.ids[0]];
+      ln.appendChild(srcBtn("Textstelle →", u.ids[0], e1.pass));
+      if (e1.pass2) ln.appendChild(srcBtn("2. Stelle →", u.ids[0], e1.pass2));
+    } else {
+      ln.appendChild(el("span","tull","Textstelle:"));
+      u.ids.forEach(function(pid){
+        var e = tp.e[pid], p = pos(pid);
+        ln.appendChild(srcBtn(p.short + " →", pid, e.pass));
+        if (e.pass2) ln.appendChild(srcBtn(p.short + ", 2. Stelle →", pid, e.pass2));
+      });
+    }
+    body.appendChild(ln);
+    card.appendChild(body);
+    return card;
+  }
   function answerTile(tp, c, title, members, sums){
     var t = el("section","tile t-" + c + (members.length ? "" : " empty"));
     var hd = el("div","tileh");
@@ -943,6 +1003,15 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
       hd.appendChild(dd);
     }
     t.appendChild(hd);
+    if (tp.units){
+      var us = tp.units.filter(function(u){ return u.cat === c; });
+      if (us.length){
+        var ul = el("div","tunits");
+        us.forEach(function(u){ ul.appendChild(unitCard(tp, u)); });
+        t.appendChild(ul);
+      } else t.appendChild(el("div","hatch", DSMETA.tileEmpty || "niemand"));
+      return t;
+    }
     var ss = sums.filter(function(s){ return s.cat === c; });
     if (ss.length){
       var sb = el("div","tilesum");
@@ -971,6 +1040,7 @@ h1 { font-family:var(--serif); font-weight:600; font-size:clamp(30px,4.4vw,46px)
     }
     var by = { nein:[], ja:[], mid:[] };
     engaged(tp).forEach(function(p){ by[tp.e[p.id].cat || "mid"].push(p); });
+    if (tp.units) box.appendChild(el("div","sumtag tilestag","Kurzfassungen · redaktionell — «Textstelle» zeigt das wörtliche Zitat"));
     var grid = el("div","tilegrid");
     grid.appendChild(answerTile(tp, "nein", T.nein, by.nein, sums));
     grid.appendChild(answerTile(tp, "ja", T.ja, by.ja, sums));

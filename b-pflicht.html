@@ -439,4 +439,16 @@ p.foot a{color:var(--dim)}
   tabs.forEach(function(t){ t.addEventListener('click', function(){ show(t.dataset.k); }); });
 })();
 </script>
+<script>
+(function(){
+  if (location.hash) return;
+  var moved = false;
+  ["wheel","touchstart","keydown","mousedown"].forEach(function(t){ window.addEventListener(t, function(){ moved = true; }, { passive:true, once:true }); });
+  try { if ("scrollRestoration" in history) history.scrollRestoration = "manual"; } catch (e) {}
+  function toTop(){ if (moved) return; try { window.scrollTo(0, 0); var r = document.documentElement; if (r.scrollIntoView) r.scrollIntoView({ block:"start" }); } catch (e) {} }
+  toTop();
+  document.addEventListener("DOMContentLoaded", toTop);
+  window.addEventListener("load", toTop);
+})();
+</script>
 </body></html>
